@@ -19,6 +19,14 @@ class CatalogServiceProvider extends ServiceProvider {
 	public function boot()
 	{
 		$this->package('palmabit/catalog');
+
+        // include filters
+        require __DIR__ . "/../../filters.php";
+        // include routes.php
+        require __DIR__ . "/../../routes.php";
+        // include view composers
+        require __DIR__ . "/../../composers.php";
+
 	}
 
 	/**

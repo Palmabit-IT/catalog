@@ -1,4 +1,4 @@
-<?php namespace Prodotti\Repository;
+i<?php namespace Prodotti\Repository;
 /**
  * Class ImmagineRepository
  *

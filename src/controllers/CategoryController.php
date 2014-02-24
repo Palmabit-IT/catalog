@@ -1,16 +1,16 @@
-<?php namespace Category\Controllers;
+<?php namespace Palmabit\Catalog\Controllers;
 
 use BaseController;
 use View;
 use Input;
 use Redirect;
-use Category\Repository\CategoriaRepository;
+use Palmabit\Catalog\Repository\CategoryRepository;
 use Exceptions\PalmabitExceptionsInterface;
 use Classes\FormModel;
-use Validators\CategoriaValidator;
+use Validators\CategoryValidator;
 use Categoria;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Presenters\PresenterCategoria;
+use Presenters\PresenterCategory;
 
 class CategoryController extends BaseController
 {

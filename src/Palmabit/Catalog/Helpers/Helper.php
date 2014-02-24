@@ -1,13 +1,13 @@
-<?php namespace Prodotti\Helper;
+<?php namespace Palmabit\Catalog\Helpers;
 /**
  * Class ImageHelper
  *
- * @author jacopo beschi
+ * @author jacopo beschi j.beschi@palmabit.com
  */
 use Input;
-use Exceptions\NotFoundException;
+use Palmabit\Library\Exceptions\NotFoundException;
 
-class ImageHelper {
+class Helper {
 
     public static function getPathFromInput($nome_input)
     {

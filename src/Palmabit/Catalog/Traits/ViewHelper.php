@@ -1,19 +1,17 @@
-<?php  namespace Presenters\Traits; 
+<?php namespace Palmabit\Catalog\Traits;
 
 /**
  * Trait ViewHelper
  *
- * @author jacopo beschi jacopo@jacopobeschi.com
+ * @author jacopo beschi j.beschi@palmabit.com
  */
 trait ViewHelper {
 
     /**
-     * Controlla se il prodotto è stato fornito, in tal caso
-     * setta il data toggle, altrimenti lo disabilita
+     * Used to enable subtabs after product creation
      */
     public function get_toggle()
     {
         return $this->resource->exists ? 'data-toggle="tab"' : 'data-toggle="" disabled="disabled"';
     }
-
 } 

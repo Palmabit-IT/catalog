@@ -1,25 +1,22 @@
-<?php namespace Presenters;
+<?php namespace Palmabit\Catalog\Presenters;
 /**
- * Class PresenterProdotti
+ * Class PresenterProducts
  *
- * Helper per visualizzare dati corretti dalla view partendo da un prodotto
- *
- * @author jacopo beschi
+ * @author jacopo beschi j.beschi@palmabit.com
  */
 namespace Presenters;
 
 use ImmaginiProdotto;
-use Prodotti\Repository\TagsRepository;
-use Presenters\Traits\ViewHelper;
-use Presenters\Traits\AccessoriHelper;
+use Palmabit\Catalog\Traits\ViewHelper;
 
-class PresenterProdotti extends AbstractPresenter {
-use ViewHelper, AccessoriHelper;
+class PresenterProducts extends AbstractPresenter {
+use ViewHelper;
 
     protected $default_img_path;
 
     public function __construct($resource)
     {
+        //@todo fix path
         $this->default_img_path = public_path()."/admin/img/no-photo.png";
         return parent::__construct($resource);
     }
