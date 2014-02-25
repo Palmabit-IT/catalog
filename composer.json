@@ -16,7 +16,8 @@
         "baum/baum": "1.0.9",
         "way/form": "dev-master",
         "intervention/image": "dev-master",
-        "palmabit/library" : "dev-master"
+        "palmabit/library" : "dev-master",
+        "palmabit/multilanguage" : "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "0.9.0",
