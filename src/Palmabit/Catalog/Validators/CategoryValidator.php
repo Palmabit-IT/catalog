@@ -8,7 +8,9 @@ class CategoryValidator extends AbstractValidator
     protected static $rules = array(
         "description" => "required|max:255",
         "slug" => ["required","AlphaDash"],
-        "lang" => "max:2"
+        "lang" => "max:2",
+        'data' => ['image','min:1', 'max:4096']
+
     );
 
     public function __construct()

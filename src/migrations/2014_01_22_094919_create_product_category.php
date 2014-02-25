@@ -12,7 +12,6 @@ class CreateProductCategory extends Migration {
 	 */
 	public function up()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         if(! Schema::hasTable('product_category'))
             Schema::create('product_category', function(Blueprint $table) {
 			$table->increments('id');
@@ -28,7 +27,6 @@ class CreateProductCategory extends Migration {
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 		});
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 	/**
@@ -38,9 +36,7 @@ class CreateProductCategory extends Migration {
 	 */
 	public function down()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::dropIfExists('product_category');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

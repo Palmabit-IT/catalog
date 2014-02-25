@@ -16,6 +16,6 @@ class Category extends Model{
 
     public function products()
     {
-        return $this->belongsToMany('Product',"product_category", "category_id", "product_id");
+        return $this->belongsToMany('Palmabit\Catalog\Models\Product',"product_category", "category_id", "product_id");
     }
 }

@@ -1,14 +1,16 @@
 <?php namespace Palmabit\Catalog\Models;
 
+use Eloquent;
+
 class ProductImage extends Eloquent {
 
     protected $table = "product_image";
 
-    protected $fillable = array("description,","product_id","featured","data");
+    protected $fillable = array("description","product_id","featured","data");
 
     public function product()
     {
-        return $this->belongsTo("Product", "product_id");
+        return $this->belongsTo('Palmabit\Catalog\Models\Product', "product_id");
     }
 
     public function setDataAttribute($value)

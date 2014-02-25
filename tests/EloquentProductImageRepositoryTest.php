@@ -1,6 +1,9 @@
 <?php namespace Palmabit\Catalog\Tests;
 
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
+use Palmabit\Catalog\Models\Product;
+use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\ProductImage;
 
 class EloquentProductImageRepositoryTest extends DbTestCase {
 
@@ -11,98 +14,98 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
     {
         parent::setUp();
 
-        $this->faker = Faker\Factory::create();
+        $this->faker = \Faker\Factory::create();
         $this->repo = new ImageRepositoryStub;
     }
 
     public function testCreateWorks()
     {
-        $this->creaProdotto();
+        $this->createProduct();
         $data = [
-            "descrizione" => "desc",
-            "prodotto_id" => 1,
-            "in_evidenza" => 1,
-            "immagine_url" => "",
+            "description" => "desc",
+            "product_id" => 1,
+            "featured" => 1,
+            "image" => "1"
         ];
         $obj = $this->repo->create($data);
-        $this->assertTrue(is_a($obj,"ImmaginiProdotto"));
-        $this->assertEquals("desc", $obj->descrizione);
+        $this->assertTrue(is_a($obj,'\Palmabit\Catalog\Models\ProductImage') );
+        $this->assertEquals('desc', $obj->description);
     }
 
     public function testDeleteWorks()
     {
-        $this->creaProdotto();
+        $this->createProduct();
         $data = [
-            "descrizione" => "desc",
-            "prodotto_id" => 1,
-            "in_evidenza" => 1,
-            "immagine_url" => "",
+            "description" => "desc",
+            "product_id" => 1,
+            "featured" => 1,
+            "image" => "",
         ];
         $obj = $this->repo->create($data);
         $this->repo->delete(1);
-        $numero_cat = Categoria::all()->count();
+        $numero_cat = Category::all()->count();
         $this->assertEquals(0, $numero_cat);
     }
 
-    public function testCambiaEvidenzaWorks()
+    public function testChangeFeaturedWorks()
     {
-        $this->creaProdotto();
-        // creazione categorie
+        $this->createProduct();
+        // create cats
         $data = [
-            "descrizione" => "desc1",
-            "prodotto_id" => 1,
-            "in_evidenza" => 1,
-            "immagine_url" => "",
+            "description" => "desc1",
+            "product_id" => 1,
+            "featured" => 1,
+            "image" => ""
         ];
         $this->repo->create($data);
         $data = [
-            "descrizione" => "desc2",
-            "prodotto_id" => 1,
-            "in_evidenza" => 0,
-            "immagine_url" => "",
+            "description" => "desc2",
+            "product_id" => 1,
+            "featured" => 0,
+            "image" => ""
         ];
         $this->repo->create($data);
         // creazione prodotto
         $faker = $this->faker;
-        Prodotto::create([
-                         "codice" => $faker->text(5),
-                         "nome" => $faker->text(10),
+        Product::create([
+                         "code" => $faker->text(5),
+                         "name" => $faker->text(10),
                          "slug" => "slug_1",
-                         "slug_lingua" => "slug_lingua",
+                         "slug_lang" => "slug_lingua",
                          "lang" => 'it',
-                         "descrizione" => $faker->text(10),
-                         "descrizione_estesa" => $faker->text(100),
-                         "in_evidenza" => 1,
+                         "description" => $faker->text(10),
+                         "descrizione_long" => $faker->text(100),
+                         "featured" => 1,
                          ]);
 
-        $this->repo->cambiaEvidenza(2,1);
-        $img1 = ImmaginiProdotto::find(1);
-        $img2 = ImmaginiProdotto::find(2);
-        $this->assertEquals(0,$img1->in_evidenza);
-        $this->assertEquals(1,$img2->in_evidenza);
+        $this->repo->changeFeatured(2,1);
+        $img1 = ProductImage::find(1);
+        $img2 = ProductImage::find(2);
+        $this->assertEquals(1,$img1->featured);
+        $this->assertEquals(0,$img2->featured);
     }
 
-    protected function creaProdotto()
+    protected function createProduct()
     {
-        $descrizione = "desc";
+        $description= "desc";
         $data = [
-            "descrizione" => $descrizione,
-            "codice" => "codice",
-            "nome" => "nome",
+            "description" => $description,
+            "code" => "code",
+            "name" => "name",
             "slug" => "slug",
-            "slug_lingua" => "",
-            "descrizione_estesa" => "",
+            "slug_lang" => "",
+            "descrizione_long" => "",
             "in_evidenza" => 1,
         ];
-        Prodotto::create($data);
+        Product::create($data);
     }
 
     /**
-     * @expectedException Exceptions\NotFoundException
+     * @expectedException \Palmabit\Library\Exceptions\NotFoundException
      */
-    public function testCambiaEvidenzaThrowsNotFoundException()
+    public function testChangeFeaturedThrowsNotFoundException()
     {
-        $this->repo->cambiaEvidenza(1,1);
+        $this->repo->changeFeatured(1,1);
     }
 
 }

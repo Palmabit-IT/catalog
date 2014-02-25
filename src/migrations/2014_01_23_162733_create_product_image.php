@@ -12,7 +12,6 @@ class CreateProductImage extends Migration {
 	 */
 	public function up()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         if(! Schema::hasTable('product_image'))
         {
             Schema::create('product_image', function(Blueprint $table) {
@@ -26,9 +25,8 @@ class CreateProductImage extends Migration {
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
 		    });
-            DB::statement('ALTER TABLE  `product_image` ADD  `data` LONGBLOB NOT NULL');
+            DB::statement('ALTER TABLE  `product_image` ADD  `data` LONGBLOB');
         }
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
     }
 
@@ -40,9 +38,7 @@ class CreateProductImage extends Migration {
 	 */
 	public function down()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::dropIfExists('product_image');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

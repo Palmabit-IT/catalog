@@ -4,10 +4,9 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-namespace Presenters;
-
 use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Traits\ViewHelper;
+use Palmabit\Library\Presenters\AbstractPresenter;
 
 class PresenterProducts extends AbstractPresenter {
 use ViewHelper;
@@ -81,7 +80,7 @@ use ViewHelper;
         return (isset($cat->description)) ? $cat->description : '';
     }
 
-    public function categories()
+    public function categories_ids()
     {
         $cat = $this->resource->categories()->get();
         if(! $cat->isEmpty()) $cat = $cat->first();

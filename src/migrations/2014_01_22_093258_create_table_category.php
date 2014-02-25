@@ -12,7 +12,6 @@ class CreateTableCategory extends Migration {
 	 */
 	public function up()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         if(! Schema::hasTable('category'))
             Schema::create('category', function(Blueprint $table) {
                 $table->increments('id');
@@ -29,8 +28,7 @@ class CreateTableCategory extends Migration {
                 $table->timestamps();
                 $table->softDeletes();
             });
-        DB::statement('ALTER TABLE  `image` ADD  `data` LONGBLOB');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::statement('ALTER TABLE  `category` ADD  `image` LONGBLOB');
 
     }
 
@@ -42,9 +40,7 @@ class CreateTableCategory extends Migration {
 	 */
 	public function down()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::dropIfExists('category');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

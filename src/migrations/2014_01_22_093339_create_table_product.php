@@ -12,7 +12,6 @@ class CreateTableProduct extends Migration {
 	 */
 	public function up()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         if(! Schema::hasTable('product'))
             Schema::create('product', function(Blueprint $table) {
 			$table->increments('id');
@@ -22,15 +21,14 @@ class CreateTableProduct extends Migration {
             $table->string('name');
             $table->string('slug')->unique();
 			$table->text('description');
-            $table->text('long_description');
-            $table->boolean('featured');
+            $table->text('long_description')->nullable();
+            $table->boolean('featured')->default(0);
             $table->integer("order")->default(0);
             // for multilanguage
             $table->string('slug_lang');
             $table->string('lang',2)->default('it');
             $table->timestamps();
         });
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 
@@ -41,9 +39,7 @@ class CreateTableProduct extends Migration {
 	 */
 	public function down()
 	{
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Schema::dropIfExists('product');
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
 }

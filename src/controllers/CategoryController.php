@@ -38,14 +38,14 @@ class CategoryController extends BaseController
         $this->f = new FormModel($v, $repo);
     }
 
-    public function lista()
+    public function list()
     {
         $cats = $this->repo->all();
 
         return View::make('admin.category.show')->with( array("categorie" => $cats) );
     }
 
-    public function getModifica()
+    public function getEdit()
     {
         $slug_lingua = Input::get('slug_lingua');
 
@@ -63,7 +63,7 @@ class CategoryController extends BaseController
         return View::make('admin.category.modifica')->with( ["categorie" => $categorie, "slug_lingua" => $slug_lingua, "presenter" => $this->p] );
     }
 
-    public function postModifica()
+    public function postEdit()
     {
        $input = Input::all();
 
@@ -80,7 +80,7 @@ class CategoryController extends BaseController
        return Redirect::action("Category\\Controllers\\CategoryController@getModifica",["slug_lingua" => $obj->slug_lingua])->with(["message"=>"Categoria modificata con successo."]);
     }
 
-    public function cancella()
+    public function delete()
     {
         $input = Input::all();
 
@@ -96,41 +96,4 @@ class CategoryController extends BaseController
 
         return Redirect::action("Category\\Controllers\\CategoryController@lista")->with(array("message"=>"Categoria eliminata con successo."));
     }
-
-    public function associaAccessorio()
-    {
-        $categoria_id = Input::get('categoria_id');
-        $accessorio_id = Input::get('accessorio_id');
-        $slug_lingua= Input::get('slug_lingua');
-
-        try
-        {
-            $this->repo->associaAccessorio($categoria_id, $accessorio_id);
-        }
-        catch(ModelNotFoundException $e)
-        {
-            return Redirect::action("Category\\Controllers\\CategoryController@getModifica", ["slug_lingua" => $slug_lingua])->withErrors(new MessageBag(["model" => "Accessorio non trovato."]));
-        }
-
-        return Redirect::action("Category\\Controllers\\CategoryController@getModifica",["slug_lingua" => $slug_lingua])->with(array("message_acc"=>"Accessorio associato con successo."));
-    }
-
-    public function deassociaAccessorio()
-    {
-        $categoria_id = Input::get('categoria_id');
-        $accessorio_id = Input::get('accessorio_id');
-        $slug_lingua= Input::get('slug_lingua');
-
-        try
-        {
-            $this->repo->deassociaAccessorio($categoria_id, $accessorio_id);
-        }
-        catch(ModelNotFoundException $e)
-        {
-            return Redirect::action("Category\\Controllers\\CategoryController@getModifica", ["slug_lingua" => $slug_lingua])->withErrors(new MessageBag(["model" => "Accessorio non trovato."]));
-        }
-
-        return Redirect::action("Category\\Controllers\\CategoryController@getModifica",["slug_lingua" => $slug_lingua])->with(array("message_acc"=>"Accessorio deassociato con successo."));
-    }
-
 }

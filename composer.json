@@ -17,11 +17,13 @@
         "way/form": "dev-master",
         "intervention/image": "dev-master",
         "palmabit/library" : "dev-master",
-        "palmabit/multilanguage" : "dev-master"
+        "palmabit/multilanguage" : "dev-master",
+        "jacopo/laravel-single-table-inheritance": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "0.9.0",
-        "orchestra/testbench": "2.1.*"
+        "orchestra/testbench": "2.1.*",
+        "fzaninotto/faker": "1.4.*@dev"
     },
     "repositories": [
         {

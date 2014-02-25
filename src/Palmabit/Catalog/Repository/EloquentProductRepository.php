@@ -1,4 +1,4 @@
-<?php namespace Prodotti\Repository;
+<?php namespace Palmabit\Catalog\Repository;
 /**
  * Class ProdottoRepository
  *
@@ -6,15 +6,15 @@
  */
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Models\Category;
-use Palmabit\Multilinguage\Interfaces\MultilinguageRepositoryInterface;
+use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
-use Palmabit\Multilinguage\Traits\LanguageHelper;
+use Palmabit\Multilanguage\Traits\LanguageHelper;
 use L;
 use Config;
 use DB;
 use Cache;
 
-class EloquentProductRepository extends EloquentBaseRepository implements MultilinguaRepositoryInterface
+class EloquentProductRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
 {
     use LanguageHelper;
     /**
@@ -76,7 +76,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             ->whereLang($this->getLang())
             ->orderBy($model::CREATED_AT)
             ->take($max)
-            ->rememberForever('featured-'.$this->getLingua())
+            ->rememberForever('featured-'.$this->getLang())
             ->get();
 
         return $products;
@@ -168,11 +168,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $product = $this->find($product_id);
         $cat_ids = [];
-        $product->categoria()->get()->each(function($cat) use (&$cat_ids){
+        $product->categories()->get()->each(function($cat) use (&$cat_ids){
             $cat_ids[] = $cat->id;
         });
-        $product->categoria()->detach($cat_ids);
-        $product->categoria()->attach($category_id);
+        $product->categories()->detach($cat_ids);
+        $product->categories()->attach($category_id);
     }
 
     /**
@@ -181,9 +181,9 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     protected function clearAllCache($slug)
     {
         // prodotti in evidenza
-        Cache::forget('featured-'.$this->getLingua());
+        Cache::forget('featured-'.$this->getLang());
         // prodotto
-        Cache::forget("product-{$slug}-".$this->getLingua());
+        Cache::forget("product-{$slug}-".$this->getLang());
     }
 
 }

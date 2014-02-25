@@ -10,7 +10,7 @@ class Product extends Model
 {
     protected $table = "product";
 
-    protected $fillable = array("code","name","slug","long_description","description","featured","lang", "slug_land", "order");
+    protected $fillable = array("code","name","slug","long_description","description","featured","lang", "slug_lang", "order");
 
     protected $table_type = 'General';
     /**
@@ -26,11 +26,11 @@ class Product extends Model
 
     public function categories()
     {
-        return $this->belongsToMany('Category',"product_category", "product_id", "category_id");
+        return $this->belongsToMany('Palmabit\Catalog\Models\Category',"product_category", "product_id", "category_id");
     }
 
     public function product_images()
     {
-        return $this->hasMany("ProductImage", "product_id");
+        return $this->hasMany('Palmabit\Catalog\Models\ProductImage', "product_id");
     }
 } 

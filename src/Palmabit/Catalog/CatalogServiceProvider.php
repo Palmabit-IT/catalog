@@ -1,9 +1,9 @@
 <?php namespace Palmabit\Catalog;
 
 use Illuminate\Support\ServiceProvider;
-use Palmabit\Catalog\Repository\EloquentCategoryRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
+use Illuminate\Foundation\AliasLoader;
 
 class CatalogServiceProvider extends ServiceProvider {
 
@@ -30,6 +30,9 @@ class CatalogServiceProvider extends ServiceProvider {
         // include view composers
         require __DIR__ . "/../../composers.php";
 
+        $this->loadOtherProviders();
+        $this->registerAliases();
+
         $this->bindRepositories();
 	}
 
@@ -46,6 +49,16 @@ class CatalogServiceProvider extends ServiceProvider {
         $this->app->bind('product_image_repository', function ($app) {
             return new EloquentProductImageRepository;
         });
+    }
+
+    protected function loadOtherProviders()
+    {
+        $this->app->register('Intervention\Image\ImageServiceProvider');
+    }
+
+    protected function registerAliases()
+    {
+        AliasLoader::getInstance()->alias("Image", 'Intervention\Image\Facades\Image');
     }
 
 	/**
