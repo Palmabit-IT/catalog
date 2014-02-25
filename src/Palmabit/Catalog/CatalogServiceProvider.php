@@ -3,6 +3,7 @@
 use Illuminate\Support\ServiceProvider;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
+use Palmabit\Catalog\Repository\EloquentCategoryRepository;
 use Illuminate\Foundation\AliasLoader;
 
 class CatalogServiceProvider extends ServiceProvider {
@@ -54,11 +55,15 @@ class CatalogServiceProvider extends ServiceProvider {
     protected function loadOtherProviders()
     {
         $this->app->register('Intervention\Image\ImageServiceProvider');
+        $this->app->register('Palmabit\Multilanguage\MultilanguageServiceProvider');
     }
 
     protected function registerAliases()
     {
         AliasLoader::getInstance()->alias("Image", 'Intervention\Image\Facades\Image');
+        // for multilanguage
+        AliasLoader::getInstance()->alias("L", 'Palmabit\Multilanguage\Facades\Multilinguage');
+        AliasLoader::getInstance()->alias("URLT", 'Palmabit\Multilinguage\Facades\Urltranslator');
     }
 
 	/**

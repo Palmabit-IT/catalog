@@ -1,5 +1,5 @@
 <?php
-namespace Validators;
+namespace Palmabit\Catalog\Validators;
 
 use Event;
 use Palmabit\Library\Validators\AbstractValidator;

@@ -1,4 +1,4 @@
-<?php namespace Validators;
+<?php namespace Palmabit\Catalog\Validators;
 
 class ProductImageValidator extends AbstractValidator
 {

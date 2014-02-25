@@ -36,12 +36,12 @@ use ViewHelper;
         return array("data"=> $featured ? "data:image;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
     }
 
-    public function immagini_all()
+    public function images_all()
     {
         return $this->images(false);
     }
 
-    public function immagini_no_featured()
+    public function immages_no_featured()
     {
         return $this->images(true);
     }

@@ -1,7 +1,7 @@
 @extends('admin.layouts.base-2cols')
 
 @section('title')
-{{$nome_sito}} Admin area: prodotti
+{{$app_name}} Admin area: prodotti
 @stop
 
 @section('content')
@@ -20,16 +20,16 @@
 
     {{-- Lista prodotti --}}
     <ul class="list-group">
-    @if(! empty($prodotti))
-    @foreach($prodotti as $prodotto)
+    @if(! empty($products))
+    @foreach($products as $product)
         <li class="list-group-item">
-            <a href="{{URL::action('Prodotti\Controllers\ProdottoController@getModifica',array('slug_lingua'=> $prodotto->slug_lingua) )}}" class="pull-left">{{$prodotto->nome}}</a>
-            <a href="{{URL::action('Prodotti\Controllers\ProdottoController@cancella',array('id' => $prodotto->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella"> cancella</span></a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class="pull-left">{{$product->name}}</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella"> cancella</span></a>
             <span class="pull-right margin-right-30">
-                {{Form::open(["action" => "Prodotti\Controllers\ProdottoController@postModificaOrdine", "class" => "form-inline"])}}
-                {{Form::label('ordine','Ordine')}}
-                {{Form::select('ordine', get_select_ordine_arr(), $prodotto->ordine, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
-                {{Form::hidden('id', $prodotto->id)}}
+                {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
+                {{Form::label('order','Ordine')}}
+                {{Form::select('order', get_select_order_arr(), $product->order, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
+                {{Form::hidden('id', $product->id)}}
                 {{Form::close()}}
             </span>
             <span class="clearfix"></span>
@@ -40,10 +40,10 @@
     @endif
     </ul>
     {{-- Aggiunta nuovo prodotto --}}
-    <a href="{{URL::action('Prodotti\Controllers\ProdottoController@getModifica')}}" class="btn btn-primary pull-right">Aggiungi</a>
+    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getModifica')}}" class="btn btn-primary pull-right">Aggiungi</a>
 
     <div style="text-align: center">
-        {{ isset($prodotti) ? $prodotti->links() : ''}}
+        {{ isset($products) ? $products->links() : ''}}
     </div>
 @stop
 

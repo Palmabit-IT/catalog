@@ -23,9 +23,9 @@ if ( ! function_exists('get_cat_select_arr'))
  * Obtain the order select
  * @return array
  */
-if ( ! function_exists('get_select_ordine_arr'))
+if ( ! function_exists('get_select_order_arr'))
 {
-    function get_select_ordine_arr()
+    function get_select_order_arr()
     {
         $arr = [];
         foreach(range(0,99) as $key)

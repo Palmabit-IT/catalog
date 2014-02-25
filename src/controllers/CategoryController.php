@@ -1,7 +1,7 @@
 <?php namespace Palmabit\Catalog\Controllers;
 
 use BaseController, View, Input, Redirect, App;
-use Exceptions\PalmabitExceptionsInterface;
+use Palmabit\Library\Exception\PalmabitExceptionsInterface;
 use Palmabit\Library\Form\FormModel;
 use Palmabit\Catalog\Validators\CategoryValidator;
 use Palmabit\Catalog\Models\Category;
@@ -35,32 +35,32 @@ class CategoryController extends BaseController
         $is_admin = true;
         $this->repo = App::make('category_repository', $is_admin);
         $this->v = $v;
-        $this->f = new FormModel($v, $repo);
+        $this->f = new FormModel($this->v, $this->repo);
     }
 
-    public function list()
+    public function lists()
     {
         $cats = $this->repo->all();
 
-        return View::make('admin.category.show')->with( array("categorie" => $cats) );
+        return View::make('catalog::category.show')->with( array("categories" => $cats) );
     }
 
     public function getEdit()
     {
-        $slug_lingua = Input::get('slug_lingua');
+        $slug_lang = Input::get('slug_lang');
 
         try
         {
-            $categorie = $this->repo->findBySlugLingua($slug_lingua);
+            $categories = $this->repo->findBySlugLang($slug_lang);
 
         }
         catch(ModelNotFoundException $e)
         {
-            $categorie = new Categoria();
+            $categories = new Category();
         }
-        $this->p = new PresenterCategoria($categorie);
+        $this->p = new PresenterCategory($categories);
 
-        return View::make('admin.category.modifica')->with( ["categorie" => $categorie, "slug_lingua" => $slug_lingua, "presenter" => $this->p] );
+        return View::make('catalog::category.edit')->with( ["categories" => $categories, "slug_lang" => $slug_lang, "presenter" => $this->p] );
     }
 
     public function postEdit()
@@ -74,10 +74,10 @@ class CategoryController extends BaseController
        catch(PalmabitExceptionsInterface $e)
        {
            $errors = $this->f->getErrors();
-           return Redirect::action("Category\\Controllers\\CategoryController@getModifica")->withInput()->withErrors($errors);
+           return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit")->withInput()->withErrors($errors);
        }
 
-       return Redirect::action("Category\\Controllers\\CategoryController@getModifica",["slug_lingua" => $obj->slug_lingua])->with(["message"=>"Categoria modificata con successo."]);
+       return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["slug_lang" => $obj->slug_lang])->with(["message"=>"Categoria modificata con successo."]);
     }
 
     public function delete()
@@ -91,9 +91,9 @@ class CategoryController extends BaseController
         catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f->getErrors();
-            return Redirect::action("Category\\Controllers\\CategoryController@lista")->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->withErrors($errors);
         }
 
-        return Redirect::action("Category\\Controllers\\CategoryController@lista")->with(array("message"=>"Categoria eliminata con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->with(array("message"=>"Categoria eliminata con successo."));
     }
 }
