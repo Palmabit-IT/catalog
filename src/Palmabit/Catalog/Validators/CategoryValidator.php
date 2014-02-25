@@ -1,11 +1,12 @@
 <?php namespace Validators;
 
 use Event;
+use Palmabit\Library\Validators\AbstractValidator;
 
-class CategoriaValidator extends AbstractValidator
+class CategoryValidator extends AbstractValidator
 {
     protected static $rules = array(
-        "descrizione" => "required|max:255",
+        "description" => "required|max:255",
         "slug" => ["required","AlphaDash"],
         "lang" => "max:2"
     );
@@ -16,7 +17,7 @@ class CategoriaValidator extends AbstractValidator
         {
             if(isset($input["id"]))
             {
-                static::$rules["slug"][] = "unique:categoria,slug,{$input['id']}";
+                static::$rules["slug"][] = "unique:category,slug,{$input['id']}";
             }
         });
     }

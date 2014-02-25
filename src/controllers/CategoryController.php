@@ -1,45 +1,39 @@
 <?php namespace Palmabit\Catalog\Controllers;
 
-use BaseController;
-use View;
-use Input;
-use Redirect;
-use Palmabit\Catalog\Repository\CategoryRepository;
+use BaseController, View, Input, Redirect, App;
 use Exceptions\PalmabitExceptionsInterface;
-use Classes\FormModel;
-use Validators\CategoryValidator;
-use Categoria;
+use Palmabit\Library\Form\FormModel;
+use Palmabit\Catalog\Validators\CategoryValidator;
+use Palmabit\Catalog\Models\Category;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Presenters\PresenterCategory;
+use Palmabit\Catalog\Presenters\PresenterCategory;
 
 class CategoryController extends BaseController
 {
     /**
-     * Repository per la gestione delle categorie
+     * Repository for the categories
      * @var
      */
     protected $repo;
     /**
-     * Validatore categoria
+     * Category validator
      *
-     * @var CategoriaValidator
+     * @var CategoryValidator
      */
     protected $v;
     /**
-     * Model per il salvataggio del form
-     * @var \Classes\FormModel
+     * @var Palmabit\Library\Form\FormModel
      */
     protected $f;
     /**
-     * Presenter categoria
-     * @var \Presenters\PresenterCategoria
+     * @var Palmabit\Catalog\Presenters\PresenterCategoria
      */
     protected $p;
 
-    public function __construct(CategoriaRepository $repo, CategoriaValidator $v)
+    public function __construct(CategoryValidator $v)
     {
         $is_admin = true;
-        $this->repo = new CategoriaRepository($is_admin);
+        $this->repo = App::make('category_repository', $is_admin);
         $this->v = $v;
         $this->f = new FormModel($v, $repo);
     }

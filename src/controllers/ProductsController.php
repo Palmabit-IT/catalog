@@ -14,7 +14,7 @@ use Presenters\PresenterProdotti;
 use Validators\ImmaginiProdottoValidator;
 use Prodotti\Repository\ImmagineRepository;
 
-class ProdottoController extends \BaseController {
+class ProductsController extends \BaseController {
 
     /**
      * Prodotto repository

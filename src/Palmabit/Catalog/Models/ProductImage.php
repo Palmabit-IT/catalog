@@ -4,7 +4,7 @@ class ProductImage extends Eloquent {
 
     protected $table = "product_image";
 
-    protected $fillable = array("description,","product_id","featured","data", "description");
+    protected $fillable = array("description,","product_id","featured","data");
 
     public function product()
     {

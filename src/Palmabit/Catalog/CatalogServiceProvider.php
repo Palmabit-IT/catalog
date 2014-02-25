@@ -1,6 +1,9 @@
 <?php namespace Palmabit\Catalog;
 
 use Illuminate\Support\ServiceProvider;
+use Palmabit\Catalog\Repository\EloquentCategoryRepository;
+use Palmabit\Catalog\Repository\EloquentProductRepository;
+use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 
 class CatalogServiceProvider extends ServiceProvider {
 
@@ -27,7 +30,23 @@ class CatalogServiceProvider extends ServiceProvider {
         // include view composers
         require __DIR__ . "/../../composers.php";
 
+        $this->bindRepositories();
 	}
+
+    protected function bindRepositories()
+    {
+        $this->app->bind('category_repository', function ($app, $is_admin) {
+            return new EloquentCategoryRepository;
+        });
+
+        $this->app->bind('product_repository', function ($app, $is_admin) {
+            return new EloquentProductRepository;
+        });
+
+        $this->app->bind('product_image_repository', function ($app) {
+            return new EloquentProductImageRepository;
+        });
+    }
 
 	/**
 	 * Register the service provider.

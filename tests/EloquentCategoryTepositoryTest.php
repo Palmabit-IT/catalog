@@ -1,8 +1,8 @@
-<?php
+<?php namespace Palmabit\Catalog\Tests;
 
-use Category\Repository\CategoriaRepository;
+use Palmabit\Catalog\Repository\EloquentCategoryRepository;
 
-class CategoryTepositoryTest extends TestCase {
+class EloquentCategoryTepositoryTest extends DbTestCase {
 
     protected $faker;
     protected $repo;
@@ -12,9 +12,7 @@ class CategoryTepositoryTest extends TestCase {
         parent::setUp();
 
         $this->faker = Faker\Factory::create();
-        $this->repo = new RepoStubLingua();
-
-        Artisan::call('migrate:refresh');
+        $this->repo = new RepoStubLang();
     }
 
     public function testCreate()
@@ -105,7 +103,7 @@ class CategoryTepositoryTest extends TestCase {
 
 }
 
-class RepoStubLingua extends CategoriaRepository
+class RepoStubLang extends EloquentCategoryRepository
 {
     public function getLingua()
     {

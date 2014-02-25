@@ -6,7 +6,7 @@
  */
 namespace Presenters;
 
-use ImmaginiProdotto;
+use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Traits\ViewHelper;
 
 class PresenterProducts extends AbstractPresenter {
@@ -16,116 +16,76 @@ use ViewHelper;
 
     public function __construct($resource)
     {
-        //@todo fix path
-        $this->default_img_path = public_path()."/admin/img/no-photo.png";
+        $this->default_img_path = public_path()."/packages/catalog/img/no-photo.png";
         return parent::__construct($resource);
     }
     /**
-     * Ottiene l'immagine in evidenza
+     * Obtains featured image
      * @return null
      * @return String|null
-     * @todo ritornare un'immagine di default quando non c'è l'img
      */
-    public function immagine_evidenza()
+    public function features()
     {
-        $in_evidenza = $this->resource->immagini_prodotto()
-            ->where("in_evidenza","=",1)
+        $featured = $this->resource->product_images()
+            ->where("featured","=",1)
             ->get();
 
-        if($in_evidenza->isEmpty())
-            return ["data" => "data:image;base64,".base64_encode(ImmaginiProdotto::getImageFromUrl($this->default_img_path) ), "alt" => ""];
-        else $in_evidenza = $in_evidenza->first();
+        if($featured->isEmpty())
+            return ["data" => "data:image;base64,".base64_encode(ProductImage::getImageFromUrl($this->default_img_path) ), "alt" => ""];
+        else $featured = $featured->first();
 
-        return array("data"=> $in_evidenza ? "data:image;base64,{$in_evidenza->data}" : null, "alt" => $in_evidenza->descrizione);
+        return array("data"=> $featured ? "data:image;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
     }
 
     public function immagini_all()
     {
-        return $this->immagini(false);
+        return $this->images(false);
     }
 
-    public function immagini_esclusco_evidenza()
+    public function immagini_no_featured()
     {
-        return $this->immagini(true);
+        return $this->images(true);
     }
 
     /**
-     * Ottene le immagini del prodotto
+     * Obtain product images
      * @param $escludi_evidenza
      * @return String
      */
-    protected function immagini($escludi_evidenza = true)
+    protected function images($exclude_featured = true)
     {
-        $immagini_a = array();
+        $all_img = array();
 
-        $immagini = $this->resource->immagini_prodotto();
-        if($escludi_evidenza)
-            $immagini = $immagini->where('in_evidenza','=',0);
-        $immagini = $immagini->get();
+        $images = $this->resource->immagini_prodotto();
+        if($exclude_featured)
+            $images = $images->where('in_evidenza','=',0);
+        $images = $images->get();
 
-        $immagini->each(function($immagine) use(&$immagini_a){
-            $immagini_a[] = [
-                "data" => "data:image;base64,{$immagine->data}",
-                "alt" => $immagine->descrizione,
-                "id" => $immagine->id,
-                "in_evidenza" => $immagine->in_evidenza
+        $images->each(function($image) use(&$all_img){
+            $all_img[] = [
+                "data" => "data:image;base64,{$image->data}",
+                "alt" => $image->description,
+                "id" => $image->id,
+                "in_evidenza" => $image->featured
             ];
         });
 
-        return $immagini_a;
+        return $all_img;
     }
 
-    public function categoria()
+    public function categories()
     {
-        $cat = $this->resource->categoria()->get();
+        $cat = $this->resource->categories()->get();
         if(! $cat->isEmpty()) $cat = $cat->first();
 
-        return (isset($cat->descrizione)) ? $cat->descrizione : '';
+        return (isset($cat->description)) ? $cat->description : '';
     }
 
-    public function categoria_id()
+    public function categories()
     {
-        $cat = $this->resource->categoria()->get();
+        $cat = $this->resource->categories()->get();
         if(! $cat->isEmpty()) $cat = $cat->first();
 
         return (isset($cat->id)) ? $cat->id: '';
     }
-
-    /**
-     * Ottiene i tags associati al prodotto
-     */
-    public function tags()
-    {
-        $tags = $this->resource->tags()->get(["id", "descrizione", "prodotto_id"]);
-        return $tags->isEmpty() ? '' : $tags->toArray();
-    }
-
-    /**
-     * Ottiene tutti i tags distinct
-     * @return array
-     */
-    public function tags_select()
-    {
-        $tags_repo = new TagsRepository();
-        $tags = $tags_repo->allDistinct();
-        $tags_select = [];
-        foreach($tags as $tag)
-        {
-            $tags_select[$tag["descrizione"]] = $tag["descrizione"];
-        }
-
-        return $tags_select;
-    }
-
-    /**
-     * Ottiene gli accessori legati alla categoria di appartenenza
-     * @return array
-     */
-    public function accessori_categoria()
-    {
-        $prodotto = $this->resource;
-        $cat = $prodotto->categoria()->first();
-        return $cat ? $cat->accessori()->get()->toArray() : [];
-    }
-
 } 

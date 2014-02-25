@@ -2,15 +2,16 @@
 namespace Validators;
 
 use Event;
+use Palmabit\Library\Validators\AbstractValidator;
 
-class ProdottoValidator  extends AbstractValidator{
+class ProductValidator  extends AbstractValidator{
 
     protected static $rules = [
-        "codice" => ["max:255"],
-        "nome" => "required|max:255",
+        "code" => ["max:255"],
+        "name" => "required|max:255",
         "slug" => ["required","max:255","AlphaDash"],
-        "descrizione" => "max:255",
-        "descrizione_estesa" => "max:255",
+        "description" => "max:255",
+        "description_long" => "max:255",
         "lang" => "max:2",
     ];
 
@@ -20,7 +21,7 @@ class ProdottoValidator  extends AbstractValidator{
         {
             if(isset($input["id"]))
             {
-                static::$rules["slug"][] = "unique:prodotto,slug,{$input['id']}";
+                static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
             }
         });
     }

@@ -1,4 +1,5 @@
-<?php
+<?php namespace Palmabit\Catalog\Tests;
+
 use Prodotti\Repository\ProdottoRepository;
 use Mockery as m;
 

@@ -1,8 +1,8 @@
-<?php
+<?php namespace Palmabit\Catalog\Tests;
 
-use Prodotti\Repository\ImmagineRepository;
+use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 
-class ImmaginiRepositoryTest extends TestCase {
+class EloquentProductImageRepositoryTest extends DbTestCase {
 
     protected $repo;
     protected $faker;
@@ -12,9 +12,7 @@ class ImmaginiRepositoryTest extends TestCase {
         parent::setUp();
 
         $this->faker = Faker\Factory::create();
-        $this->repo = new ImmaginiRepositoryStub;
-
-        Artisan::call('migrate:refresh');
+        $this->repo = new ImageRepositoryStub;
     }
 
     public function testCreateWorks()
@@ -109,7 +107,7 @@ class ImmaginiRepositoryTest extends TestCase {
 
 }
 
-class ImmaginiRepositoryStub extends ImmagineRepository
+class ImageRepositoryStub extends EloquentProductImageRepository
 {
     protected function getBinaryData()
     {

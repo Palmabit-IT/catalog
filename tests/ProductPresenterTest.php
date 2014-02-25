@@ -1,30 +1,25 @@
-<?php 
+<?php namespace Palmabit\Catalog\Tests;
 /**
  * Test PresenterProdottiTest
  *
  * @author jacopo beschi jacopo@jacopobeschi.com
  */
-use Presenters\PresenterProdotti;
+use Palmabit\Catalog\Presenters\PresenterProducts;
+use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\Product;
 
-class PresenterProdottiTest extends TestCase {
+class ProductPresenterTest extends DbTestCase {
 
-    public function setUp()
-    {
-        parent::setUp();
-
-        Artisan::call('migrate:refresh');
-    }
-    
     public function testGetToggleWorks()
     {
         // test disabled
-        $prodotto = new Prodotto();
+        $prodotto = new Product();
         $presenter = new PresenterProdotti($prodotto);
         $disabled = $presenter->get_toggle;
         $this->assertEquals('data-toggle="" disabled="disabled"', $disabled);
         // test enabled
-        $prodotto->exists = true;
-        $presenter = new PresenterProdotti($prodotto)
+        $product->exists = true;
+        $presenter = new PresenterProdotti($product)
         ;
         $enabled= $presenter->get_toggle;
         $this->assertEquals('data-toggle="tab"', $enabled);
@@ -33,10 +28,10 @@ class PresenterProdottiTest extends TestCase {
     public function testTagsWorks()
     {
         $this->creaProdottiTags();
-        $prodotto = Prodotto::find(1);
-        $presenter = new PresenterProdotti($prodotto);
+        $product = Product::find(1);
+        $presenter = new PresenterProdotti($product);
         $tags = $presenter->tags();
-        $this->assertEquals(1, $tags[0]["prodotto_id"]);
+        $this->assertEquals(1, $tags[0]["product_id"]);
     }
 
     protected function creaProdottiTags($slug = "slug")
@@ -51,11 +46,11 @@ class PresenterProdottiTest extends TestCase {
             "descrizione_estesa" => "",
             "in_evidenza" => 1,
         ];
-        Prodotto::create($data);
+        Product::create($data);
 
         Tags::create([
                      "descrizione" => "desc",
-                     "prodotto_id" => 1
+                     "product_id" => 1
                      ]);
     }
 
@@ -66,10 +61,10 @@ class PresenterProdottiTest extends TestCase {
         // crea un'altro tag con la stessa desc
         Tags::create([
                      "descrizione" => "desc",
-                     "prodotto_id" => 1
+                     "product_id" => 1
                      ]);
-        $prodotto = Prodotto::find(1);
-        $presenter = new PresenterProdotti($prodotto);
+        $product = Product::find(1);
+        $presenter = new PresenterProdotti($product);
         $tags = $presenter->tags_select();
         $this->assertEquals(1, count($tags));
         $this->assertEquals("desc", $tags["desc"]);
@@ -86,9 +81,9 @@ class PresenterProdottiTest extends TestCase {
                           "slug_lingua" => "slug",
                           "lang" => "it"
                           ]);
-        $prodotto = Prodotto::find(1);
-        $prodotto->accessori()->attach(1);
-        $presenter = new PresenterProdotti($prodotto);
+        $product = Product::find(1);
+        $product->accessori()->attach(1);
+        $presenter = new PresenterProdotti($product);
         $accessori = $presenter->accessori;
         $this->assertEquals(1, count($accessori));
         $this->assertEquals("slug", $accessori[0]["slug"]);
@@ -100,7 +95,7 @@ class PresenterProdottiTest extends TestCase {
     public function it_ritorna_accessori_categoria()
     {
         $faker = Faker\Factory::create();
-        $prod = Prodotto::create([
+        $prod = Product::create([
                                  "codice" => $faker->text(5),
                                  "nome" => $faker->text(10),
                                  "slug" => "slug1",
@@ -110,7 +105,7 @@ class PresenterProdottiTest extends TestCase {
                                  "descrizione_estesa" => $faker->text(100),
                                  "in_evidenza" => false,
                                  ]);
-        $cat = Categoria::create([
+        $cat = Category::create([
                                  "descrizione" => $faker->text(10),
                                  "slug" => $faker->unique()->text(10),
                                  "lang" => "it",

@@ -15,7 +15,8 @@
         "illuminate/support": "4.1.*",
         "baum/baum": "1.0.9",
         "way/form": "dev-master",
-        "intervention/image": "dev-master"
+        "intervention/image": "dev-master",
+        "palmabit/library" : "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "0.9.0",
