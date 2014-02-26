@@ -4,7 +4,7 @@
  * Passa le voci di menu al pannello admin categoria
  */
 View::composer('catalog::category.*', function($view){
-    $view->with('sidebar', array(
+    $view->with('sidebar_items', array(
                                 "Lista categorie" => URL::to('/admin/category/lists'),
                                 "Aggiungi categoria" => URL::to('/admin/category/edit'),
                            ));
@@ -14,7 +14,7 @@ View::composer('catalog::category.*', function($view){
  * Passa le voci di menu al pannello admin prodotti
  */
 View::composer(['catalog::products.*'], function($view){
-    $view->with('sidebar', array(
+    $view->with('sidebar_items', array(
                                 "Lista prodotti" => URL::to('/admin/products/lists'),
                                 "Aggiungi prodotti" => URL::to('/admin/products/edit')
                            ));

@@ -11,12 +11,12 @@
     @endforeach
 @endif
 
-{{ Form::open(['action' => 'Prodotti\Controllers\ProdottoController@postCategoria', 'method' => 'post']) }}
+{{ Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@postCategory', 'method' => 'post']) }}
 <div class="form-group">
     {{Form::label("categoria","Categoria associata")}}
-    {{Form::select("categoria", get_cat_select_arr(), $presenter->categoria_id, ["class" => "form-control"]) }}
-    {{Form::hidden("slug_lingua", $slug_lingua)}}
-    {{Form::hidden("prodotto_id", $prodotto->id)}}
+    {{Form::select("category_id", get_cat_select_arr(), $presenter->categories_ids, ["class" => "form-control"]) }}
+    {{Form::hidden("slug_lang", $slug_lang)}}
+    {{Form::hidden("product_id", $product->id)}}
 </div>
 {{ Form::submit("Salva", ["class" => "btn btn-primary pull-right tab-remember"]) }}
 {{ Form::close() }}

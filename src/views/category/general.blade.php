@@ -5,9 +5,9 @@
 @endif
 
 <h3>Aggiungi nuova categoria</h3>
-{{Form::model($categories, array('url' => array(URL::action('Palmabit\Catalog\Controllers\CategoryController@postEdit'), $categories->id), 'method' => 'post') )}}
+{{Form::model($categories, ['url' => URL::action('Palmabit\Catalog\Controllers\CategoryController@postEdit'), 'method' => 'post'] )}}
 {{Form::hidden("slug_lang", $slug_lang)}}
-{{FormField::descrizione(["id" => "slugme"])}}
+{{FormField::description(["id" => "slugme"])}}
 {{FormField::slug(array('label'=>"Nome link", "id" => "slug"))}}
 <span class="text-danger">{{$errors->first('slug')}}</span>
 {{Form::hidden('id')}}
@@ -21,5 +21,5 @@
         $('#slugme').slugIt();
     });
 </script>
-{{HTML::script('admin/js/slugit.js')}}
+{{HTML::script('packages/palmabit/catalog/js/slugit.js')}}
 @stop

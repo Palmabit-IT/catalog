@@ -9,7 +9,7 @@
     @foreach($presenter->images_all as $image)
     <li class="list-group-item">
         <span class="pull-left">
-            <img class="media-object img-admin" src="{{$immagine['data']}}" alt="{{$immagine['alt']}}" />
+            <img class="media-object img-admin" src="{{$image['data']}}" alt="{{$image['alt']}}" />
         </span>
         {{-- descrizione immagine --}}
         <span class="pull-left">
@@ -36,13 +36,13 @@
         <div class="alert alert-danger">{{$error}}</div>
     @endforeach
 @endif
-{{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@postImmage', 'files' => true])}}
+{{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@postImage', 'files' => true])}}
 {{Form::hidden("slug_lang", $slug_lang)}}
 {{Form::hidden("product_id", $product->id)}}
 <div class="form-group">
 {{Form::label('image','Seleziona l\'immagine da caricare')}}
 </div>
-{{FormField::descrizione()}}
+{{FormField::description(["label" => "descrizione: *"])}}
 <div class="form-group">
 {{Form::file('image')}}
 <span class="text-danger">{{$errors->first('image')}}</span>

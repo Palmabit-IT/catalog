@@ -1,4 +1,4 @@
-@extends('authentication::layouts.base-2cols')
+@extends('catalog::layouts.base-2-cols-multilanguage')
 
 @section('title')
 {{$app_name}} Admin area: insersci prodotto
@@ -7,7 +7,7 @@
 @section('content')
 
     {{-- bootstrap 3 tabs --}}
-    @include('authentication::products.tabs')
+    @include('catalog::products.tabs')
     <div class="tab-content">
     <div class="tab-pane fade in active" id="tab-generale">
         @include('catalog::products.general')
@@ -23,5 +23,5 @@
 
 @section('footer_scripts')
 @parent
-    {{ HTML::script('packages/catalog/js/salva-tab.js') }}
+    {{ HTML::script('packages/palmabit/catalog/js/save-tab.js') }}
 @stop

@@ -9,6 +9,7 @@ use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
 use Palmabit\Library\Form\FormModel;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Validators\ProductImageValidator;
+use Palmabit\Catalog\Validators\ProductValidator;
 use Palmabit\Catalog\Validators\ProductFormOrderValidator;
 
 class ProductsController extends BaseController {
@@ -50,7 +51,7 @@ class ProductsController extends BaseController {
         $this->v = $v;
         $this->f = new FormModel($this->v, $this->r);
         // immages
-        $this->r_img = new EloquentProductImageRepository();
+        $this->r_img = App::make('product_image_repository');
         $this->f_img = new FormModel(new ProductImageValidator(), $this->r_img);
     }
 
@@ -104,10 +105,10 @@ class ProductsController extends BaseController {
         catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lista")->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->withErrors($errors);
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lista")->with(array("message"=>"Prodotto eliminato con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->with(array("message"=>"Prodotto eliminato con successo."));
 	}
 
     public function postCategory()
@@ -118,7 +119,7 @@ class ProductsController extends BaseController {
 
         try
         {
-            $this->r->associaCategoria($product_id, $category_id);
+            $this->r->associateCategory($product_id, $category_id);
         }
         catch(ModelNotFoundException $e)
         {
@@ -142,8 +143,7 @@ class ProductsController extends BaseController {
             $errors = $this->f_img->getErrors();
             return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])->withInput()->withErrors($errors);
         }
-
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_img"=>"Immagine caricata con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(["message_img"=>"Immagine caricata con successo."]);
     }
 
     public function deleteImage()
@@ -160,24 +160,22 @@ class ProductsController extends BaseController {
             $errors = $this->f_img->getErrors();
             return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])->withInput()->withErrors($errors);
         }
-
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_img"=>"Immagine eliminata con successo."));
     }
 
     public function postFeatured($id, $product_id)
     {
         $slug_lang= Input::get('slug_lang');
-
         try
         {
             $this->r_img->changeFeatured($id, $product_id);
         }
         catch(PalmabitExceptionsInterface $e)
         {
-            return Redirect::action("Prodotti\\Controllers\\ProdottoController@getEdit", ["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => $e->getMessage()]));
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => $e->getMessage()]));
         }
 
-        return Redirect::action("Prodotti\\Controllers\\ProdottoController@getEdit",["slug_lang" => $slug_lang])->with(array("message_img"=>"Immagine in evidenza impostata con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_img"=>"Immagine in evidenza impostata con successo."));
     }
 
     public function postChangeOrder()

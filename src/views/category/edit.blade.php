@@ -1,7 +1,7 @@
-@extends('authentication::layouts.base-2cols')
+@extends('catalog::layouts.base-2-cols-multilanguage')
 
 @section('title')
-{{$app_name}} Admin area: insersci categorie
+    {{$app_name}} Admin area: insersci categorie
 @stop
 
 @section('content')
@@ -15,6 +15,6 @@
 @stop
 
 @section('footer_scripts')
-    @parent
-    {{ HTML::script('packages/catalog/js/salva-tab.js') }}
+@parent
+    {{ HTML::script('packages/palmabit/catalog/js/salva-tab.js') }}
 @stop

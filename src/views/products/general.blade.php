@@ -7,9 +7,9 @@
 <h3>Aggiungi nuovo prodotto</h3>
 {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
 {{Form::hidden("slug_lang", $slug_lang)}}
-{{FormField::code()}}
+{{FormField::code(["label" => "codice"])}}
 <span class="text-danger">{{$errors->first('code')}}</span>
-{{FormField::nome(["id" => "slugme"])}}
+{{FormField::name(["id" => "slugme"])}}
 <span class="text-danger">{{$errors->first('name')}}</span>
 {{FormField::slug(["label"=>"Nome link", "id" => "slug"])}}
 <span class="text-danger">{{$errors->first('slug')}}</span>
@@ -27,10 +27,10 @@
 
 @section('footer_scripts')
 @parent
+{{HTML::script('packages/palmabit/catalog/js/slugit.js')}}
 <script>
     $(function(){
         $('#slugme').slugIt();
     });
 </script>
-{{ HTML::script('packages/catalog/js/salva-tab.js') }}
 @stop

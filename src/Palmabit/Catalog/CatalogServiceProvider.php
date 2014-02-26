@@ -40,15 +40,15 @@ class CatalogServiceProvider extends ServiceProvider {
     protected function bindRepositories()
     {
         $this->app->bind('category_repository', function ($app, $is_admin) {
-            return new EloquentCategoryRepository;
+            return new EloquentCategoryRepository($is_admin);
         });
 
         $this->app->bind('product_repository', function ($app, $is_admin) {
-            return new EloquentProductRepository;
+            return new EloquentProductRepository($is_admin);
         });
 
         $this->app->bind('product_image_repository', function ($app) {
-            return new EloquentProductImageRepository;
+            return new EloquentProductImageRepository();
         });
     }
 

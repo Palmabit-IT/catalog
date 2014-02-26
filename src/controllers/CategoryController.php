@@ -1,7 +1,7 @@
 <?php namespace Palmabit\Catalog\Controllers;
 
 use BaseController, View, Input, Redirect, App;
-use Palmabit\Library\Exception\PalmabitExceptionsInterface;
+use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
 use Palmabit\Library\Form\FormModel;
 use Palmabit\Catalog\Validators\CategoryValidator;
 use Palmabit\Catalog\Models\Category;

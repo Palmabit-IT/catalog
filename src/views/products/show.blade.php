@@ -1,4 +1,4 @@
-@extends('admin.layouts.base-2cols')
+@extends('catalog::layouts.base-2-cols-multilanguage')
 
 @section('title')
 {{$app_name}} Admin area: prodotti
@@ -40,7 +40,7 @@
     @endif
     </ul>
     {{-- Aggiunta nuovo prodotto --}}
-    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getModifica')}}" class="btn btn-primary pull-right">Aggiungi</a>
+    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary pull-right">Aggiungi</a>
 
     <div style="text-align: center">
         {{ isset($products) ? $products->links() : ''}}

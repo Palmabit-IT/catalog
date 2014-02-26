@@ -49,6 +49,7 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
      *
      * @param $id
      * @param $product_id
+     * @todo test
      */
     public function changeFeatured($id, $product_id)
     {
@@ -60,10 +61,10 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
             $model::where('product_id','=',$product_id)
                 ->get()
                 ->each(function($img){
-                    $this->update($img->id, ["in_evidenza" => 0]);
+                    $this->update($img->id, ["featured" => 0]);
                 });
             // set new featured image
-            $this->update($id, ["in_evidenza" => 1]);
+            $this->update($id, ["featured" => 1]);
         }
         catch(ModelNotFoundException $e)
         {

@@ -9,7 +9,7 @@ class CategoryValidator extends AbstractValidator
         "description" => "required|max:255",
         "slug" => ["required","AlphaDash"],
         "lang" => "max:2",
-        'data' => ['image','min:1', 'max:4096']
+        'image' => ['image','min:1', 'max:4096']
 
     );
 

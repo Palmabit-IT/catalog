@@ -1,5 +1,5 @@
 <?php
-use Palmabit\Catalog\Category;
+use Palmabit\Catalog\Models\Category;
 
 /**
  * Obtain the category select
@@ -11,9 +11,9 @@ if ( ! function_exists('get_cat_select_arr'))
     {
         $cat_arr = [""];
         Category::whereLang(L::get_admin())
-            ->get(["id","descrizione"])
+            ->get(["id","description"])
             ->each(function($cat) use(&$cat_arr){
-            $cat_arr[$cat->id] = $cat->descrizione;
+            $cat_arr[$cat->id] = $cat->description;
         });
         return $cat_arr;
     }

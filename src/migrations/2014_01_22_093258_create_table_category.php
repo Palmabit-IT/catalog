@@ -22,11 +22,11 @@ class CreateTableCategory extends Migration {
                 $table->integer('lft')->nullable();
                 $table->integer('rgt')->nullable();
                 $table->integer('depth')->nullable();
+                $table->boolean("blocked")->default(0);
                 // for multilang
                 $table->string('slug_lang');
                 $table->string('lang',2)->default('it');
                 $table->timestamps();
-                $table->softDeletes();
             });
         DB::statement('ALTER TABLE  `category` ADD  `image` LONGBLOB');
 

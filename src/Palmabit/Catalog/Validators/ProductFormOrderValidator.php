@@ -2,6 +2,7 @@
 namespace Palmabit\Catalog\Validators;
 
 use Event;
+use Palmabit\Library\Validators\AbstractValidator;
 
 class ProductFormOrderValidator  extends AbstractValidator{
 

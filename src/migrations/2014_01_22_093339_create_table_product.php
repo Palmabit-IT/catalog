@@ -24,6 +24,7 @@ class CreateTableProduct extends Migration {
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
             $table->integer("order")->default(0);
+            $table->boolean("blocked")->default(0);
             // for multilanguage
             $table->string('slug_lang');
             $table->string('lang',2)->default('it');

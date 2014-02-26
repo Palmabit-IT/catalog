@@ -55,7 +55,7 @@ use ViewHelper;
     {
         $all_img = array();
 
-        $images = $this->resource->immagini_prodotto();
+        $images = $this->resource->product_images();
         if($exclude_featured)
             $images = $images->where('in_evidenza','=',0);
         $images = $images->get();
@@ -65,7 +65,7 @@ use ViewHelper;
                 "data" => "data:image;base64,{$image->data}",
                 "alt" => $image->description,
                 "id" => $image->id,
-                "in_evidenza" => $image->featured
+                "featured" => $image->featured
             ];
         });
 

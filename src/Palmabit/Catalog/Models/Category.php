@@ -10,9 +10,7 @@ class Category extends Model{
 
     protected $table = "category";
 
-    protected $fillable = array("description","slug","image", "slug_lang", "lang");
-
-    protected $softDelete = true;
+    protected $fillable = array("id", "description","slug","image", "slug_lang", "lang");
 
     public function products()
     {
