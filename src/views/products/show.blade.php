@@ -23,8 +23,9 @@
     @if(! empty($products))
     @foreach($products as $product)
         <li class="list-group-item">
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class="pull-left">{{$product->name}}</a>
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella"> cancella</span></a>
+            {{$product->name}}
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella">cancella</span></a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}"><span class="glyphicon glyphicon-edit pull-right">modifica</span></a>
             <span class="pull-right margin-right-30">
                 {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
                 {{Form::label('order','Ordine')}}
