@@ -4,11 +4,10 @@
  *
  * @author jacopo beschi jacopo@jacopobeschi.com
  */
-use Palmabit\Catalog\Presenters\PresenterProducts;
-use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Models\Product;
+use Palmabit\Catalog\Presenters\PresenterProducts;
 
-class ProductPresenterTest extends DbTestCase {
+class ProductPresenterTest extends TestCase {
 
     public function testGetToggleWorks()
     {

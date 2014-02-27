@@ -5,6 +5,7 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 
+use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Library\Repository\Interfaces\RepositoryInterface;
 use Palmabit\Catalog\Helpers\Helper as ImageHelper;
@@ -15,7 +16,10 @@ use DB, Image;
 
 class EloquentProductImageRepository extends EloquentBaseRepository{
 
-    protected $model_name = 'Palmabit\Catalog\Models\ProductImage';
+    public function __construct()
+    {
+      return parent::__construct(new ProductImage) ;
+    }
 
     /**
      * Creates un model
@@ -26,8 +30,7 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
      */
     public function create(array $data)
     {
-        $model = $this->model_name;
-        return $model::create([
+        return $this->model->create([
                                         "description" => $data["description"],
                                         "product_id" => $data["product_id"],
                                         "featured" => $data["featured"],
@@ -53,12 +56,11 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
      */
     public function changeFeatured($id, $product_id)
     {
-        $model = $this->model_name;
         DB::connection()->getPdo()->beginTransaction();
         try
         {
             //clear old featured image
-            $model::where('product_id','=',$product_id)
+            $this->model->where('product_id','=',$product_id)
                 ->get()
                 ->each(function($img){
                     $this->update($img->id, ["featured" => 0]);

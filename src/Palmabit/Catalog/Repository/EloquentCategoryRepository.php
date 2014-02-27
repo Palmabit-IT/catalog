@@ -6,6 +6,7 @@
  */
 namespace Palmabit\Catalog\Repository;
 
+use Palmabit\Catalog\Models\Category;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
@@ -21,11 +22,10 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     protected $is_admin;
 
-    protected $model_name = 'Palmabit\Catalog\Models\Category';
-
     public function __construct($is_admin = false)
     {
         $this->is_admin = $is_admin;
+        return parent::__construct(new Category);
     }
 
     /**
@@ -36,8 +36,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function search($description)
     {
-        $model = $this->model_name;
-        $cats = $model::whereDescription($description)->get();
+        $cats = $this->model->whereDescription($description)->get();
         return $cats->isEmpty() ? null : $cats->all();
     }
 
@@ -63,8 +62,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function create(array $data)
     {
-        $model = $this->model_name;
-        return $model::create(array(
+        return $this->model->create(array(
                                       "description" =>$data["description"],
                                       "slug" => $data["slug"],
                                       "slug_lang" => $data["slug_lang"] ? $data["slug_lang"] : $this->generateSlugLang($data),
@@ -77,8 +75,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function all()
     {
-        $model = $this->model_name;
-        $cat = $model::whereLang($this->getLang())
+        $cat = $this->model->whereLang($this->getLang())
             ->orderBy("description")
             ->get();
 
@@ -93,8 +90,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function findBySlugLang($slug_lang)
     {
-        $model = $this->model_name;
-        $cat= $model::whereSlugLang($slug_lang)
+        $cat= $this->model->whereSlugLang($slug_lang)
             ->whereLang($this->getLang())
             ->get();
 

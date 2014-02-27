@@ -6,6 +6,7 @@
  */
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\Product;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
@@ -22,15 +23,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      * @var Boolean
      */
     protected $is_admin;
-    /**
-     * The name of the model
-     * @var
-     */
-    protected $model_name = 'Palmabit\Catalog\Models\Product';
 
     public function __construct($is_admin = false)
     {
         $this->is_admin = $is_admin;
+        return parent::__construct(new Product);
     }
 
     /**
@@ -40,8 +37,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $per_page = Config::get('catalog::admin_per_page');
         set_view_paginator('pagination::slider-3');
-        $model = $this->model_name;
-        $products = $model::whereLang($this->getLang())
+        $products = $this->model->whereLang($this->getLang())
             ->orderBy("order","name")
             ->paginate($per_page);
         return $products->isEmpty() ? null : $products;
@@ -54,8 +50,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function findBySlug($slug)
     {
-        $model = $this->model_name;
-        $product = $model::whereSlug($slug)
+        $product = $this->model->whereSlug($slug)
             ->rememberForever("product-{$slug}-".$this->getLang())
             ->get();
 
@@ -71,10 +66,9 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function featuredProducts($max = 4)
     {
-        $model = $this->model_name;
-        $products = $model::whereFeatured(1)
+        $products = $this->model->whereFeatured(1)
             ->whereLang($this->getLang())
-            ->orderBy($model::CREATED_AT)
+            ->orderBy($this->model->getCreatedAtColumn())
             ->take($max)
             ->rememberForever('featured-'.$this->getLang())
             ->get();
@@ -116,8 +110,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $this->clearAllCache($data["slug"]);
 
-        $model = $this->model_name;
-        return $model::create([
+        return $this->model->create([
                                     "code" => $data["code"],
                                     "name" => $data["name"],
                                     "slug" => $data["slug"],
@@ -148,8 +141,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function findBySlugLang($slug_lang)
     {
-        $model = $this->model_name;
-        $product = $model::whereSlugLang($slug_lang)
+        $product = $this->model->whereSlugLang($slug_lang)
             ->whereLang($this->getLang())
             ->get();
 

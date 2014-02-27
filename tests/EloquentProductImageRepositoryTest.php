@@ -81,8 +81,8 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
         $this->repo->changeFeatured(2,1);
         $img1 = ProductImage::find(1);
         $img2 = ProductImage::find(2);
-        $this->assertEquals(1,$img1->featured);
-        $this->assertEquals(0,$img2->featured);
+        $this->assertEquals(0,$img1->featured);
+        $this->assertEquals(1,$img2->featured);
     }
 
     protected function createProduct()
