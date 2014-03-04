@@ -26,7 +26,7 @@
     </li>
     @endforeach
     @else
-    <h5>Non ho trovato immagini associate.</h5>
+    <h5>Non ho trovato immagini as esociate.</h5>
     @endif
 </ul>
 <hr/>

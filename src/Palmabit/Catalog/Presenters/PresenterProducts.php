@@ -75,11 +75,13 @@ use ViewHelper;
     public function categories()
     {
         $cat = $this->resource->categories()->get();
-        if(! $cat->isEmpty()) $cat = $cat->first();
-
-        return (isset($cat->description)) ? $cat->description : '';
+        return (! $cat->isEmpty()) ? $cat->all(): null;
     }
 
+    /**
+     * @return string
+     * @deprecated
+     */
     public function categories_ids()
     {
         $cat = $this->resource->categories()->get();

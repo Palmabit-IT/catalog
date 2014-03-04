@@ -16,7 +16,8 @@ Route::group( ['before' => ['logged'] ], function()
     //@todo add csrf ui
     Route::any('/admin/products/delete',['as'=>'products.delete','uses' =>'Palmabit\Catalog\Controllers\ProductsController@delete']);
     //////////////// PRODUCT CATEGORIES //////////////////
-    Route::post('/admin/products/category/edit',['as'=>'products.category', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postCategory']);
+    Route::get('/admin/products/category/detach',['as'=>'products.category.detach', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postDetachCategory']);
+    Route::post('/admin/products/category/attach',['as'=>'products.category.attach', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postAttachCategory']);
     ////////////////////// PRODUCT IMAGE ////////////////////////
     Route::post('/admin/products/images/edit',['as'=>'products.images', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postImage']);
     //@todo add csrf ui

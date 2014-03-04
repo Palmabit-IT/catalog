@@ -7,7 +7,7 @@
 <h3>Aggiungi nuova categoria</h3>
 {{Form::model($categories, ['url' => URL::action('Palmabit\Catalog\Controllers\CategoryController@postEdit'), 'method' => 'post'] )}}
 {{Form::hidden("slug_lang", $slug_lang)}}
-{{FormField::description(["id" => "slugme"])}}
+{{FormField::description(["id" => "slugme", "type" => "text"])}}
 {{FormField::slug(array('label'=>"Nome link", "id" => "slug"))}}
 <span class="text-danger">{{$errors->first('slug')}}</span>
 {{Form::hidden('id')}}

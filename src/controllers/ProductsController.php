@@ -5,7 +5,10 @@ use BaseController, View, Input, Redirect, App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
+use Palmabit\Catalog\Validators\ProductCategoryValidator;
 use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
+use Palmabit\Library\Exceptions\NotFoundException;
+use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Library\Form\FormModel;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Validators\ProductImageValidator;
@@ -21,30 +24,29 @@ class ProductsController extends BaseController {
     protected $r;
 
     /**
-     * @var \Validators\ProdottoValidator
      */
     protected $v;
     /**
      * FormModel
-     * @var FormModel
      */
     protected $f;
     /**
-     * @var \Presenters\PresenterProdotti
      */
     protected $p;
     /**
      * FormModel Image
-     * @var FormModel
      */
     protected $f_img;
     /**
      * Image repository
-     * @var \Prodotti\Repository\ImmagineRepository
      */
     protected $r_img;
+    /**
+     * @var \Palmabit\Catalog\Validators\ProductCategoryValidator
+     */
+    protected $vp_c;
 
-    public function __construct(ProductValidator $v)
+    public function __construct(ProductValidator $v, ProductCategoryValidator $vpc)
     {
         $is_admin = true;
         $this->r = App::make('product_repository', $is_admin);
@@ -53,6 +55,8 @@ class ProductsController extends BaseController {
         // immages
         $this->r_img = App::make('product_image_repository');
         $this->f_img = new FormModel(new ProductImageValidator(), $this->r_img);
+        // product category
+        $this->v_pc = $vpc;
     }
 
 	public function lists()
@@ -111,7 +115,7 @@ class ProductsController extends BaseController {
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->with(array("message"=>"Prodotto eliminato con successo."));
 	}
 
-    public function postCategory()
+    public function postAttachCategory()
     {
         $product_id = Input::get('product_id');
         $slug_lang= Input::get('slug_lang');
@@ -119,14 +123,37 @@ class ProductsController extends BaseController {
 
         try
         {
+            $this->v_pc->validate(Input::all());
             $this->r->associateCategory($product_id, $category_id);
         }
-        catch(ModelNotFoundException $e)
+        catch(NotFoundException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors(new MessageBag("Prodotto non trovato."));
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
+        }
+        catch(ValidationException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors($this->v_pc->getErrors());
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(["message_cat"=>"Categoria associata con successo."]);
+    }
+
+    public function postDetachCategory()
+    {
+        $product_id = Input::get('product_id');
+        $slug_lang= Input::get('slug_lang');
+        $category_id = Input::get('category_id');
+
+        try
+        {
+            $this->r->deassociateCategory($product_id, $category_id);
+        }
+        catch(NotFoundException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
+        }
+
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(["message_cat"=>"Categoria deassociata con successo."]);
     }
 
     public function postImage()

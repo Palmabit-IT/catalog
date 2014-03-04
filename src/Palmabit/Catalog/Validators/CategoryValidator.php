@@ -1,9 +1,9 @@
 <?php namespace Palmabit\Catalog\Validators;
 
 use Event;
-use Palmabit\Library\Validators\AbstractValidator;
+use Palmabit\Library\Validators\OverrideConnectionValidator;
 
-class CategoryValidator extends AbstractValidator
+class CategoryValidator extends OverrideConnectionValidator
 {
     protected static $rules = array(
         "description" => "required|max:255",

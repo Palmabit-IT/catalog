@@ -9,7 +9,7 @@ if ( ! function_exists('get_cat_select_arr'))
 {
     function get_cat_select_arr()
     {
-        $cat_arr = [""];
+        $cat_arr = [];
         Category::whereLang(L::get_admin())
             ->get(["id","description"])
             ->each(function($cat) use(&$cat_arr){

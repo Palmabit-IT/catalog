@@ -58,6 +58,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      * Create record
      *
      * @param $data
+     * @override
      * @return \Illuminate\Database\Eloquent\Model|static
      */
     public function create(array $data)
@@ -72,6 +73,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
 
     /**
      * {@inheritdoc}
+     * @override
      */
     public function all()
     {

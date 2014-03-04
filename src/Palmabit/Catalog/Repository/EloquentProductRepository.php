@@ -5,11 +5,13 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Event;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
+use Palmabit\Library\Exceptions\NotFoundException;
 use L;
 use Config;
 use DB;
@@ -119,6 +121,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "description" => $data["description"],
                                     "description_long" => $data["description_long"],
                                     "featured" => (boolean)$data["featured"],
+                                    "public" => (boolean)$data["public"],
+                                    "offer" => (boolean)$data["offer"]
                                 ]);
     }
 
@@ -158,13 +162,35 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function associateCategory($product_id, $category_id)
     {
-        $product = $this->find($product_id);
-        $cat_ids = [];
-        $product->categories()->get()->each(function($cat) use (&$cat_ids){
-            $cat_ids[] = $cat->id;
-        });
-        $product->categories()->detach($cat_ids);
+        try
+        {
+            $product = $this->find($product_id);
+        }
+        catch(ModelNotFoundException $e)
+        {
+        throw new NotFoundException;
+        }
+        Event::fire('repository.products.attachCategory', [$product_id, $category_id]);
         $product->categories()->attach($category_id);
+    }
+
+    /**
+     * Deassociate a category to a given product
+     * @param $product_id
+     * @param $category_id
+     */
+    public function deassociateCategory($product_id, $category_id)
+    {
+        try
+        {
+            $product = $this->find($product_id);
+        }
+        catch(ModelNotFoundException $e)
+        {
+            throw new NotFoundException;
+        }
+
+        $product->categories()->detach($category_id);
     }
 
     /**
