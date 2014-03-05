@@ -7,8 +7,7 @@ use Palmabit\Library\Validators\OverrideConnectionValidator;
 
 class ProductCategoryValidator extends OverrideConnectionValidator
 {
-    protected static $rules = array(
-    );
+    protected static $rules = [];
 
     public function __construct()
     {

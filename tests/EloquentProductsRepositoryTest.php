@@ -83,42 +83,56 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "featured" => 1,
             "public" => 1,
             "offer" => 1,
+            "stock" => 4,
+            "with_vat" => 1,
+            "video_link" => "http://www.google.com/video/12312422313"
         ];
         $obj = $this->r->create($data);
         $this->assertTrue($obj instanceof Product);
         $this->assertEquals($description, $obj->description);
         $this->assertEquals(1, $obj->public);
         $this->assertEquals(1, $obj->offer);
+        $this->assertEquals(4, $obj->stock);
+        $this->assertEquals(1, $obj->with_vat);
+        $this->assertEquals("http://www.google.com/video/12312422313", $obj->video_link);
     }
 
-//    public function testAssociateCategorySuccess()
-//    {
-//        $this->prepareFakeData();
-//        foreach(range(1,5) as $key)
-//        {
-//            $cat = Category::create([
-//                              "description" => $this->faker->text(10),
-//                              "slug" => $this->faker->unique()->text(10),
-//                              "lang" => "it",
-//                              "slug_lang" => $this->faker->text(10),
-//                              ]);
-//            $cat->products()->attach([$cat->id]);
-//        }
-//
-//        $product = $this->r->find(1);
-//        $this->r->associateCategory($product->id, 3);
-//        $cat_id = $product->categories()->first()->id;
-//        $this->assertEquals(3,$cat_id);
-//        $numero_cat = $product->categories()->count();
-//        $this->assertEquals(1, $numero_cat);
-//    }
+    /**
+     * @test
+     **/
+    public function it_attach_another_product_as_accessory()
+    {
+        $this->prepareFakeData(2);
+
+        $this->r->attachProduct(1,2);
+        $product1 = $this->r->find(1);
+        $number_of_accessories = $product1->accessories()->count();
+
+        $this->assertEquals(1, $number_of_accessories);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_detach_another_product_as_accessory()
+    {
+        $this->prepareFakeData(2);
+
+        $this->r->attachProduct(1,2);
+        $product1 = $this->r->find(1);
+
+        $this->r->detachProduct(1,2);
+        $number_of_accessories = $product1->accessories()->count();
+
+        $this->assertEquals(0, $number_of_accessories);
+    }
 
     /**
      * @test
      **/
     public function it_associate_multiple_categories()
     {
-        $this->prepareFakeData();
+        $this->prepareFakeData(1);
         foreach(range(1,5) as $key)
         {
             Category::create([
@@ -141,7 +155,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
      **/
     public function it_deassociate_a_given_category()
     {
-        $this->prepareFakeData();
+        $this->prepareFakeData(1);
         foreach(range(1,2) as $key)
         {
             Category::create([
@@ -163,8 +177,8 @@ class EloquentProductsRepositoryTest extends DbTestCase {
      **/
     public function it_throw_exception_if_try_to_deassociate_a_product_not_found()
     {
-        $this->prepareFakeData();
-        $this->r->deassociateCategory(6,1);
+        $this->prepareFakeData(1);
+        $this->r->deassociateCategory(2,1);
     }
 
     /**
@@ -175,12 +189,15 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->r->associateCategory(1,2);
     }
 
-
-    protected function prepareFakeData()
+    /**
+     * Creates n random products
+     * @param $number
+     */
+    protected function prepareFakeData($number = 5)
     {
         $faker = $this->faker;
 
-        foreach(range(1,5) as $key)
+        foreach(range(1,$number) as $key)
         {
             Product::create([
                              "code" => $faker->text(5),

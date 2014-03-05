@@ -2,7 +2,7 @@
 /**
  * Test TestCase
  *
- * @author jacopo beschi jacopo@jacopobeschi.com
+ * @author jacopo beschi j.beschi@palmabit.com
  */
 class TestCase extends \Orchestra\Testbench\TestCase  {
 

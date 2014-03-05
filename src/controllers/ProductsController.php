@@ -1,10 +1,10 @@
 <?php namespace Palmabit\Catalog\Controllers;
 
 use Illuminate\Support\MessageBag;
-use BaseController, View, Input, Redirect, App;
+use Palmabit\Catalog\Repository\EloquentProductRepository;
+use View, Input, Redirect, App, Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Presenters\PresenterProducts;
-use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 use Palmabit\Catalog\Validators\ProductCategoryValidator;
 use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
 use Palmabit\Library\Exceptions\NotFoundException;
@@ -14,9 +14,10 @@ use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Validators\ProductImageValidator;
 use Palmabit\Catalog\Validators\ProductValidator;
 use Palmabit\Catalog\Validators\ProductFormOrderValidator;
+use Palmabit\Catalog\Validators\ProductsProductsValidator;
 
-class ProductsController extends BaseController {
-
+class ProductsController extends Controller
+{
     /**
      * Products repository
      * @var \Prodotto\ProdottoRepository
@@ -45,8 +46,12 @@ class ProductsController extends BaseController {
      * @var \Palmabit\Catalog\Validators\ProductCategoryValidator
      */
     protected $vp_c;
+    /**
+     * @var \Palmabit\Catalog\Validators\ProductsProductsValidator
+     */
+    protected $v_pp;
 
-    public function __construct(ProductValidator $v, ProductCategoryValidator $vpc)
+    public function __construct(ProductValidator $v, ProductCategoryValidator $vpc, ProductsProductsValidator $vpp)
     {
         $is_admin = true;
         $this->r = App::make('product_repository', $is_admin);
@@ -57,6 +62,8 @@ class ProductsController extends BaseController {
         $this->f_img = new FormModel(new ProductImageValidator(), $this->r_img);
         // product category
         $this->v_pc = $vpc;
+        // products products
+        $this->v_pp = $vpp;
     }
 
 	public function lists()
@@ -223,4 +230,51 @@ class ProductsController extends BaseController {
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProdottoController@lists")->with(array("message"=>"Ordine modificato con successo."));
     }
+
+    public function postDetachProduct()
+    {
+        $first_product_id = Input::get('first_product_id');
+        $second_product_id = Input::get('second_product_id');
+        $slug_lang = Input::get('slug_lang');
+
+        try
+        {
+            $this->v_pp->validate(Input::all());
+            $this->r->detachProduct($first_product_id, $second_product_id);
+        }
+        catch(NotFoundException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
+        }
+        catch(ValidationException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors($this->v_pp->getErrors());
+        }
+
+        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto rimosso con successo."));
+    }
+
+    public function postAttachProduct()
+    {
+        $first_product_id = Input::get('first_product_id');
+        $second_product_id = Input::get('second_product_id');
+        $slug_lang = Input::get('slug_lang');
+
+        try
+        {
+            $this->v_pp->validate(Input::all());
+            $this->r->attachProduct($first_product_id, $second_product_id);
+        }
+        catch(NotFoundException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
+        }
+        catch(ValidationException $e)
+        {
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors($this->v_pp->getErrors());
+        }
+
+        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
+  }
+
 }

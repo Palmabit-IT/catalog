@@ -18,6 +18,9 @@
     <div class="tab-pane fade" id="tab-immagini">
         @include('catalog::products.image')
     </div>
+    <div class="tab-pane fade" id="tab-accessories">
+        @include('catalog::products.accessories')
+    </div>
     </div>
 @stop
 

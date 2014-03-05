@@ -122,7 +122,10 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "description_long" => $data["description_long"],
                                     "featured" => (boolean)$data["featured"],
                                     "public" => (boolean)$data["public"],
-                                    "offer" => (boolean)$data["offer"]
+                                    "offer" => (boolean)$data["offer"],
+                                    "stock" => $data["stock"],
+                                    "with_vat" => (boolean)$data["with_vat"],
+                                    "video_link" => isset($data["video_link"]) ? $data["video_link"] : null
                                 ]);
     }
 
@@ -194,6 +197,30 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     }
 
     /**
+     * Attach a product to another
+     * @param $first_product_id
+     * @param $second_product_id
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function attachProduct($first_product_id, $second_product_id)
+    {
+        Event::fire('repository.products.attachProduct', [$first_product_id, $second_product_id]);
+        $first_product = $this->model->find($first_product_id);
+        $first_product->accessories()->attach($second_product_id);
+    }
+
+    /**
+     * Detach a product
+     * @param $fist_product_id
+     * @param $second_product_id
+     */
+    public function detachProduct($first_product_id, $second_product_id)
+    {
+        $first_product = $this->model->find($first_product_id);
+        $first_product->accessories()->detach($second_product_id);
+    }
+
+    /**
      * Pulisce tutta la cache dei prodotti
      */
     protected function clearAllCache($slug)
@@ -203,5 +230,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         // prodotto
         Cache::forget("product-{$slug}-".$this->getLang());
     }
+
+
 
 }

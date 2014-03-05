@@ -1,5 +1,19 @@
 <?php
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\Product;
+
+/**
+ * Obtain the product select
+ * @return null
+ */
+if ( ! function_exists('get_product_select_arr'))
+{
+    function get_product_select_arr()
+    {
+        return Product::whereLang(L::get_admin())
+                    ->lists('name', 'id');
+    }
+}
 
 /**
  * Obtain the category select

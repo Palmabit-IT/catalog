@@ -89,4 +89,10 @@ use ViewHelper;
 
         return (isset($cat->id)) ? $cat->id: '';
     }
+
+    public function accessories()
+    {
+        $prod = $this->resource->accessories()->get();
+        return (! $prod->isEmpty()) ? $prod->all(): null;
+    }
 } 

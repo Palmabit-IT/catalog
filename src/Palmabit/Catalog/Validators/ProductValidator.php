@@ -13,6 +13,8 @@ class ProductValidator  extends OverrideConnectionValidator{
         "description" => "max:8000",
         "description_long" => "max:8000",
         "lang" => "max:2",
+        "stock" => "integer",
+        "video_link" => "max:255|url"
     ];
 
     public function __construct()

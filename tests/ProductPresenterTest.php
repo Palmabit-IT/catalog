@@ -62,5 +62,32 @@ class ProductPresenterTest extends TestCase {
         $this->assertEquals(2, count($cats));
     }
 
+    /**
+     * @test
+     **/
+    public function it_gets_products_products()
+    {
+        $arr_cats = [new Product, new Product];
+        $mock_empty = m::mock('StdClass')
+            ->shouldReceive('isEmpty')
+            ->once()
+            ->andReturn(false)
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn($arr_cats)
+            ->getMock();
+        $mock_get = m::mock('StdClass')
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn($mock_empty)
+            ->getMock();
+        $mock_product = m::mock('StdClass')
+            ->shouldReceive('accessories')->andReturn($mock_get)
+            ->getMock();
+        $presenter = new PresenterProducts($mock_product );
+        $cats = $presenter->accessories();
+
+        $this->assertEquals(2, count($cats));
+    }
 
 }

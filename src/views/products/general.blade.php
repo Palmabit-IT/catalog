@@ -15,6 +15,8 @@
 <span class="text-danger">{{$errors->first('slug')}}</span>
 {{FormField::description(["type" => "textarea", "label" => "Descrizione:"])}}
 <span class="text-danger">{{$errors->first('description')}}</span>
+{{FormField::video_link(["type" => "text", "label" => "Link al video (se disponibile):"])}}
+<span class="text-danger">{{$errors->first('video_link')}}</span>
 {{FormField::description_long(["label" => "Note", "type" => "textarea"])}}
 <span class="text-danger">{{$errors->first('description_long')}}</span>
 <div class="form-group">
@@ -29,6 +31,11 @@
     {{Form::label("offer","Prodotto in offerta")}}
     {{Form::select('offer', ["1" => "Sì", "0" => "No"], (isset($product->offer) && $product->offer) ? $product->offer: "0", ["class"=> "form-control"] )}}
 </div>
+<div class="form-group">
+    {{Form::label("with_vat","Iva inclusa: ")}}
+    {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], (isset($product->with_vat) && $product->with_vat) ? $product->with_vat: "0", ["class"=> "form-control"] )}}
+</div>
+{{FormField::stock(["label" => "Giacenza: "])}}
 {{Form::hidden('id')}}
 {{Form::submit('Salva', array("class"=>"btn btn-primary pull-right tab-remember margin-bottom-30"))}}
 {{Form::close()}}
