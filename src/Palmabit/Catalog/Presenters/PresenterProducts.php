@@ -4,6 +4,7 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
+use Config, App;
 use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Library\Presenters\AbstractPresenter;
@@ -94,5 +95,26 @@ use ViewHelper;
     {
         $prod = $this->resource->accessories()->get();
         return (! $prod->isEmpty()) ? $prod->all(): null;
+    }
+
+    /**
+     * Obtain the price to show at the user
+     * @return mixed
+     */
+    public function price()
+    {
+        $group_professional = Config::get('catalog::groups.professional_group_name');
+        $group_logged = Config::get('catalog::groups.logged_group_name');
+        $authenticator = App::make('authenticator');
+
+        // if not logged public price
+        if ( ! $authenticator->check()) return $this->resource->public_price;
+        // if professional professional price
+        if (  $authenticator->hasGroup($group_professional)) return $this->resource->professional_price;
+        // if has logged group logged price
+        if (  $authenticator->hasGroup($group_logged)) return $this->resource->logged_price;
+
+        // default back to public price
+        return $this->resource->public_price;
     }
 } 

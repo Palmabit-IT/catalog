@@ -15,20 +15,30 @@
 <span class="text-danger">{{$errors->first('slug')}}</span>
 {{FormField::description(["type" => "textarea", "label" => "Descrizione:"])}}
 <span class="text-danger">{{$errors->first('description')}}</span>
+{{FormField::public_price(["type" => "text", "label" => "Prezzo al pubblico:"])}}
+<span class="text-danger">{{$errors->first('public_price')}}</span>
+{{FormField::logged_price(["type" => "text", "label" => "Prezzo utente registrato:"])}}
+<span class="text-danger">{{$errors->first('logged_price')}}</span>
+{{FormField::professional_price(["type" => "text", "label" => "Prezzo professionista:"])}}
+<span class="text-danger">{{$errors->first('professional_price')}}</span>
 {{FormField::video_link(["type" => "text", "label" => "Link al video (se disponibile):"])}}
 <span class="text-danger">{{$errors->first('video_link')}}</span>
 {{FormField::description_long(["label" => "Note", "type" => "textarea"])}}
 <span class="text-danger">{{$errors->first('description_long')}}</span>
 <div class="form-group">
-    {{Form::label("featured","Prodotto in evidenza")}}
+    {{Form::label("featured","Prodotto in evidenza: ")}}
     {{Form::select('featured', ["1" => "Sì", "0" => "No"], (isset($product->featured) && $product->featured) ? $product->featured: "0", ["class"=> "form-control"] )}}
 </div>
 <div class="form-group">
-    {{Form::label("public","Prodotto pubblico")}}
+    {{Form::label("professional","Prodotto professionale: ")}}
+    {{Form::select('professional', ["1" => "Sì", "0" => "No"], (isset($product->professional) && $product->professional) ? $product->professional: "0", ["class"=> "form-control"] )}}
+</div>
+<div class="form-group">
+    {{Form::label("public","Prodotto pubblico: ")}}
     {{Form::select('public', ["1" => "Sì", "0" => "No"], (isset($product->public) && $product->public) ? $product->public: "0", ["class"=> "form-control"] )}}
 </div>
 <div class="form-group">
-    {{Form::label("offer","Prodotto in offerta")}}
+    {{Form::label("offer","Prodotto in offerta: ")}}
     {{Form::select('offer', ["1" => "Sì", "0" => "No"], (isset($product->offer) && $product->offer) ? $product->offer: "0", ["class"=> "form-control"] )}}
 </div>
 <div class="form-group">

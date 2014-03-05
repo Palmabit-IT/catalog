@@ -18,6 +18,7 @@
         "intervention/image": "dev-master",
         "palmabit/library" : "dev-master",
         "palmabit/multilanguage" : "dev-master",
+        "palmabit/authentication" : "dev-master",
         "jacopo/laravel-single-table-inheritance": "dev-master"
     },
     "require-dev": {

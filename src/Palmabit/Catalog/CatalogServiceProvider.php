@@ -30,6 +30,8 @@ class CatalogServiceProvider extends ServiceProvider {
         require __DIR__ . "/../../routes.php";
         // include view composers
         require __DIR__ . "/../../composers.php";
+        // include custom validators
+        require __DIR__ . "/../../validators.php";
 
         $this->loadOtherProviders();
         $this->registerAliases();
@@ -56,6 +58,7 @@ class CatalogServiceProvider extends ServiceProvider {
     {
         $this->app->register('Intervention\Image\ImageServiceProvider');
         $this->app->register('Palmabit\Multilanguage\MultilanguageServiceProvider');
+        $this->app->register('Palmabit\Authentication\AuthenticationServiceProvider');
     }
 
     protected function registerAliases()
