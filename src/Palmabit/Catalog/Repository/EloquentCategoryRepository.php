@@ -6,13 +6,14 @@
  */
 namespace Palmabit\Catalog\Repository;
 
+use Palmabit\Catalog\Interfaces\TreeInterface;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
+class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface, TreeInterface
 {
     use LanguageHelper;
 
@@ -101,4 +102,18 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
         return $cat->first();
     }
 
+
+    public function getParent($id)
+    {
+
+    }
+
+    public function getChildrens($id)
+    {}
+
+    public function setParent($id, $parent_id)
+    {}
+
+    public function setRoot($id, $parent_id)
+    {}
 }

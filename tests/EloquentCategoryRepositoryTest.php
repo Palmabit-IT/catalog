@@ -55,6 +55,16 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
 
         $this->assertTrue( $this->repo->delete($cat->id) );
     }
+    
+    /**
+     * @test
+     **/
+    public function it_associate_a_parent_node()
+    {
+        $cat = $this->repo->create(array("description"=> $desc, "slug" => "slug", "slug_lang" => "slug") );
+        $cat = $this->repo->create(array("description"=> $desc, "slug" => "slug", "slug_lang" => "slug") );
+
+    }
 }
 
 class RepoStubLang extends EloquentCategoryRepository

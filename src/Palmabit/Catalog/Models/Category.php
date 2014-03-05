@@ -10,7 +10,7 @@ class Category extends Model{
 
     protected $table = "category";
 
-    protected $fillable = array("id", "description","slug","image", "slug_lang", "lang");
+    protected $fillable = array("id", "description","slug","image", "slug_lang", "lang", "lft", "r");
 
     public function products()
     {
