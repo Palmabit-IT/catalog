@@ -42,7 +42,7 @@
 <div class="form-group">
 {{Form::label('image','Seleziona l\'immagine da caricare')}}
 </div>
-{{FormField::description(["label" => "descrizione: *"])}}
+{{FormField::description(["label" => "descrizione: *", 'type' => 'text'])}}
 <div class="form-group">
 {{Form::file('image')}}
 <span class="text-danger">{{$errors->first('image')}}</span>

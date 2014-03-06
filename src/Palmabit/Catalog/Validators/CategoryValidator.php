@@ -9,8 +9,6 @@ class CategoryValidator extends OverrideConnectionValidator
         "description" => "required|max:255",
         "slug" => ["required","AlphaDash"],
         "lang" => "max:2",
-        'image' => ['image','min:1', 'max:4096']
-
     );
 
     public function __construct()

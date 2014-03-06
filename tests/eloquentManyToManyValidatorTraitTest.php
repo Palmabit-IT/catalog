@@ -1,5 +1,6 @@
 <?php  namespace Palmabit\Catalog\Tests;
-use Illuminate\Support\Facades\DB;
+
+use DB;
 use Palmabit\Catalog\Validators\Traits\eloquentManyToManyUniqueValidatorTrait;
 use Mockery as m;
 /**

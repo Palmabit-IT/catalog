@@ -21,9 +21,9 @@ if ( ! function_exists('get_product_select_arr'))
  */
 if ( ! function_exists('get_cat_select_arr'))
 {
-    function get_cat_select_arr()
+    function get_cat_select_arr($with_empty_field = false)
     {
-        $cat_arr = [];
+        $cat_arr = $with_empty_field ? [""=>""] : [];
         Category::whereLang(L::get_admin())
             ->get(["id","description"])
             ->each(function($cat) use(&$cat_arr){

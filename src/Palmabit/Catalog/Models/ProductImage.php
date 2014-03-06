@@ -20,8 +20,7 @@ class ProductImage extends Eloquent {
 
     public function getDataAttribute()
     {
-        return base64_encode($this->attributes['data']);
-    }
+        return isset($this->attributes['data']) ? base64_encode($this->attributes['data']) : null;    }
 
     public static function getImageFromUrl($url)
     {

@@ -6,13 +6,17 @@
  */
 namespace Palmabit\Catalog\Repository;
 
+use Baum\MoveNotPossibleException;
+use Palmabit\Catalog\Interfaces\TreeInterface;
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Library\Exceptions\InvalidException;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Palmabit\Catalog\Helpers\Helper as ImageHelper;
 
-class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
+class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface, TreeInterface
 {
     use LanguageHelper;
 
@@ -72,6 +76,18 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     }
 
     /**
+     * @param $id
+     * @todo test
+     */
+    public function updateImage($id)
+    {
+        $model = $this->find($id);
+        $model->update([
+                        "image" => ImageHelper::getBinaryData('600', 'image')
+                       ]);
+    }
+
+    /**
      * {@inheritdoc}
      * @override
      */
@@ -101,4 +117,48 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
         return $cat->first();
     }
 
+
+    /**
+     * @param $id
+     * @todo tests
+     */
+    public function getParent($id)
+    {
+        return $this->find($id)->parent()->get();
+    }
+
+    /**
+     * @param $id
+     * @todo tests
+     */
+    public function getChildrens($id)
+    {
+        return $this->find($id)->children()->get();
+    }
+
+    /**
+     * @param $id
+     * @param $parent_id
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function setParent($id, $parent_id)
+    {
+        try
+        {
+            $this->find($id)->makeChildOf($parent_id);
+        }catch(MoveNotPossibleException $e)
+        {
+            throw new InvalidException;
+        }
+    }
+
+    /**
+     * @param $id
+     * @param $parent_id
+     * @todo tests
+     */
+    public function setRoot($id)
+    {
+        $this->find($id)->makeRoot();
+    }
 }
