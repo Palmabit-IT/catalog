@@ -1,10 +1,10 @@
-<?php  namespace Palmabit\Catalog\Interfaces; 
+<?php  namespace Palmabit\Catalog\Interfaces;
 /**
- * Interface TreeInterface
+ * Class TreeInterface
  *
- * @author jacopo beschi jacopo@jacopobeschi.com
+ * @author jacopo beschi j.beschi@palmabit.com
  */
-interface TreeInterface 
+interface TreeInterface
 {
     public function getParent($id);
 
@@ -12,6 +12,5 @@ interface TreeInterface
 
     public function setParent($id, $parent_id);
 
-    public function setRoot($id, $parent_id);
-
+    public function setRoot($id);
 }

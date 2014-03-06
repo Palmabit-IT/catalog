@@ -16,11 +16,10 @@ use Palmabit\Catalog\Validators\ProductValidator;
 use Palmabit\Catalog\Validators\ProductFormOrderValidator;
 use Palmabit\Catalog\Validators\ProductsProductsValidator;
 
-class ProductsController extends Controller
-{
+class ProductsController extends Controller {
     /**
      * Products repository
-     * @var \Prodotto\ProdottoRepository
+     * @var \Palmabit\Catalog\Repository\EloquentProductReposiot
      */
     protected $r;
 

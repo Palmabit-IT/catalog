@@ -8,7 +8,9 @@ Route::group( ['before' => ['logged'] ], function()
     Route::post('/admin/category/edit',['as'=>'category.modifica', "before"=>"csrf", 'uses' =>'Palmabit\Catalog\Controllers\CategoryController@postEdit']);
     //@todo add csrf filter ui
     Route::any('/admin/category/delete',['as'=>'category.cancella','uses' =>'Palmabit\Catalog\Controllers\CategoryController@delete']);
-
+    Route::post('/admin/category/setparent', ['as' => 'category.setparent', 'uses' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParent']);
+    Route::post('/admin/category/setparentlists', ['as' => 'category.setparentfromlist', 'uses' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList']);
+    Route::post('/admin/category/changeimage', ['as' => 'category.changeimage', 'uses' => 'Palmabit\Catalog\Controllers\CategoryController@postUpdateImage']);
     ////////////////////////////////////// PRODUCT //////////////////////////////////
     Route::get('/admin/products/lists',['as'=>'products.lists','uses' =>'Palmabit\Catalog\Controllers\ProductsController@lists']);
     Route::get('/admin/products/edit',['as'=>'products.edit','uses' =>'Palmabit\Catalog\Controllers\ProductsController@getEdit']);

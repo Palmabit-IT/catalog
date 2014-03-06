@@ -10,4 +10,11 @@ use Palmabit\Library\Presenters\AbstractPresenter;
 class PresenterCategory extends AbstractPresenter {
  use ViewHelper;
 
+    /**
+     * @todo test
+     */
+    public function image()
+    {
+        return $this->resource->image ? "data:image;base64,{$this->resource->image}" : null;
+    }
 } 

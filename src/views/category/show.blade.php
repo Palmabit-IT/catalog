@@ -23,6 +23,16 @@
             {{$category->description}}
             <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella">cancella</span></a>
             <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}"><span class="glyphicon glyphicon-edit pull-right">modifica</span></a>
+            <span class="pull-right margin-right-30">
+            {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
+            <div class="form-group">
+                {{Form::label("categoria","Padre:")}}
+                {{Form::select("parent_id", get_cat_select_arr(true), $category->parent_id, ["class" => "form-control", "style" => "height:20px", "onchange" => "this.form.submit()"]) }}
+            </div>
+            {{Form::hidden("id", $category->id)}}
+            {{Form::close()}}
+            </span>
+            <span class="clearfix"></span>
         </li>
     @endforeach
     @else
