@@ -2,6 +2,7 @@
 
 use Palmabit\Catalog\Repository\EloquentCategoryRepository;
 use Palmabit\Catalog\Models\Category;
+use Event;
 
 class EloquentCategoryRepositoryTest extends DbTestCase {
 
@@ -14,6 +15,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
 
         $this->faker = \Faker\Factory::create();
         $this->repo = new RepoStubLang();
+
     }
 
     public function testCreate()
@@ -23,7 +25,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
         $this->assertTrue($cat instanceof Category);
         $this->assertEquals($desc, $cat->description);
     }
-
+//
     public function testSearch()
     {
         $description = "description";
@@ -69,11 +71,12 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
     }
     /**
      * @test
+     * need to fix invalidattribute exception with multiple nodes
      **/
 //    public function it_associate_a_parent_node()
 //    {
-//        $cat1 = $this->repo->create(array("description"=> "1", "slug" => "1", "slug_lang" => "slug") );
-//        $cat2 = $this->repo->create(array("description"=> "2", "slug" => "2", "slug_lang" => "slug") );
+//        $cat1 = $this->repo->create(array("description"=> "1", "slug" => "1", "slug_lang" => "slug1") );
+//        $cat2 = $this->repo->create(array("description"=> "2", "slug" => "2", "slug_lang" => "slug2") );
 //        $this->repo->setParent($cat1->id, $cat2->id);
 //
 //        $cat1 = $this->repo->find(1);

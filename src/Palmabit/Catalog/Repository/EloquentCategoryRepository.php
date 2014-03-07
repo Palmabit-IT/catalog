@@ -145,6 +145,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      * @param $id
      * @param $parent_id
      * @throws \Palmabit\Library\Exceptions\NotFoundException
+     * @todo finish test
      */
     public function setParent($id, $parent_id)
     {
