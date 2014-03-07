@@ -6,7 +6,7 @@
 
 @section('content')
     {{-- Lista dei prodotti --}}
-    <h3>Lista prodotti</h3>
+    <h3>Catalogo prodotti</h3>
     {{-- messaggi vari --}}
     <?php $message = Session::get('message'); ?>
     @if( isset($message) )
@@ -24,8 +24,8 @@
     @foreach($products as $product)
         <li class="list-group-item">
             {{$product->name}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella">cancella</span></a>
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}"><span class="glyphicon glyphicon-edit pull-right">modifica</span></a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}" class="pull-right"><i class="glyphicon glyphicon-trash cancella"></i> cancella</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>
             <span class="pull-right margin-right-30">
                 {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
                 {{Form::label('order','Ordine')}}
@@ -41,7 +41,7 @@
     @endif
     </ul>
     {{-- Aggiunta nuovo prodotto --}}
-    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary pull-right">Aggiungi</a>
+    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
 
     <div style="text-align: center">
         {{ isset($products) ? $products->links() : ''}}
