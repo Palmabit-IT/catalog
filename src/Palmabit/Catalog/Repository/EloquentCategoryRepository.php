@@ -87,6 +87,11 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
                        ]);
     }
 
+    public function getRootNodes()
+    {
+        return $this->model->roots()->get();
+    }
+    
     /**
      * {@inheritdoc}
      * @override
@@ -143,6 +148,8 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function setParent($id, $parent_id)
     {
+        if(! ($parent_id)) return $this->setRoot($id);
+
         try
         {
             $this->find($id)->makeChildOf($parent_id);
@@ -160,5 +167,27 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function setRoot($id)
     {
         $this->find($id)->makeRoot();
+    }
+
+    /**
+     * @return mixed
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function getSiblians($id)
+    {
+        $cat = $this->find($id);
+        return $cat->getSiblings()->get();
+    }
+
+    /**
+     *
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function hasChildrens($id)
+    {
+        $cat = $this->find($id);
+        return (boolean)$cat->children()->count();
     }
 }

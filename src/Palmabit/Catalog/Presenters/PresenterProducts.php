@@ -6,10 +6,11 @@
  */
 use Config, App;
 use Palmabit\Catalog\Models\ProductImage;
+use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Library\Presenters\AbstractPresenter;
 
-class PresenterProducts extends AbstractPresenter {
+class PresenterProducts extends AbstractPresenter implements ProductCategoryPresenterInterface{
 use ViewHelper;
 
     protected $default_img_path;
@@ -117,4 +118,19 @@ use ViewHelper;
         // default back to public price
         return $this->resource->public_price;
     }
-} 
+
+    public function featured_image()
+    {
+        return $this->features();
+    }
+
+    public function description()
+    {
+        return $this->resource->description;
+    }
+
+    public function name()
+    {
+        return $this->resource->name;
+    }
+}

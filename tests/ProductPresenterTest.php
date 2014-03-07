@@ -187,4 +187,41 @@ class ProductPresenterTest extends TestCase {
         $this->assertEquals("2.12", $presenter->price);
     }
 
+    /**
+     * @test
+     **/
+    public function it_returns_the_featured_image()
+    {
+        $presenter = m::mock('Palmabit\Catalog\Presenters\PresenterProducts')->makePartial()->shouldReceive('features')->once()->andReturn(22)->getMock();
+        $this->assertEquals(22, $presenter->featured_image);
+
+    }
+
+    /**
+     * @test
+     **/
+    public function it_returns_the_description_and_name()
+    {
+        $product = new Product([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "public_price" => "12.22",
+                               "logged_price" => "8.21",
+                               "professional_price" => "2.12",
+                               ]);
+        $presenter = new PresenterProducts($product);
+        $this->assertEquals("name", $presenter->name);
+        $this->assertEquals("desc", $presenter->description);
+    }
 }

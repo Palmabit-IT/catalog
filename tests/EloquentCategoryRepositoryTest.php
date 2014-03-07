@@ -59,6 +59,17 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
     /**
      * @test
      **/
+    public function it_gets_only_root_categories()
+    {
+        $this->repo->create(array("description"=> "", "slug" => "slug1", "slug_lang" => "slug") );
+
+        $this->repo->create(array("description"=> "", "slug" => "slug2", "slug_lang" => "slug") );
+        $results = $this->repo->getRootNodes();
+        $this->assertEquals(2, count($results));
+    }
+    /**
+     * @test
+     **/
 //    public function it_associate_a_parent_node()
 //    {
 //        $cat1 = $this->repo->create(array("description"=> "1", "slug" => "1", "slug_lang" => "slug") );

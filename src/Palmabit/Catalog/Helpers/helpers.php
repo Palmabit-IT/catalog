@@ -23,7 +23,7 @@ if ( ! function_exists('get_cat_select_arr'))
 {
     function get_cat_select_arr($with_empty_field = false)
     {
-        $cat_arr = $with_empty_field ? [""=>""] : [];
+        $cat_arr = $with_empty_field ? ["0"=>""] : [];
         Category::whereLang(L::get_admin())
             ->get(["id","description"])
             ->each(function($cat) use(&$cat_arr){

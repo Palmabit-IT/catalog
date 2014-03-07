@@ -19,3 +19,4 @@ View::composer(['catalog::products.*'], function($view){
                                 "Aggiungi prodotti" => URL::to('/admin/products/edit')
                            ));
 });
+
