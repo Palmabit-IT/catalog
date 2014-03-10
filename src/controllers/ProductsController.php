@@ -78,7 +78,7 @@ class ProductsController extends Controller {
         {
             $product = $this->r->findBySlugLang($slug_lang);
         }
-        catch(ModelNotFoundException $e)
+        catch(NotFoundException $e)
         {
             $product = new Product();
         }
