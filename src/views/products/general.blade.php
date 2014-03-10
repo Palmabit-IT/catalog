@@ -25,6 +25,12 @@
     <div class="col-md-6">
         {{FormField::video_link(["type" => "text", "label" => "URL video (youtube/vimeo):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
+        {{FormField::public_price(["type" => "text", "label" => "Prezzo al pubblico:"])}}
+        <span class="text-danger">{{$errors->first('public_price')}}</span>
+        {{FormField::logged_price(["type" => "text", "label" => "Prezzo utente registrato:"])}}
+        <span class="text-danger">{{$errors->first('logged_price')}}</span>
+        {{FormField::professional_price(["type" => "text", "label" => "Prezzo professionista:"])}}
+        <span class="text-danger">{{$errors->first('professional_price')}}</span>
         <div class="form-group">
             {{Form::label("featured","Prodotto in evidenza")}}
             {{Form::select('featured', ["1" => "Sì", "0" => "No"], (isset($product->featured) && $product->featured) ? $product->featured: "0", ["class"=> "form-control"] )}}

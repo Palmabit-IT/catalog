@@ -18,7 +18,7 @@ use ViewHelper;
 
     public function __construct($resource)
     {
-        $this->default_img_path = public_path()."/packages/catalog/img/no-photo.png";
+        $this->default_img_path = public_path()."/packages/palmabit/catalog/img/no-photo.png";
         return parent::__construct($resource);
     }
     /**

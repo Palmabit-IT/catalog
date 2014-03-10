@@ -7,6 +7,7 @@
  */
 use Mockery as m;
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
 class PresenterCategoryTest extends \PHPUnit_Framework_TestCase {
@@ -39,6 +40,19 @@ class PresenterCategoryTest extends \PHPUnit_Framework_TestCase {
         $presenter = new PresenterCategory($category);
         $this->assertEquals("name", $presenter->name);
         $this->assertEquals("desc", $presenter->description);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_gets_siblings_with_same_lang()
+    {
+        $get_mock = m::mock('StdClass')->shouldReceive('get')->andReturn(1)->getMock();
+        $mock_where = m::mock('StdClass')->shouldReceive('whereLang')->andReturn($get_mock)->getMock();
+        $mock_resource = m::mock('StdClass')->shouldReceive('siblings')->andReturn($mock_where)->getMock();
+        $presenter = new PresenterCategory($mock_resource);
+
+        $this->assertEquals(1, $presenter->siblings());
     }
 }
  

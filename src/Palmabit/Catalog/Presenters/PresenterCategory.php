@@ -4,19 +4,33 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
+use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Library\Presenters\AbstractPresenter;
+use L;
 
 class PresenterCategory extends AbstractPresenter implements ProductCategoryPresenterInterface{
  use ViewHelper;
 
+    protected $default_img_path;
+
+    public function __construct($resource)
+    {
+        $this->default_img_path = public_path()."/packages/palmabit/catalog/img/no-photo.png";
+        return parent::__construct($resource);
+    }
+
     /**
-     * @todo test
+     * @return array
+     * @todo refactor to test for default image: no statics
      */
     public function image()
     {
-        return $this->resource->image ? "data:image;base64,{$this->resource->image}" : null;
+        $data = $this->resource->image ? "data:image;base64,{$this->resource->image}" : "data:image;base64,".base64_encode(ProductImage::getImageFromUrl($this->default_img_path));
+        $alt = $this->resource->description;
+
+        return ["data" => $data, "alt" => $alt];
     }
 
     public function featured_image()
@@ -32,5 +46,10 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
     public function name()
     {
         return $this->resource->name;
+    }
+
+    public function siblings()
+    {
+        return $this->resource->siblings()->whereLang(L::get())->get();
     }
 }
