@@ -27,7 +27,7 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
      */
     public function image()
     {
-        $data = $this->resource->image ? "data:image;base64,{$this->resource->image}" : "data:image;base64,".base64_encode(ProductImage::getImageFromUrl($this->default_img_path));
+        $data = $this->resource->image ? "data:image;base64,{$this->resource->image}" : "data:image;base64,".base64_encode(ProductImage::getImageFromUrl($this->default_img_path) );
         $alt = $this->resource->description;
 
         return ["data" => $data, "alt" => $alt];
