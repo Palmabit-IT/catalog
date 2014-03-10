@@ -1,5 +1,9 @@
 @extends('authentication::layouts.base')
 
+@section('head_css')
+    {{ HTML::style('packages/palmabit/catalog/css/catalog.css') }}
+@stop
+
 @section('container')
 <div class="col-md-2 nav bs-sidenav">
     @include('authentication::layouts.sidebar')

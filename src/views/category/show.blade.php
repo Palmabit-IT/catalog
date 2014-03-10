@@ -21,8 +21,8 @@
     @foreach($categories as $category)
         <li class="list-group-item">
             {{$category->description}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}"><span class="glyphicon glyphicon-trash pull-right cancella">cancella</span></a>
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}"><span class="glyphicon glyphicon-edit pull-right">modifica</span></a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="pull-right"><i class="glyphicon glyphicon-trash cancella"></i> cancella</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>
             <span class="pull-right margin-right-30">
             {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
             <div class="form-group">
@@ -40,7 +40,7 @@
     @endif
     </ul>
     {{-- Add new category --}}
-    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit')}}" class="btn btn-primary pull-right">Aggiungi</a>
+    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit')}}" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
 @stop
 
 @section('footer_scripts')
