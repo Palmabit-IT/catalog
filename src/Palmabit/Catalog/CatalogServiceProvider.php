@@ -31,9 +31,6 @@ class CatalogServiceProvider extends ServiceProvider {
         // include view composers
         require __DIR__ . "/../../composers.php";
 
-        $this->loadOtherProviders();
-        $this->registerAliases();
-
         $this->bindRepositories();
 	}
 
@@ -73,7 +70,8 @@ class CatalogServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+        $this->loadOtherProviders();
+        $this->registerAliases();
 	}
 
 	/**
