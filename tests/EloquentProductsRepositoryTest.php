@@ -79,7 +79,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "name" => "name",
             "slug" => "slug",
             "slug_lang" => "",
-            "description_long" => "",
+            "long_description" => "",
             "featured" => 1,
             "public" => 1,
             "offer" => 1,

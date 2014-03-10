@@ -119,7 +119,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "slug_lang" => $data["slug_lang"] ? $data["slug_lang"] : $this->generateSlugLang($data),
                                     "lang" => $this->getLang(),
                                     "description" => $data["description"],
-                                    "description_long" => $data["description_long"],
+                                    "long_description" => $data["long_description"],
                                     "featured" => (boolean)$data["featured"],
                                     "public" => (boolean)$data["public"],
                                     "offer" => (boolean)$data["offer"],
