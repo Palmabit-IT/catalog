@@ -156,7 +156,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             ->whereLang($this->getLang())
             ->get();
 
-        if($product->isEmpty()) throw new ModelNotFoundException;
+        if($product->isEmpty()) throw new NotFoundException;
 
         return $product->first();
     }
