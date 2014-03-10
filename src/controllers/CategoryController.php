@@ -3,6 +3,7 @@
 use BaseController, View, Input, Redirect, App;
 use Illuminate\Support\MessageBag;
 use Palmabit\Library\Exceptions\InvalidException;
+use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
 use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Library\Form\FormModel;
@@ -59,7 +60,7 @@ class CategoryController extends BaseController
             $categories = $this->repo->findBySlugLang($slug_lang);
 
         }
-        catch(ModelNotFoundException $e)
+        catch(NotFoundException $e)
         {
             $categories = new Category();
         }
