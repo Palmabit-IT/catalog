@@ -23,7 +23,7 @@
 	        {{Form::hidden("slug_lang", $slug_lang)}}
 
 			<hr>
-			{{Form::submit('salve', ['class' => 'btn btn-primary tab-remember'])}}
+			{{Form::submit('Salva', ['class' => 'btn btn-primary tab-remember'])}}
 		{{Form::close()}}
 
 	</div>
