@@ -10,6 +10,7 @@ use Baum\MoveNotPossibleException;
 use Palmabit\Catalog\Interfaces\TreeInterface;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Library\Exceptions\InvalidException;
+use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
@@ -117,7 +118,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
             ->whereLang($this->getLang())
             ->get();
 
-        if($cat->isEmpty()) throw new ModelNotFoundException;
+        if($cat->isEmpty()) throw new NotFoundException;
 
         return $cat->first();
     }
@@ -179,6 +180,17 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $cat = $this->find($id);
         return $cat->getSiblings()->get();
+    }
+
+    /**
+     * @return mixed
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function getSiblingsAndSelf($id, Array $columns = ['*'] )
+    {
+        $cat = $this->find($id);
+        return $cat->siblingsAndSelf()->whereLang($this->getLang())->get($columns);
     }
 
     /**

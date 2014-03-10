@@ -19,4 +19,6 @@ interface TreeInterface
     public function getRootNodes();
 
     public function getSiblians($id);
+
+    public function getSiblingsAndSelf($id, Array $columns);
 }

@@ -37,4 +37,19 @@ class PresenterCategoryProductFactory
             return ( ! empty($products) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterProducts', $products ) : new Collection();
         }
     }
+
+    /**
+     * Create the category menu with his childrens
+     * @todo test
+     */
+    public function createMenu(Category $category)
+    {
+
+//        $categories = $this->r->getSiblingsAndSelf($category->id, ['id', 'description', 'slug_lang']);
+//
+//        foreach ( as $) {
+
+//        }
+
+    }
 } 
