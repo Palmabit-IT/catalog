@@ -33,9 +33,6 @@ class CatalogServiceProvider extends ServiceProvider {
         // include custom validators
         require __DIR__ . "/../../validators.php";
 
-        $this->loadOtherProviders();
-        $this->registerAliases();
-
         $this->bindRepositories();
 	}
 
@@ -64,9 +61,6 @@ class CatalogServiceProvider extends ServiceProvider {
     protected function registerAliases()
     {
         AliasLoader::getInstance()->alias("Image", 'Intervention\Image\Facades\Image');
-        // for multilanguage
-        AliasLoader::getInstance()->alias("L", 'Palmabit\Multilanguage\Facades\Multilinguage');
-        AliasLoader::getInstance()->alias("URLT", 'Palmabit\Multilinguage\Facades\Urltranslator');
     }
 
 	/**
@@ -76,7 +70,8 @@ class CatalogServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+        $this->loadOtherProviders();
+        $this->registerAliases();
 	}
 
 	/**

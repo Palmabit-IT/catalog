@@ -10,7 +10,7 @@ class Product extends Model
 {
     protected $table = "product";
 
-    protected $fillable = array("code","name","slug","long_description","description","featured","lang", "slug_lang", "order", "public", "offer", "stock", "with_vat", "video_link", "professional", "public_price", "logged_price", "professional_price");
+    protected $fillable = array("id","code","name","slug","long_description","description","featured","lang", "slug_lang", "order", "public", "offer", "stock", "with_vat", "video_link", "professional", "public_price", "logged_price", "professional_price");
 
     protected $table_type = 'General';
     /**
@@ -22,7 +22,7 @@ class Product extends Model
      * The list of attributes that belongs to the class
      * @var array
      */
-    protected static $my_attributes = array("id","code","name","slug","long_description","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "public_price", "logged_price", "professional_price");
+    protected static $my_attributes = array("id","code","name","slug","long_description","image","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "public_price", "logged_price", "professional_price");
 
     public function categories()
     {

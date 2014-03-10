@@ -9,17 +9,17 @@
 {{Form::hidden("slug_lang", $slug_lang)}}
 {{FormField::code(["label" => "Codice:"])}}
 <span class="text-danger">{{$errors->first('code')}}</span>
-{{FormField::name(["id" => "slugme", "label" => "Nome prodotto:"])}}
+{{FormField::name(["id" => "slugme", "label" => "Nome prodotto: *"])}}
 <span class="text-danger">{{$errors->first('name')}}</span>
-{{FormField::slug(["label"=>"Nome link:", "id" => "slug"])}}
+{{FormField::slug(["label"=>"Nome link: *", "id" => "slug"])}}
 <span class="text-danger">{{$errors->first('slug')}}</span>
-{{FormField::description(["type" => "textarea", "label" => "Descrizione:"])}}
+{{FormField::description(["type" => "textarea", "label" => "Descrizione: *"])}}
 <span class="text-danger">{{$errors->first('description')}}</span>
-{{FormField::public_price(["type" => "text", "label" => "Prezzo al pubblico:"])}}
+{{FormField::public_price(["type" => "text", "label" => "Prezzo al pubblico: *"])}}
 <span class="text-danger">{{$errors->first('public_price')}}</span>
-{{FormField::logged_price(["type" => "text", "label" => "Prezzo utente registrato:"])}}
+{{FormField::logged_price(["type" => "text", "label" => "Prezzo utente registrato: *"])}}
 <span class="text-danger">{{$errors->first('logged_price')}}</span>
-{{FormField::professional_price(["type" => "text", "label" => "Prezzo professionista:"])}}
+{{FormField::professional_price(["type" => "text", "label" => "Prezzo professionista: *"])}}
 <span class="text-danger">{{$errors->first('professional_price')}}</span>
 {{FormField::video_link(["type" => "text", "label" => "Link al video (se disponibile):"])}}
 <span class="text-danger">{{$errors->first('video_link')}}</span>
@@ -45,7 +45,10 @@
     {{Form::label("with_vat","Iva inclusa: ")}}
     {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], (isset($product->with_vat) && $product->with_vat) ? $product->with_vat: "0", ["class"=> "form-control"] )}}
 </div>
-{{FormField::stock(["label" => "Giacenza: "])}}
+<div class="form-group">
+    {{Form::label("stock","Giacenza: ")}}
+    {{Form::select('stock', ["1" => "Sì", "0" => "No"], (isset($product->stock) && $product->stock) ? $product->stock: "0", ["class"=> "form-control"] )}}
+</div>
 {{Form::hidden('id')}}
 {{Form::submit('Salva', array("class"=>"btn btn-primary pull-right tab-remember margin-bottom-30"))}}
 {{Form::close()}}

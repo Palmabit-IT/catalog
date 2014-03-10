@@ -83,7 +83,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "featured" => 1,
             "public" => 1,
             "offer" => 1,
-            "stock" => 4,
+            "stock" => 1,
             "with_vat" => 1,
             "video_link" => "http://www.google.com/video/12312422313",
             "professional" => 1,
@@ -96,7 +96,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals($description, $obj->description);
         $this->assertEquals(1, $obj->public);
         $this->assertEquals(1, $obj->offer);
-        $this->assertEquals(4, $obj->stock);
+        $this->assertEquals(true, $obj->stock);
         $this->assertEquals(1, $obj->with_vat);
         $this->assertEquals("http://www.google.com/video/12312422313", $obj->video_link);
         $this->assertEquals(1, $obj->professional);

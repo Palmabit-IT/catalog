@@ -123,7 +123,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "featured" => (boolean)$data["featured"],
                                     "public" => (boolean)$data["public"],
                                     "offer" => (boolean)$data["offer"],
-                                    "stock" => $data["stock"],
+                                    "stock" => (boolean)$data["stock"],
                                     "with_vat" => (boolean)$data["with_vat"],
                                     "video_link" => isset($data["video_link"]) ? $data["video_link"] : null,
                                     "professional" => (boolean)$data["professional"],

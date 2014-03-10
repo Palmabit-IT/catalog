@@ -8,6 +8,7 @@ use Config, App;
 use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
+use Palmabit\Authentication\Exceptions\GroupNotFoundException;
 use Palmabit\Library\Presenters\AbstractPresenter;
 
 class PresenterProducts extends AbstractPresenter implements ProductCategoryPresenterInterface{
@@ -101,6 +102,7 @@ use ViewHelper;
     /**
      * Obtain the price to show at the user
      * @return mixed
+     * @todo add the test for groupnotfoundexception
      */
     public function price()
     {
@@ -110,10 +112,15 @@ use ViewHelper;
 
         // if not logged public price
         if ( ! $authenticator->check()) return $this->resource->public_price;
-        // if professional professional price
-        if (  $authenticator->hasGroup($group_professional)) return $this->resource->professional_price;
-        // if has logged group logged price
-        if (  $authenticator->hasGroup($group_logged)) return $this->resource->logged_price;
+        try
+        {
+            // if professional professional price
+            if (  $authenticator->hasGroup($group_professional)) return $this->resource->professional_price;
+            // if has logged group logged price
+            if (  $authenticator->hasGroup($group_logged)) return $this->resource->logged_price;
+        }
+        // if doesn't find any of the groups
+        catch(GroupNotFoundException $e) {}
 
         // default back to public price
         return $this->resource->public_price;

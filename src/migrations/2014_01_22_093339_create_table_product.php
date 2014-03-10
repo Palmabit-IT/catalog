@@ -28,7 +28,7 @@ class CreateTableProduct extends Migration {
             $table->boolean("public")->default(1);
             $table->boolean("offer")->default(1);
             $table->boolean("with_vat")->default(0);
-            $table->integer("stock")->default(0);
+            $table->boolean("stock")->default(0);
             $table->integer("professional")->default(0);
             $table->string("video_link")->nullable()->default(null);
             $table->decimal("public_price", 19,2)->nullable();

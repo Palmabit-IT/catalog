@@ -10,14 +10,13 @@ class ProductValidator  extends OverrideConnectionValidator{
         "code" => ["max:255"],
         "name" => "required|max:255",
         "slug" => ["required","max:255","AlphaDash"],
-        "description" => "max:8000",
+        "description" => "required|max:8000",
         "description_long" => "max:8000",
         "lang" => "max:2",
-        "stock" => "integer",
         "video_link" => "max:255|url",
-        "public_price" => "currency",
-        "logged_price" => "currency",
-        "professional_price" => "currency",
+        "public_price" => "required|currency",
+        "logged_price" => "required|currency",
+        "professional_price" => "required|currency",
     ];
 
     public function __construct()

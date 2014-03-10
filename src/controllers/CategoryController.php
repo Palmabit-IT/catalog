@@ -12,7 +12,7 @@ use Palmabit\Catalog\Models\Category;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
-class getCategoryController extends BaseController
+class CategoryController extends BaseController
 {
     /**
      * Repository for the categories

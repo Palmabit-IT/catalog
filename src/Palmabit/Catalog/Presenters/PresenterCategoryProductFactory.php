@@ -3,6 +3,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Library\Presenters\PresenterPagination;
+use Config;
 
 /**
  * Class PresenterCategoryProductFactory
@@ -23,7 +24,7 @@ class PresenterCategoryProductFactory
      */
     public function create(Category $category)
     {
-        $per_page = 10;
+        $per_page = Config::get('catalog::client_per_page');
         // if has childrens returns the subcategories
         if($this->r->hasChildrens($category->id))
         {
@@ -32,7 +33,7 @@ class PresenterCategoryProductFactory
         }
         else
         {
-            $products = isset($category->products) ? $category->products()->paginate($per_page) : array();
+            $products = ($category->products) ? $category->products()->paginate($per_page) : array();
             return ( ! empty($products) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterProducts', $products ) : new Collection();
         }
     }
