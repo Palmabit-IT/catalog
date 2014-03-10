@@ -11,7 +11,7 @@
         <ul class="list-group">
             <li class="list-group-item">
                 <span class="pull-left">
-                    <img class="media-object img-admin" src="{{$presenter->image}}" alt="" />
+                    <img class="media-object img-admin" src="{{$presenter->image['data']}}" alt="{{$presenter->image['alt']}}" />
                 </span>
                 <span class="clearfix"></span>
             </li>
