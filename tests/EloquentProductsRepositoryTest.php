@@ -196,6 +196,21 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     {
         $this->r->associateCategory(1,2);
     }
+    
+    /**
+     * @test
+     * @group p
+     **/
+    public function it_returns_associated_products()
+    {
+        $mock_get = m::mock('StdClass')->shouldReceive('get')->once()->andReturn(["first","second"])->getMock();
+        $mock_model = m::mock('StdClass')->shouldReceive('accessories')->once()->andReturn($mock_get)->getMock();
+        $mock_repo = m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->makePartial()->shouldReceive('find')->once()->andReturn($mock_model)->getMock();
+        $repo = $mock_repo;
+
+        $acc = $repo->getAccessories(1);
+        $this->assertEquals(2, count($acc));
+    }
 
     /**
      * Creates n random products

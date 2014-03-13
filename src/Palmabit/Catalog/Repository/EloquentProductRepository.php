@@ -26,10 +26,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     protected $is_admin;
 
-    public function __construct($is_admin = false)
+    public function __construct($is_admin = false, $model = null)
     {
         $this->is_admin = $is_admin;
-        return parent::__construct(new Product);
+        $model = $model ? $model : new Product;
+        return parent::__construct($model);
     }
 
     /**
@@ -225,7 +226,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     }
 
     /**
-     * Pulisce tutta la cache dei prodotti
+     * Clean product cache
      */
     protected function clearAllCache($slug)
     {
@@ -235,6 +236,14 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         Cache::forget("product-{$slug}-".$this->getLang());
     }
 
-
+    /**
+     * Obtains all product accessories
+     * @throws Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function getAccessories($id)
+    {
+        $model = $this->find($id);
+        return $model->accessories()->get();
+    }
 
 }
