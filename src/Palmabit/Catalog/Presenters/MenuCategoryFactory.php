@@ -40,7 +40,9 @@ class MenuCategoryFactory
                 if(is_a($children, 'Palmabit\Catalog\Models\Category'))
                     $cat_menu_item->add(new MenuItem($children->description, $children->slug_lang, $this->cat_type));
                 else
-                    $cat_menu_item->add(new MenuItem($children->name, $children->slug_lang, $this->product_type));
+                {
+                    // do nothing
+                }
             }
             // append to original menu
             $cat_menu->push($cat_menu_item);

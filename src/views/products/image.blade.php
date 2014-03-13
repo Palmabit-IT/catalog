@@ -33,10 +33,8 @@
         </ul>
         <hr/>
         <h3>Aggiungi un'immagine</h3>
-        @if($errors && ! $errors->isEmpty() )
-            @foreach($errors->all() as $error)
-                <div class="alert alert-danger">{{$error}}</div>
-            @endforeach
+        @if($errors->has('model'))
+            <div class="alert alert-danger">{{$errors->first('model')}}</div>
         @endif
         {{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@postImage', 'files' => true])}}
         {{Form::hidden("slug_lang", $slug_lang)}}
