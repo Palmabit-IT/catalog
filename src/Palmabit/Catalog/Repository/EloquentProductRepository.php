@@ -46,6 +46,15 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $products->isEmpty() ? null : $products;
     }
 
+    public function getFirstOffersMax($max = 8)
+    {
+        $products = $this->model->whereLang($this->getLang())
+            ->orderBy("offer","DESC")
+            ->take($max)
+            ->get();
+        return $products->isEmpty() ? null : $products;
+    }
+
     /**
      * Finds a product starting from the slug
      * @param $slug

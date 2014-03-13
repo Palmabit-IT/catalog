@@ -211,6 +211,21 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $acc = $repo->getAccessories(1);
         $this->assertEquals(2, count($acc));
     }
+    
+    /**
+     * @test
+     * @group take
+     **/
+    public function it_gets_n_products_prediliging_offers()
+    {
+        $this->prepareFakeData();
+        $this->r->update(1, ["offer"=>1]);
+
+        $products = $this->r->getFirstOffersMax(4);
+
+        $this->assertEquals(4, count($products));
+        $this->assertEquals(1, $products[0]->offer);
+    }
 
     /**
      * Creates n random products
