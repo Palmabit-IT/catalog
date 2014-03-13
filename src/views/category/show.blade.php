@@ -21,7 +21,7 @@
     @foreach($categories as $category)
         <li class="list-group-item">
             {{$category->description}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="pull-right"><i class="glyphicon glyphicon-trash cancella"></i> cancella</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="delete pull-right"><i class="glyphicon glyphicon-trash"></i> cancella</a>
             <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>
             <span class="pull-right margin-right-30">
             {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
@@ -46,7 +46,7 @@
 @section('footer_scripts')
 @parent
 <script>
-    $(".cancella").click(function(){
+    $(".delete").click(function(){
         return confirm("Sei sicuro di volere eliminare la categoria selezionata?");
     });
 </script>
