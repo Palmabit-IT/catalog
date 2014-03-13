@@ -10,7 +10,7 @@ class ProductValidator  extends OverrideConnectionValidator{
         "code" => ["max:255"],
         "name" => "required|max:255",
         "slug" => ["required","max:255","AlphaDash"],
-        "description" => "required|max:8000",
+        "description" => "required|max:60",
         "description_long" => "max:8000",
         "lang" => "max:2",
         "video_link" => "max:255|url",

@@ -133,7 +133,7 @@ use ViewHelper;
 
     public function description()
     {
-        return $this->resource->description;
+        return substr($this->resource->description,0,60);
     }
 
     public function name()

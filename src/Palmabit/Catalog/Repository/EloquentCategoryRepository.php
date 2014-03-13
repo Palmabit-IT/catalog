@@ -90,7 +90,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
 
     public function getRootNodes()
     {
-        return $this->model->roots()->get();
+        return $this->model->roots()->whereLang($this->getLang())->get();
     }
     
     /**
@@ -179,7 +179,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function getSiblians($id)
     {
         $cat = $this->find($id);
-        return $cat->getSiblings()->get();
+        return $cat->getSiblings()->whereLang($this->getLang())->get();
     }
 
     /**
