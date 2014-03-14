@@ -31,14 +31,48 @@ class MenuItem
      * @var \Illuminate\Support\Collection
      */
     protected $subitems_collection;
+    /**
+     * If the current menu item is active
+     * @var Boolean
+     */
+    protected $active;
+    /**
+     * @var Boolean
+     */
+    protected $open;
 
-    function __construct($name, $slug, $type, Collection $collection = null, $icon = null)
+    function __construct($name, $slug, $type, Collection $collection = null, $active = false, $icon = null)
     {
         $this->icon = $icon;
         $this->type = $type;
         $this->name = $name;
         $this->slug = $slug;
+        $this->active = $active;
         $this->subitems_collection = $collection ? $collection : new Collection();
+    }
+
+    /**
+     * @param boolean $open
+     */
+    public function setOpen($open)
+    {
+        $this->open = $open;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getOpen()
+    {
+        return $this->open;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 
     /**

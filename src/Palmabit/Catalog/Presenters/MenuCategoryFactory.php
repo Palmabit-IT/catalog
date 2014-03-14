@@ -13,8 +13,11 @@ class MenuCategoryFactory
 {
     protected $cat_type = "category";
 
-    public function __construct()
+    protected $slug;
+
+    public function __construct($slug = null)
     {
+        $this->slug = $slug;
         $this->r = App::make('category_repository');
     }
 
@@ -32,18 +35,18 @@ class MenuCategoryFactory
             // get the childrens
             $childrens = ( $category->children()->whereLang(L::get())->count() ) ? $category->children()->whereLang(L::get())->get(["id", "description", "slug_lang"]) : null;
             // create the menuitems
-            //@todo handle multiple recursive subitems with a bette algorith
-            $cat_menu_item = new MenuItem($category->description, $category->slug_lang, $this->cat_type);
+            //@todo handle multiple recursive subitems with a better algorithm
+            $cat_menu_item = new MenuItem($category->description, $category->slug_lang, $this->cat_type, null, $this->getActive($category->slug_lang));
             if($childrens) foreach ($childrens as $children)
             {
-                $children_item = new MenuItem($children->description, $children->slug_lang, $this->cat_type);
+                $children_item = new MenuItem($children->description, $children->slug_lang, $this->cat_type, null, $this->getActive($children->slug_lang));
                 // if has sub-subcategories
                 if($children->children()->whereLang(L::get())->count())
                 {
-                    $childrens_children = $category->children()->whereLang(L::get())->get(["id", "description", "slug_lang"]);
+                    $childrens_children = $children->children()->whereLang(L::get())->get(["id", "description", "slug_lang"]);
                     foreach ($childrens_children as $children_children)
                     {
-                        $children_item->add(new MenuItem($children_children->description, $children_children->slug_lang, $this->cat_type) );
+                        $children_item->add(new MenuItem($children_children->description, $children_children->slug_lang, $this->cat_type, null, $this->getActive($children_children->slug_lang)) );
                     }
                 }
 
@@ -55,5 +58,10 @@ class MenuCategoryFactory
         }
 
         return $cat_menu;
+    }
+
+    protected function getActive($menu_slug)
+    {
+        return ($this->slug == $menu_slug) ? true : false;
     }
 } 
