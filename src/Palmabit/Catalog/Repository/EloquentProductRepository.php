@@ -105,6 +105,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function update($id , array $data)
     {
         $slug = isset($data["slug"]) ? $data["slug"] : '';
+        $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $this->clearAllCache($slug);
 
         if(isset($data["slug_lang"])) unset($data["slug_lang"]);
@@ -137,9 +138,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "with_vat" => (boolean)$data["with_vat"],
                                     "video_link" => isset($data["video_link"]) ? $data["video_link"] : null,
                                     "professional" => (boolean)$data["professional"],
-                                    "public_price" => $data["public_price"],
-                                    "logged_price" => $data["logged_price"],
-                                    "professional_price" => $data["professional_price"]
+                                    "price1" => $data["price1"],
+                                    "price2" => $data["price2"],
+                                    "price3" => $data["price3"],
+                                    'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
+                                    'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
                                 ]);
     }
 
@@ -247,7 +250,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
 
     /**
      * Obtains all product accessories
-     * @throws Palmabit\Library\Exceptions\NotFoundException
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
      */
     public function getAccessories($id)
     {

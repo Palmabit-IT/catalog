@@ -93,7 +93,7 @@ class ProductsController extends Controller {
 
         try
         {
-            $obj = $this->f->process($input);
+             $obj = $this->f->process($input);
         }
         catch(PalmabitExceptionsInterface $e)
         {

@@ -90,6 +90,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "public_price" => "12.22",
             "logged_price" => "8.21",
             "professional_price" => "2.12",
+//            "price1" => "12.22",
+//            "price2" => "8.21",
+//            "price3" => "2.12",
         ];
         $obj = $this->r->create($data);
         $this->assertTrue($obj instanceof Product);

@@ -111,19 +111,19 @@ use ViewHelper;
         $authenticator = App::make('authenticator');
 
         // if not logged public price
-        if ( ! $authenticator->check()) return $this->resource->public_price;
+        if ( ! $authenticator->check()) return $this->resource->price1;
         try
         {
             // if professional professional price
-            if (  $authenticator->hasGroup($group_professional)) return $this->resource->professional_price;
+            if (  $authenticator->hasGroup($group_professional)) return $this->resource->price2;
             // if has logged group logged price
-            if (  $authenticator->hasGroup($group_logged)) return $this->resource->logged_price;
+            if (  $authenticator->hasGroup($group_logged)) return $this->resource->price3;
         }
         // if doesn't find any of the groups
         catch(GroupNotFoundException $e) {}
 
         // default back to public price
-        return $this->resource->public_price;
+        return $this->resource->price1;
     }
 
     public function featured_image()

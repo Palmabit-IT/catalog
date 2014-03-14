@@ -26,29 +26,34 @@
         {{FormField::video_link(["type" => "text", "label" => "URL video (youtube/vimeo):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo al pubblico:​</label>​
+            <label for=​"video_link" class=​"control-label">​Prezzo1: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
-              <input type="text" name="public_price" value="{{(isset($product->public_price) && $product->public_price) ? $product->public_price : '0.00' }}" class="form-control">
+              <input type="text" name="price1" value="{{(isset($product->price1) && $product->price1) ? $product->price1 : '0.00' }}" class="form-control">
             </div>
         </div>
-        <span class="text-danger">{{$errors->first('public_price')}}</span>
+        <span class="text-danger">{{$errors->first('price1')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo al pubblico:​</label>​
+            <label for=​"video_link" class=​"control-label">​Prezzo2: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
-              <input type="text" name="logged_price" value="{{(isset($product->logged_price) && $product->logged_price) ? $product->logged_price : '0.00' }}" class="form-control">
+              <input type="text" name="price2" value="{{(isset($product->price2) && $product->price2) ? $product->price2 : '0.00' }}" class="form-control">
             </div>
         </div>
-        <span class="text-danger">{{$errors->first('logged_price')}}</span>
+        <span class="text-danger">{{$errors->first('price2')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo al pubblico:​</label>​
+            <label for=​"video_link" class=​"control-label">​Prezzo3: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
-              <input type="text" name="professional_price" value="{{(isset($product->professional_price) && $product->professional_price) ? $product->professional_price : '0.00' }}" class="form-control">
+              <input type="text" name="price3" value="{{(isset($product->price3) && $product->price3) ? $product->price3 : '0.00' }}" class="form-control">
             </div>
         </div>
-        <span class="text-danger">{{$errors->first('professional_price')}}</span>
+        <span class="text-danger">{{$errors->first('price3')}}</span>
+        <div class="form-group">
+            {{Form::label("","Abilita gestione quantità: ")}}
+            {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"], (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ? $product->quantity_pricing_enabled: "0", ["class"=> "form-control"] )}}
+        </div>
+        {{FormField::quantity_pricing_quantity(["label" => "Quantità"])}}
         <div class="form-group">
             {{Form::label("with_vat","Iva inclusa: ")}}
             {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], (isset($product->with_vat) && $product->with_vat) ? $product->with_vat: "0", ["class"=> "form-control"] )}}
