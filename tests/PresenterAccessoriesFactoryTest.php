@@ -35,9 +35,11 @@ class PresenterAccessoriesFactoryTest extends DbTestCase {
                        "with_vat" => 1,
                        "video_link" => "http://www.google.com/video/12312422313",
                        "professional" => 1,
-                       "public_price" => "12.22",
-                       "logged_price" => "8.21",
-                       "professional_price" => "2.12",
+                       "price1" => "12.22",
+                       "price2" => "8.21",
+                       "price3" => "2.12",
+                       "quantity_pricing_enabled" => 0,
+                       "quantity_pricing_quantity" => 100
                    ];
         $data2 = $data1;
         $data2["slug"] = "slug2";

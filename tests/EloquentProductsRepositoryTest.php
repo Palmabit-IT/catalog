@@ -87,12 +87,11 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "with_vat" => 1,
             "video_link" => "http://www.google.com/video/12312422313",
             "professional" => 1,
-            "public_price" => "12.22",
-            "logged_price" => "8.21",
-            "professional_price" => "2.12",
-//            "price1" => "12.22",
-//            "price2" => "8.21",
-//            "price3" => "2.12",
+            "price1" => "12.22",
+            "price2" => "8.21",
+            "price3" => "2.12",
+            "quantity_pricing_enabled" => 0,
+            "quantity_pricing_quantity" => 100,
         ];
         $obj = $this->r->create($data);
         $this->assertTrue($obj instanceof Product);
@@ -103,9 +102,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals(1, $obj->with_vat);
         $this->assertEquals("http://www.google.com/video/12312422313", $obj->video_link);
         $this->assertEquals(1, $obj->professional);
-        $this->assertEquals("12.22", $obj->public_price);
-        $this->assertEquals("8.21", $obj->logged_price);
-        $this->assertEquals("2.12", $obj->professional_price);
+        $this->assertEquals("12.22", $obj->price1);
+        $this->assertEquals("8.21", $obj->price2);
+        $this->assertEquals("2.12", $obj->price3);
     }
 
     /**

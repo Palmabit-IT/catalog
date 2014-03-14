@@ -54,6 +54,7 @@
             {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"], (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ? $product->quantity_pricing_enabled: "0", ["class"=> "form-control"] )}}
         </div>
         {{FormField::quantity_pricing_quantity(["label" => "Quantità"])}}
+        <span class="text-danger">{{$errors->first('quantity_pricing_quantity')}}</span>
         <div class="form-group">
             {{Form::label("with_vat","Iva inclusa: ")}}
             {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], (isset($product->with_vat) && $product->with_vat) ? $product->with_vat: "0", ["class"=> "form-control"] )}}
