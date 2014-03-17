@@ -4,18 +4,14 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-use Cartalyst\Sentry\Users\LoginRequiredException;
 use Illuminate\Database\Eloquent\Model;
+use Palmabit\Authentication\Exceptions\LoginRequiredException;
 use App, Config;
 class RowOrder extends Model
 {
     protected $table = "row_order";
 
     protected $fillable = ["order_id", "product_id", "quantity", "total_price"];
-
-    protected $product_id;
-    protected $quantity;
-    protected $total_price;
 
     public function order()
     {
@@ -33,7 +29,9 @@ class RowOrder extends Model
      */
     public function setItem(Product $product, $quantity)
     {
-
+        $this->setAttribute('product_id', $product->id);
+        $this->setAttribute('quantity', $quantity);
+        $this->setAttribute('total_price', $this->calculatePrice($product, $quantity));
     }
 
     /**
@@ -49,7 +47,19 @@ class RowOrder extends Model
 
         if(! $authenticator->check()) throw new LoginRequiredException;
 
-        if($authenticator->hasGroup($group_professional)) return $product->price2;
-        if($authenticator->hasGroup($group_logged)) return $product->price1;
+        if($product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity)
+        {
+            if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price3,$quantity);
+            if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price2,$quantity);
+        }
+
+        if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price2,$quantity);
+        if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price1,$quantity);
     }
+
+    protected function multiplyMoney($price, $quantity)
+    {
+        return round( ($price * $quantity) , 2);
+    }
+
 } 
