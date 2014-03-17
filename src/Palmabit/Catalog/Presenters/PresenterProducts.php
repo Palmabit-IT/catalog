@@ -168,4 +168,9 @@ use ViewHelper;
     {
         return $this->resource->name;
     }
+
+    public function urlVideo()
+    {
+        return $this->resource->video_link;
+    }
 }
