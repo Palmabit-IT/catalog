@@ -22,7 +22,7 @@ class Product extends Model
      * The list of attributes that belongs to the class
      * @var array
      */
-    protected static $my_attributes = array("id","code","name","slug","long_description","image","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", 'quantity_pricing_enabled', 'quantity_pricing_quantity');
+    protected static $my_attributes = array("id","code","name","slug","long_description","image","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", 'quantity_pricing_enabled', 'quantity_pricing_quantity', 'price_small', 'price_big');
 
     public function categories()
     {
