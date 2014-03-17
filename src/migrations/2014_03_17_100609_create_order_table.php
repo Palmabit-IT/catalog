@@ -18,7 +18,7 @@ class CreateOrderTable extends Migration {
                 $table->increments('id');
                 $table->string('user_id');
                 $table->dateTime('date');
-                $table->boolean('staus');
+                $table->boolean('completed');
                 $table->timestamps();
                 $table->softDeletes();
             });

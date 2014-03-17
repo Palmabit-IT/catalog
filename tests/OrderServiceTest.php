@@ -1,19 +1,18 @@
 <?php  namespace Palmabit\Catalog\Tests;
-use Mockery as m;
-use App;
-use Carbon\Carbon;
-use Palmabit\Authentication\Models\User;
+use Palmabit\Catalog\Models\RowOrder;
+use Palmabit\Catalog\Orders\OrderService;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
-use Palmabit\Catalog\Models\RowOrder;
-
+use Palmabit\Authentication\Models\User;
+use Session, App;
+use Mockery as m;
 /**
- * Test OrderTest
+ * Test OrderServiceTest
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-class OrderTest extends DbTestCase
-{
+class OrderServiceTest extends DbTestCase {
+
     public function tearDown()
     {
         m::close();
@@ -22,102 +21,125 @@ class OrderTest extends DbTestCase
     /**
      * @test
      **/
-    public function it_add_row_order_to_his_collection()
+    public function it_gets_a_new_instance_and_check_for_sessions()
     {
-        $order = new Order;
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, 10)
-            ->andReturn(true)
-            ->getMock();
-        $order->addRow($product, 10, $mock_row);
+        $service = new OrderService();
+        $order = $service->getOrder();
+        $this->assertInstanceOf('Palmabit\Catalog\Models\Order', $order);
 
-        $this->assertEquals(1, $order->getRowOrders()->count());
-    }
-
-    /**
-     * @test
-     **/
-    public function it_saves_himself_and_his_collection_to_db_and_set_completed_and_user_id()
-    {
-        $order = new Order;
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, 10)
-            ->andReturn(true)
-            ->getMock();
-        $mock_row->product_id = 10;
-        $mock_row->quantity= 1;
-        $mock_row->total_price = 1.00;
-        $order->addRow($product, 10, $mock_row);
-        $user_stub = new User();
-        $user_stub->id = 10;
-        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->once()->andReturn($user_stub)->getMock();
-        App::instance('authenticator',$mock_auth);
-
-        $order->save();
-
-        // set completed state
-        $this->assertTrue($order->completed);
-        // set user_id
-        $this->assertEquals(10,$order->user_id);
-        // save his collection
-        $row = RowOrder::first();
-        $this->assertEquals(10, $row->product_id);
-        $this->assertEquals($order->id, $order->getRowOrders()->first()->order_id);
+        $order = new Order(["user_id" => 1]);
+        Session::put($service->getSessionKey(), $order);
+        $service = new OrderService();
+        $this->assertSame($order, $service->getOrder());
     }
     
     /**
      * @test
-     * @expectedException Palmabit\Authentication\Exceptions\LoginRequiredException
      **/
-    public function it_throws_exception_if_no_user_is_logged()
+    public function it_add_rows_to_orders_and_update_session()
     {
-        $order = new Order();
-        $order->save();
+        $service = new OrderService();
+        $product = new Product([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "price1" => "12.22",
+                               "price2" => "8.21",
+                               "price3" => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+        $quantity = 10;
+        $mock_auth = $this->getPriceMockProfessional();
+        App::instance('authenticator', $mock_auth);
+        $service->addRow($product, $quantity);
+
+        // check for session updated data
+        $order_session = Session::get($service->getSessionKey());
+        $this->assertEquals(1, $order_session->getRowOrders()->count());
     }
+
+    /**
+     * @test
+     **/
+    public function it_saves_db_data_on_commit_and_clear_session()
+    {
+        $service = new OrderService();
+        $product = Product::create([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "price1" => "12.22",
+                               "price2" => "8.21",
+                               "price3" => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+        $user_stub = new User;
+        $user_stub->id = 1;
+        $mock_auth = m::mock('StdClass')
+            ->shouldReceive('check')
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('getLoggedUser')
+            ->once()
+            ->andReturn($user_stub)
+            ->getMock();
+        $quantity = 10;
+        App::instance('authenticator', $mock_auth);
+        $service->addRow($product, $quantity);
+
+        $service->commit();
+        $row = RowOrder::first();
+        $this->assertEquals(1, $row->id);
+
+        $this->assertFalse(Session::has($service->getSessionKey()));
+    }
+
+    /**
+     * @test
+     **/
+    public function it_send_email_to_user_and_admin_on_commit()
+    {
+
+
+    }
+
+    protected function getPriceMockProfessional()
+    {
+        return m::mock('StdClass')
+            ->shouldReceive('check')
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+    }
+
 
 }
  

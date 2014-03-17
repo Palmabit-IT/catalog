@@ -131,16 +131,16 @@ class RowOrderTest extends DbTestCase {
             ->getMock();
     }
 
-    public function getProfessionalUserPriceMock()
-    {
-        return m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-    }
+        public function getProfessionalUserPriceMock()
+        {
+            return m::mock('StdClass')
+                ->shouldReceive('check')
+                ->once()
+                ->andReturn(true)
+                ->shouldReceive('hasGroup')
+                ->once()
+                ->andReturn(true)
+                ->getMock();
+        }
 }
  

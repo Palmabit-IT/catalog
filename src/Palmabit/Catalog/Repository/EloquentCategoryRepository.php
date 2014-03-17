@@ -123,7 +123,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
         return $cat->first();
     }
 
-
     /**
      * @param $id
      * @todo tests
