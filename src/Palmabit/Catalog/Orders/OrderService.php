@@ -4,7 +4,8 @@
  *
  * @author jacopo beschi j.beschi@palamabit.com
  */
-use Session;
+use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Session, Event, App;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
 
@@ -21,6 +22,8 @@ class OrderService
     public function __construct()
     {
         $this->order = $this->getOrderInstance();
+        Event::listen('order.creating', 'Palmabit\Catalog\Orders\OrderService@sendEmailToClient');
+        Event::listen('order.creating', 'Palmabit\Catalog\Orders\OrderService@sendEmailToAdmin');
     }
 
     public function getOrderInstance()
@@ -62,6 +65,7 @@ class OrderService
         $success = $this->order->save();
         if($success)
         {
+            Event::fire('order.creating', $this->order);
             $this->order->getConnection()->getPdo()->commit();
             $this->clearSession();
         }
@@ -74,6 +78,29 @@ class OrderService
     protected function clearSession()
     {
         Session::forget($this->session_key);
+    }
+
+    public function sendEmailToClient()
+    {
+        //@todo
+        // get the client email
+        $this->getClientEmail();
+        // send the email with the information
+    }
+
+    public function sendEmailToAdmin()
+    {
+        //@todo
+        // get the admin email
+        // send the email with the information
+    }
+
+    protected function getClientEmail()
+    {
+        $user = App::make('authenticator')->getLoggedUser();
+        if (!$user) throw new LoginRequiredException;
+
+        $email = $user->email;
     }
 
 }

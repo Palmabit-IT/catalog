@@ -1,4 +1,4 @@
-<?php  namespace Palmabit\Catalog\Models;
+<?php namespace Palmabit\Catalog\Models;
 /**
  * Class Order
  *

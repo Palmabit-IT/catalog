@@ -4,7 +4,7 @@ use Palmabit\Catalog\Orders\OrderService;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Authentication\Models\User;
-use Session, App;
+use Session, App, Event;
 use Mockery as m;
 /**
  * Test OrderServiceTest
@@ -23,6 +23,7 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_gets_a_new_instance_and_check_for_sessions()
     {
+        $this->stopEventCreating();
         $service = new OrderService();
         $order = $service->getOrder();
         $this->assertInstanceOf('Palmabit\Catalog\Models\Order', $order);
@@ -38,6 +39,7 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_add_rows_to_orders_and_update_session()
     {
+        $this->stopEventCreating();
         $service = new OrderService();
         $product = new Product([
                                "description" => "desc",
@@ -74,6 +76,7 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_saves_db_data_on_commit_and_clear_session()
     {
+        $this->stopEventCreating();
         $service = new OrderService();
         $product = Product::create([
                                "description" => "desc",
@@ -124,8 +127,28 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_send_email_to_user_and_admin_on_commit()
     {
+        $user_stub = new User();
+        $user_stub->id = 1;
+        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        App::instance('authenticator', $mock_auth);
+        $service = new OrderService();
 
+        //@todo go from here check that send the email to the user and traslate the email
+        $service->sendEmailToClient();
+        $service->sendEmailToAdmin();
+    }
 
+    /**
+     * @test
+     * @expectedException Palmabit\Authentication\Exceptions\LoginRequiredException
+     **/
+    public function it_throws_exception_if_cannot_find_the_user_email()
+    {
+        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn(false)->getMock();
+        App::instance('authenticator', $mock_auth);
+
+        $service = new OrderService();
+        $service->sendEmailToClient();
     }
 
     protected function getPriceMockProfessional()
@@ -138,6 +161,11 @@ class OrderServiceTest extends DbTestCase {
             ->once()
             ->andReturn(true)
             ->getMock();
+    }
+
+    protected function stopEventCreating()
+    {
+        Event::listen('order.creating', function(){return false;});
     }
 
 
