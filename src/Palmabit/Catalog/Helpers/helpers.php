@@ -34,6 +34,19 @@ if ( ! function_exists('get_cat_select_arr'))
 }
 
 /**
+ * Obtain the optins for the shippping_select
+ */
+if ( ! function_exists('get_shipping_select_arr'))
+{
+    function get_shipping_select_arr($with_empty_field = false)
+    {
+        $arr = $with_empty_field ? [""=>""] : [];
+        $arr = array_merge($arr, Config::get('catalog::shipping_nations') );
+        return $arr;
+    }
+}
+
+/**
  * Obtain the order select
  * @return array
  */

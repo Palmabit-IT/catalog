@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <?php use Palmbit\Catalog\Models\Product; ?>
+<?php $profile_info = Session::get('profile_info'); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -19,6 +20,7 @@
             </li>
         @endforeach
     </ul>
+    {{-- i dettagli della spedizione sono in profile_info e sono uguali all'input del form dove si può modificare indirizzo spedizione e billing --}}
     <a href="{{URL::to('/')}}" target="_blank">Vai al tuo pannello per i dettagli</a>
 </div>
 </body>
