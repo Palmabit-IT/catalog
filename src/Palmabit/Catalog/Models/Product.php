@@ -38,4 +38,4 @@ class Product extends Model
     {
         return $this->belongsToMany('Palmabit\Catalog\Models\Product', "products_products", "first_product_id", "second_product_id");
     }
-} 
+}

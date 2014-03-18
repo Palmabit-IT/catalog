@@ -92,6 +92,41 @@ class RowOrderTest extends DbTestCase {
         $row->calculatePrice(new Product,10);
     }
 
+    /**
+     * @test
+     * @group 1
+     **/
+    public function it_gets_the_product_presenter()
+    {
+        $row = new RowOrder();
+        $product = Product::create([
+                "description" => "desc",
+                "code" => "code",
+                "name" => "name",
+                "slug" => "slug",
+                "slug_lang" => "",
+                "description_long" => "",
+                "featured" => 1,
+                "public" => 1,
+                "offer" => 1,
+                "stock" => 4,
+                "with_vat" => 1,
+                "video_link" => "http://www.google.com/video/12312422313",
+                "professional" => 1,
+                "price1" => "12.22",
+                "price2" => "8.21",
+                "price3" => "2.12",
+                "quantity_pricing_quantity" => 10,
+                "quantity_pricing_enabled" => 1
+                ]);
+        $row->product_id = $product->id;
+
+        $presenter = $row->getProductPresenter();
+
+        $this->assertInstanceOf('Palmabit\Catalog\Presenters\PresenterProducts', $presenter);
+        $this->assertEquals($product->id, $presenter->id);
+    }
+
     protected function getStandardProduct()
     {
         return new Product([

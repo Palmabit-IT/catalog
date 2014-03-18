@@ -7,6 +7,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
 use App, Config;
+use Palmabit\Catalog\Presenters\PresenterProducts;
+
 class RowOrder extends Model
 {
     protected $table = "row_order";
@@ -60,6 +62,11 @@ class RowOrder extends Model
     protected function multiplyMoney($price, $quantity)
     {
         return round( ($price * $quantity) , 2);
+    }
+
+    public function getProductPresenter()
+    {
+        return new PresenterProducts($this->product);
     }
 
 } 
