@@ -23,8 +23,8 @@ class OrderService
     public function __construct()
     {
         $this->order = $this->getOrderInstance();
-        Event::listen('order.creating', 'Palmabit\Catalog\Orders\OrderService@sendEmailToClient');
-        Event::listen('order.creating', 'Palmabit\Catalog\Orders\OrderService@sendEmailToAdmin');
+        Event::listen('order.created', 'Palmabit\Catalog\Orders\OrderService@sendEmailToClient');
+        Event::listen('order.created', 'Palmabit\Catalog\Orders\OrderService@sendEmailToAdmin');
     }
 
     public function getOrderInstance()
@@ -66,8 +66,8 @@ class OrderService
         $success = $this->order->save();
         if($success)
         {
-            Event::fire('order.creating', $this->order);
             $this->order->getConnection()->getPdo()->commit();
+            Event::fire('order.created', $this->order);
             $this->clearSession();
         }
         else
@@ -87,7 +87,6 @@ class OrderService
         $email = $this->getClientEmail();
         // send the email with the information
         $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog:mail.order-sent-client');
-
     }
 
     public function sendEmailToAdmin(MailerInterface $mailer)
