@@ -1,6 +1,7 @@
 <?php
+use Palmabit\Catalog\Orders\OrderService;
 
-/**
+    /**
  * Passa le voci di menu al pannello admin categoria
  */
 View::composer('catalog::category.*', function($view){
@@ -20,3 +21,11 @@ View::composer(['catalog::products.*'], function($view){
                            ));
 });
 
+View::composer(['pages.shop.*'], function($view){
+    $service = new OrderService();
+
+    $order = $service->getOrder();
+    $row_order = $order->getRowOrders();
+
+    $view->with('row_orders', $row_order);
+});

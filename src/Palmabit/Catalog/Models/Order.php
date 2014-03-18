@@ -30,6 +30,15 @@ class Order extends Model
         return parent::__construct(func_get_args());
     }
 
+    function __sleep()
+    {
+        $serialize_fields = array();
+
+        $serialize_fields[] = 'row_orders';
+
+        return $serialize_fields;
+    }
+
     public function markCompleted()
     {
         $this->setAttribute('completed', true);
