@@ -156,7 +156,7 @@ class OrderTest extends DbTestCase
     public function it_change_quantity_of_an_order()
     {
         $order = new Order;
-        $product = new Product([
+        $product = Product::create([
                                "description" => "desc",
                                "code" => "code",
                                "name" => "name",
@@ -185,7 +185,19 @@ class OrderTest extends DbTestCase
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
         $order->addRow($product, 10, $mock_row);
-
+        // mock price calculation
+        $mock_auth = m::mock('StdClass')
+            ->shouldReceive('check')
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->once()
+            ->andReturn(false)
+            ->shouldReceive('hasGroup')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        App::instance("authenticator", $mock_auth);
         $order->changeRowQuantity(1,3);
 
         $this->assertEquals(3, $order->getRowOrders()->first()->quantity);

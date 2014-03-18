@@ -5,6 +5,7 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use App;
 use Carbon\Carbon;
@@ -114,11 +115,19 @@ class Order extends Model
     public function changeRowQuantity($product_id, $quantity)
     {
         $success = false;
-        foreach($this->row_orders as $order)
+        foreach($this->row_orders as $order_row)
         {
-            if($order->product_id == $product_id)
+            if($order_row->product_id == $product_id)
             {
-                $order->quantity = $quantity;
+                $order_row->quantity = $quantity;
+                try
+                {
+                    $order_row->total_price = $order_row->calculatePrice(Product::findOrFail($product_id), $quantity);
+                }
+                catch(ModelNotFoundException $e)
+                {
+                    throw new NotFoundException;
+                }
                 $success = true;
             }
         }
