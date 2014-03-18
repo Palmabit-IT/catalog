@@ -20,8 +20,8 @@ View::composer(['catalog::products.*'], function($view){
                                 "Aggiungi prodotti" => URL::to('/admin/products/edit')
                            ));
 });
-
-View::composer(['pages.shop.*'], function($view){
+// elementi presenti nel carrello
+View::composer(['*'], function($view){
     $service = new OrderService();
 
     $order = $service->getOrder();
