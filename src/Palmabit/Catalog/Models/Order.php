@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use App;
 use Carbon\Carbon;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Palmabit\Library\Exceptions\NotFoundException;
 
 class Order extends Model
 {
@@ -79,6 +80,49 @@ class Order extends Model
         parent::save(func_get_args());
 
         $this->saveRows();
+
+        return $this;
+    }
+
+    /**
+     * Deletes a row given a product id
+     * @param $product_id
+     * @throws Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function deleteRowOrder($product_id)
+    {
+        $success = false;
+        foreach($this->row_orders as $key => $order)
+        {
+            if($order->product_id == $product_id)
+            {
+                $this->row_orders->forget($key);
+                $success = true;
+            }
+        }
+        if(! $success) throw new NotFoundException;
+
+        return $this;
+    }
+
+    /**
+     * changes a row quantity
+     * @param $product_id
+     * @param $quantity
+     * @throws Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function changeRowQuantity($product_id, $quantity)
+    {
+        $success = false;
+        foreach($this->row_orders as $order)
+        {
+            if($order->product_id == $product_id)
+            {
+                $order->quantity = $quantity;
+                $success = true;
+            }
+        }
+        if(! $success) throw new NotFoundException;
 
         return $this;
     }

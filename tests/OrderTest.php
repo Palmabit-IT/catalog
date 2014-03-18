@@ -108,7 +108,109 @@ class OrderTest extends DbTestCase
         $this->assertEquals(10, $row->product_id);
         $this->assertEquals($order->id, $order->getRowOrders()->first()->order_id);
     }
-    
+
+    /**
+     * @test
+     **/
+    public function it_deletes_a_row_given_product_id()
+    {
+        $order = new Order;
+        $product = new Product([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "price1" => "12.22",
+                               "price2" => "8.21",
+                               "price3" => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
+            ->shouldReceive('setItem')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $mock_row->product_id = 1;
+        $mock_row->quantity= 1;
+        $mock_row->total_price = 1.00;
+        $order->addRow($product, 10, $mock_row);
+
+        $order->deleteRowOrder(1);
+
+        $this->assertEquals(0, $order->getRowOrders()->count());
+    }
+
+    /**
+     * @test
+     **/
+    public function it_change_quantity_of_an_order()
+    {
+        $order = new Order;
+        $product = new Product([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "price1" => "12.22",
+                               "price2" => "8.21",
+                               "price3" => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
+            ->shouldReceive('setItem')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $mock_row->product_id = 1;
+        $mock_row->quantity= 1;
+        $mock_row->total_price = 1.00;
+        $order->addRow($product, 10, $mock_row);
+
+        $order->changeRowQuantity(1,3);
+
+        $this->assertEquals(3, $order->getRowOrders()->first()->quantity);
+    }
+
+    /**
+     * @test
+     * @expectedException Palmabit\Library\Exceptions\NotFoundException
+     **/
+    public function it_throw_exception_if_cannot_delete_an_item()
+    {
+        $order = new Order;
+        $order->deleteRowOrder(1);
+    }
+
+    /**
+     * @test
+     * @expectedException Palmabit\Library\Exceptions\NotFoundException
+     **/
+    public function it_throw_exception_if_cannot_change_quantity_of_an_item()
+    {
+        $order = new Order;
+        $order->changeRowQuantity(1,10);
+    }
+
     /**
      * @test
      * @expectedException Palmabit\Authentication\Exceptions\LoginRequiredException

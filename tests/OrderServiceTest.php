@@ -100,6 +100,7 @@ class OrderServiceTest extends DbTestCase {
                                ]);
         $user_stub = new User;
         $user_stub->id = 1;
+        // mock authenticator
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -108,12 +109,17 @@ class OrderServiceTest extends DbTestCase {
             ->once()
             ->andReturn(true)
             ->shouldReceive('getLoggedUser')
-            ->once()
             ->andReturn($user_stub)
             ->getMock();
         $quantity = 10;
         App::instance('authenticator', $mock_auth);
         $service->addRow($product, $quantity);
+        // mock mailer
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
+        App::instance('palmamailer', $mock_mailer);
+        // mock auth helper
+        $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->once()->andReturn([""])->getMock();
+        App::instance('authentication_helper', $mock_auth_helper);
 
         $service->commit();
         $row = RowOrder::first();
@@ -135,9 +141,39 @@ class OrderServiceTest extends DbTestCase {
         $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
         $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->once()->andReturn([""])->getMock();
         App::instance('authentication_helper', $mock_auth_helper);
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
+        App::instance('palmamailer', $mock_mailer);
 
-        $service->sendEmailToClient($mock_mailer);
-        $service->sendEmailToAdmin($mock_mailer);
+        $service->sendEmailToClient();
+        $service->sendEmailToAdmin();
+    }
+
+    /**
+     * @test
+     **/
+    public function it_deletes_row()
+    {
+        $mock_order = m::mock('StdClass')->shouldReceive('deleteRowOrder')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $service = new OrderServiceStub($mock_order);
+
+        $service->deleteRow(1);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_changes_row_quantity()
+    {
+        $mock_order = m::mock('StdClass')->shouldReceive('changeRowQuantity')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $service = new OrderServiceStub($mock_order);
+
+        $service->changeRowQuantity(1,10);
     }
 
     /**
@@ -173,4 +209,12 @@ class OrderServiceTest extends DbTestCase {
 
 
 }
- 
+
+class OrderServiceStub extends OrderService
+{
+    public function __construct($order)
+    {
+        parent::__construct();
+        $this->order = $order;
+    }
+}

@@ -81,16 +81,18 @@ class OrderService
         Session::forget($this->session_key);
     }
 
-    public function sendEmailToClient(MailerInterface $mailer)
+    public function sendEmailToClient()
     {
+        $mailer = App::make('palmamailer');
         // get the client email
         $email = $this->getClientEmail();
         // send the email with the information
         $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog:mail.order-sent-client');
     }
 
-    public function sendEmailToAdmin(MailerInterface $mailer)
+    public function sendEmailToAdmin()
     {
+        $mailer = App::make('palmamailer');
         // get the admin emails
         $mail_helper = App::make('authentication_helper');
         $mails       = $mail_helper->getNotificationRegistrationUsersEmail();
@@ -98,6 +100,16 @@ class OrderService
         {
             $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , 'Ordine: '.$this->order->id.' creato', 'catalog:mail.order-sent-admin');
         }
+    }
+
+    public function deleteRow($product_id)
+    {
+        return $this->order->deleteRowOrder($product_id);
+    }
+
+    public function changeRowQuantity($product_id, $quantity)
+    {
+        return $this->order->changeRowQuantity($product_id, $quantity);
     }
 
     protected function getClientEmail()
