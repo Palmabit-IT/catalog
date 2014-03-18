@@ -5,9 +5,10 @@
  * @author jacopo beschi j.beschi@palamabit.com
  */
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
-use Session, Event, App;
+use Session, Event, App, L;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
+use Palmabit\Library\Email\MailerInterface;
 
 class OrderService 
 {
@@ -80,27 +81,33 @@ class OrderService
         Session::forget($this->session_key);
     }
 
-    public function sendEmailToClient()
+    public function sendEmailToClient(MailerInterface $mailer)
     {
-        //@todo
         // get the client email
-        $this->getClientEmail();
+        $email = $this->getClientEmail();
         // send the email with the information
+        $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog:mail.order-sent-client');
+
     }
 
-    public function sendEmailToAdmin()
+    public function sendEmailToAdmin(MailerInterface $mailer)
     {
-        //@todo
-        // get the admin email
-        // send the email with the information
+        // get the admin emails
+        $mail_helper = App::make('authentication_helper');
+        $mails       = $mail_helper->getNotificationRegistrationUsersEmail();
+        if (!empty($mails)) foreach ($mails as $email)
+        {
+            $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , 'Ordine: '.$this->order->id.' creato', 'catalog:mail.order-sent-admin');
+        }
     }
 
     protected function getClientEmail()
     {
         $user = App::make('authenticator')->getLoggedUser();
+
         if (!$user) throw new LoginRequiredException;
 
-        $email = $user->email;
+        return $user->email;
     }
 
 }

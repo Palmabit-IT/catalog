@@ -132,10 +132,12 @@ class OrderServiceTest extends DbTestCase {
         $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
         App::instance('authenticator', $mock_auth);
         $service = new OrderService();
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
+        $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->once()->andReturn([""])->getMock();
+        App::instance('authentication_helper', $mock_auth_helper);
 
-        //@todo go from here check that send the email to the user and traslate the email
-        $service->sendEmailToClient();
-        $service->sendEmailToAdmin();
+        $service->sendEmailToClient($mock_mailer);
+        $service->sendEmailToAdmin($mock_mailer);
     }
 
     /**
@@ -146,9 +148,10 @@ class OrderServiceTest extends DbTestCase {
     {
         $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn(false)->getMock();
         App::instance('authenticator', $mock_auth);
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
 
         $service = new OrderService();
-        $service->sendEmailToClient();
+        $service->sendEmailToClient($mock_mailer);
     }
 
     protected function getPriceMockProfessional()

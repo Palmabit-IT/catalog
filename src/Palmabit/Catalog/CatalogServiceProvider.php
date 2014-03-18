@@ -32,6 +32,8 @@ class CatalogServiceProvider extends ServiceProvider {
         require __DIR__ . "/../../composers.php";
         // include custom validators
         require __DIR__ . "/../../validators.php";
+        // various includes
+        require __DIR__ . "/../../includes.php";
 
         $this->bindRepositories();
 	}
