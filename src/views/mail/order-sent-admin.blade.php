@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php use Palmbit\Catalog\Models\Product; ?>
+<?php use Palmabit\Catalog\Models\Product; ?>
 <?php $profile_info = Session::get('profile_info'); ?>
 <html lang="it">
 <head>

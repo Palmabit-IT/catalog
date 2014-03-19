@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php use Palmbit\Catalog\Models\Product; ?>
+<?php use Palmabit\Catalog\Models\Product; ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">

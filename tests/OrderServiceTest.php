@@ -159,8 +159,8 @@ class OrderServiceTest extends DbTestCase {
         App::instance('authenticator', $mock_auth);
         $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->andReturn([""])->getMock();
         App::instance('authentication_helper', $mock_auth_helper);
-
-        $service = new OrderService();
+        $mock_order = m::mock('Palmabit\Catalog\Models\Order')->makePartial()->shouldReceive('save')->getMock();
+        $service = new OrderServiceStub($mock_order);
         $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andThrow(new LoginRequiredException)->getMock();
         App::instance('palmamailer', $mock_mailer);
         $gotcha = false; // if get the exceptions
@@ -185,7 +185,8 @@ class OrderServiceTest extends DbTestCase {
         $user_stub->id = 1;
         $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
         App::instance('authenticator', $mock_auth);
-        $service = new OrderService();
+        $mock_order = m::mock('Palmabit\Catalog\Models\Order')->makePartial()->shouldReceive('save')->getMock();
+        $service = new OrderServiceStub($mock_order);
         $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')
             ->once()
             ->andReturn(true)
