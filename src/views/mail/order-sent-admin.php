@@ -6,22 +6,22 @@
     <meta charset="utf-8">
 </head>
 <body>
-<h2>Ordine su {{Config::get('authentication::app_name')}} inoltrato con successo</h2>
+<h2>{{Config::get('authentication::app_name')}}: {{L::t('Order submitted successfully')}}</h2>
 <div>
-    Buongiorno {{ $body['email'] }}
-    <strong>L'ordine numero: {{$body['order']->id}} è stato inoltrato con successo.</strong>
+    {{L::t('Thanks')}} {{ $body['email'] }}
+    <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}</strong>
     <br/>
     <strong>Dettagli ordine:</strong>
     <ul>
         @foreach($body['order']->row_order()->get() as $order)
             <? $product = Product::find($order->product_id); ?>
             <li>
-                <strong>nome: </strong>{{$product->name}}
+                <strong>{{L::t('Name')}}: </strong>{{$product->name}}
             </li>
         @endforeach
     </ul>
     {{-- i dettagli della spedizione sono in profile_info e sono uguali all'input del form dove si può modificare indirizzo spedizione e billing --}}
-    <a href="{{URL::to('/')}}" target="_blank">Vai al tuo pannello per i dettagli</a>
+    <a href="{{URL::to('/')}}" target="_blank">{{L::t('View your profile for details')}}</a>
 </div>
 </body>
 </html>
