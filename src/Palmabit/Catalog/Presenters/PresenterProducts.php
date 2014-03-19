@@ -95,4 +95,9 @@ use ViewHelper;
         $prod = $this->resource->accessories()->get();
         return (! $prod->isEmpty()) ? $prod->all(): null;
     }
-} 
+
+    public function urlVideo()
+    {
+        return preg_replace("/\s*[a-zA-Z\/\/:\.]*youtube.com\/watch\?v=([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i","<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$1\" frameborder=\"0\" allowfullscreen></iframe>",$this->resource->video_link);
+    }
+}

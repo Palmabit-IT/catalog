@@ -23,7 +23,7 @@
         <span class="text-danger">{{$errors->first('long_description')}}</span>
     </div>
     <div class="col-md-6">
-        {{FormField::video_link(["type" => "text", "label" => "URL video (youtube/vimeo):"])}}
+        {{FormField::video_link(["type" => "text", "label" => "URL video (youtube):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
             {{Form::label("featured","Prodotto in evidenza")}}
