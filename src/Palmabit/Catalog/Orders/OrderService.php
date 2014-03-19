@@ -4,13 +4,17 @@
  *
  * @author jacopo beschi j.beschi@palamabit.com
  */
+use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
-use Session, Event, App, L;
+use Palmabit\Library\Exceptions\InvalidException;
+use Session, Event, App, L, Log;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Library\Email\MailerInterface;
+use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
+use Swift_TransportException;
 
-class OrderService 
+class OrderService
 {
     /**
      * The order
@@ -18,13 +22,18 @@ class OrderService
      */
     protected $order;
 
+    /**
+     *
+     * @var Illuminate\Support\MessageBag
+     */
+    protected $errors;
+
     protected $session_key = "catalog_order";
 
     public function __construct()
     {
         $this->order = $this->getOrderInstance();
-        Event::listen('order.created', 'Palmabit\Catalog\Orders\OrderService@sendEmailToClient');
-        Event::listen('order.created', 'Palmabit\Catalog\Orders\OrderService@sendEmailToAdmin');
+        $this->errors = new MessageBag();
     }
 
     public function getOrderInstance()
@@ -62,18 +71,27 @@ class OrderService
 
     public function commit()
     {
-        $this->order->getConnection('authentication')->getPdo()->beginTransaction();
-        $success = $this->order->save();
-        if($success)
+        $this->order->getConnection()->getPdo()->beginTransaction();
+
+        try
         {
-            $this->order->getConnection()->getPdo()->commit();
-            Event::fire('order.created', $this->order);
+            $this->order->save();
+            $this->sendEmailToClient();
+            $this->sendEmailToAdmin();
             $this->clearSession();
         }
-        else
+        catch( PalmabitExceptionsInterface $e)
         {
-            $this->order->getConnection()->getPdo()->rollback();
+            $this->logMailErrors();
         }
+        catch( Swift_TransportException $e)
+        {
+            $this->logMailErrors();
+        }
+
+        $this->order->getConnection()->getPdo()->commit();
+
+        return $this;
     }
 
     protected function clearSession()
@@ -87,7 +105,7 @@ class OrderService
         // get the client email
         $email = $this->getClientEmail();
         // send the email with the information
-        $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog:mail.order-sent-client');
+        $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog::mail.order-sent-client');
     }
 
     public function sendEmailToAdmin()
@@ -98,7 +116,7 @@ class OrderService
         $mails       = $mail_helper->getNotificationRegistrationUsersEmail();
         if (!empty($mails)) foreach ($mails as $email)
         {
-            $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , 'Ordine: '.$this->order->id.' creato', 'catalog:mail.order-sent-admin');
+            $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , 'Ordine: '.$this->order->id.' creato', 'catalog::mail.order-sent-admin');
         }
     }
 
@@ -119,6 +137,22 @@ class OrderService
         if (!$user) throw new LoginRequiredException;
 
         return $user->email;
+    }
+
+    /**
+     * @return \Palmabit\Catalog\Orders\Illuminate\Support\MessageBag
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    protected function logMailErrors()
+    {
+        $this->order->getConnection()->getPdo()->rollback();
+        $this->errors->add("email", "There was an error sending the email.");
+        Log::error('error sending email.');
+        throw new InvalidException;
     }
 
 }

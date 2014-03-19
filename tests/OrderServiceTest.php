@@ -1,4 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests;
+use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Palmabit\Library\Exceptions\InvalidException;
+use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
 use Palmabit\Catalog\Models\RowOrder;
 use Palmabit\Catalog\Orders\OrderService;
 use Palmabit\Catalog\Models\Order;
@@ -23,7 +26,6 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_gets_a_new_instance_and_check_for_sessions()
     {
-        $this->stopEventCreating();
         $service = new OrderService();
         $order = $service->getOrder();
         $this->assertInstanceOf('Palmabit\Catalog\Models\Order', $order);
@@ -39,7 +41,6 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_add_rows_to_orders_and_update_session()
     {
-        $this->stopEventCreating();
         $service = new OrderService();
         $product = new Product([
                                "description" => "desc",
@@ -76,7 +77,6 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_saves_db_data_on_commit_and_clear_session()
     {
-        $this->stopEventCreating();
         $service = new OrderService();
         $product = Product::create([
                                "description" => "desc",
@@ -151,6 +151,77 @@ class OrderServiceTest extends DbTestCase {
     /**
      * @test
      **/
+    public function it_set_error_and_throw_exception_if_mail_client_fails()
+    {
+        $user_stub = new User();
+        $user_stub->id = 1;
+        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        App::instance('authenticator', $mock_auth);
+        $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->andReturn([""])->getMock();
+        App::instance('authentication_helper', $mock_auth_helper);
+
+        $service = new OrderService();
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andThrow(new LoginRequiredException)->getMock();
+        App::instance('palmamailer', $mock_mailer);
+        $gotcha = false; // if get the exceptions
+        try
+        {
+            $service->commit();
+        }
+        catch(InvalidException $e)
+        {
+            $gotcha = true;
+        }
+        $this->assertTrue($gotcha);
+        $this->assertFalse($service->getErrors()->isEmpty());
+    }
+
+    /**
+     * @test
+     **/
+    public function it_set_error_and_throw_exception_if_mail_admin_fails()
+    {
+        $user_stub = new User();
+        $user_stub->id = 1;
+        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        App::instance('authenticator', $mock_auth);
+        $service = new OrderService();
+        $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('sendTo')
+            ->once()
+            ->andThrow(new LoginRequiredException)
+            ->getMock();
+        App::instance('palmamailer', $mock_mailer);
+        $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->once()->andReturn([""])->getMock();
+        App::instance('authentication_helper', $mock_auth_helper);
+        $gotcha = false; // if get the exceptions
+        try
+        {
+        $service->commit();
+        }
+        catch(InvalidException $e)
+        {
+            $gotcha = true;
+        }
+        $this->assertTrue($gotcha);
+        $this->assertFalse($service->getErrors()->isEmpty());
+    }
+
+    /**
+     * @test
+     **/
+    public function it_throws_exception_if_dont_have_product_in_the_cart()
+    {
+        $service = new OrderService();
+
+        $service->commit();
+    }
+
+    /**
+     * @test
+     **/
     public function it_deletes_row()
     {
         $mock_order = m::mock('StdClass')->shouldReceive('deleteRowOrder')
@@ -201,12 +272,6 @@ class OrderServiceTest extends DbTestCase {
             ->andReturn(true)
             ->getMock();
     }
-
-    protected function stopEventCreating()
-    {
-        Event::listen('order.creating', function(){return false;});
-    }
-
 
 }
 
