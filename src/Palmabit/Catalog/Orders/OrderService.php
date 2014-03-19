@@ -7,6 +7,7 @@
 use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
 use Palmabit\Library\Exceptions\InvalidException;
+use Palmabit\Library\Exceptions\ValidationException;
 use Session, Event, App, L, Log;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
@@ -80,13 +81,19 @@ class OrderService
             $this->sendEmailToAdmin();
             $this->clearSession();
         }
-        catch( PalmabitExceptionsInterface $e)
+        catch( LoginRequiredException $e)
         {
             $this->logMailErrors();
         }
         catch( Swift_TransportException $e)
         {
             $this->logMailErrors();
+        }
+        catch( ValidationException $e)
+        {
+            $this->order->getConnection()->getPdo()->rollback();
+            $this->errors = $this->order->getErrors();
+            throw new InvalidException;
         }
 
         $this->order->getConnection()->getPdo()->commit();

@@ -212,11 +212,21 @@ class OrderServiceTest extends DbTestCase {
     /**
      * @test
      **/
-    public function it_throws_exception_if_dont_have_product_in_the_cart()
+    public function it_set_error_and_throw_exception_if_save_not_succeed()
     {
         $service = new OrderService();
+        $gotcha = false; // if get the exceptions
 
-        $service->commit();
+        try
+        {
+            $service->commit();
+        }
+        catch(InvalidException $e)
+        {
+            $gotcha = true;
+        }
+        $this->assertTrue($gotcha);
+        $this->assertFalse($service->getErrors()->isEmpty());
     }
 
     /**

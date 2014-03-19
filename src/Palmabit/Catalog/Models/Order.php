@@ -7,10 +7,12 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
-use App;
+use App, L;
 use Carbon\Carbon;
+use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
 use Palmabit\Library\Exceptions\NotFoundException;
+use Palmabit\Library\Exceptions\ValidationException;
 
 class Order extends Model
 {
@@ -19,6 +21,8 @@ class Order extends Model
     protected $dates = ["date"];
 
     protected $fillable = ["completed","user_id","date"];
+
+    protected $errors;
 
     /**
      * A collection of row_order
@@ -29,6 +33,7 @@ class Order extends Model
     public function __construct()
     {
         $this->row_orders = new Collection();
+        $this->errors = new MessageBag();
         return parent::__construct(func_get_args());
     }
 
@@ -75,6 +80,8 @@ class Order extends Model
 
     public function save(array $options = array())
     {
+        if(! $this->validate()) throw new ValidationException;
+
         $this->markCompleted();
         $this->setupUserId();
         $this->setupDate();
@@ -83,6 +90,17 @@ class Order extends Model
         $this->saveRows();
 
         return $this;
+    }
+
+    public function validate()
+    {
+        if($this->row_orders->isEmpty())
+        {
+            $this->errors->add("row_orders", L::t("There is no product in the cart.") );
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -154,5 +172,14 @@ class Order extends Model
     {
         $this->setAttribute('date', Carbon::now());
     }
+
+    /**
+     * @return \Illuminate\Support\MessageBag
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
 
 }

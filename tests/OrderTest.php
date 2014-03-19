@@ -2,6 +2,7 @@
 use Mockery as m;
 use App;
 use Carbon\Carbon;
+use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Authentication\Models\User;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
@@ -202,6 +203,46 @@ class OrderTest extends DbTestCase
 
         $this->assertEquals(3, $order->getRowOrders()->first()->quantity);
     }
+    
+    /**
+     * @test
+     * @group 1
+     **/
+    public function it_validate_row_orders()
+    {
+        $order = new Order;
+
+        $this->assertFalse($order->validate());
+
+        $this->assertFalse($order->getErrors()->isEmpty());
+    }
+
+    /**
+     * @test
+     * @expectedException Palmabit\Library\Exceptions\ValidationException
+     **/
+    public function it_throws_exception_on_save_if_validation_fails()
+    {
+        $order = new Order;
+
+        $order->save();
+    }
+
+    /**
+     * @test
+     **/
+    public function it_set_errors_on_save_if_validation_fails()
+    {
+        $order = new Order;
+        try
+        {
+            $order->save();
+        }
+        catch(ValidationException $e)
+        {}
+
+        $this->assertFalse($order->getErrors()->isEmpty());
+    }
 
     /**
      * @test
@@ -230,6 +271,36 @@ class OrderTest extends DbTestCase
     public function it_throws_exception_if_no_user_is_logged()
     {
         $order = new Order();
+        $product = new Product([
+                               "description" => "desc",
+                               "code" => "code",
+                               "name" => "name",
+                               "slug" => "slug",
+                               "slug_lang" => "",
+                               "description_long" => "",
+                               "featured" => 1,
+                               "public" => 1,
+                               "offer" => 1,
+                               "stock" => 4,
+                               "with_vat" => 1,
+                               "video_link" => "http://www.google.com/video/12312422313",
+                               "professional" => 1,
+                               "price1" => "12.22",
+                               "price2" => "8.21",
+                               "price3" => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
+            ->shouldReceive('setItem')
+            ->once()
+            ->with($product, 10)
+            ->andReturn(true)
+            ->getMock();
+        $mock_row->product_id = 10;
+        $mock_row->quantity= 1;
+        $mock_row->total_price = 1.00;
+        $order->addRow($product, 10, $mock_row);
         $order->save();
     }
 
