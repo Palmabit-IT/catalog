@@ -6,11 +6,11 @@
  * @author jacopo beschi jacopo@jacopobeschi.com
  */
 use Mockery as m;
+use URLT;
 use Palmabit\Catalog\Models\Category;
-use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
-class PresenterCategoryTest extends \PHPUnit_Framework_TestCase {
+class PresenterCategoryTest extends TestCase {
 
     public function tearDown()
     {
@@ -53,6 +53,22 @@ class PresenterCategoryTest extends \PHPUnit_Framework_TestCase {
         $presenter = new PresenterCategory($mock_resource);
 
         $this->assertEquals(1, $presenter->siblings());
+    }
+
+    /**
+     * @test
+     **/
+    public function it_get_translated_link()
+    {
+        URLT::shouldReceive('action')->once();
+        $category = new Category([
+                                 "description" => "desc",
+                                 "name" => "name",
+                                 "slug" => "slug",
+                                 "slug_lang" => "",
+                                 ]);
+        $presenter = new PresenterCategory($category);
+        $presenter->getLink();
     }
 }
  

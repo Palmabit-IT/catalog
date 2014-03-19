@@ -8,7 +8,7 @@ use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Library\Presenters\AbstractPresenter;
-use L;
+use L, URLT;
 
 class PresenterCategory extends AbstractPresenter implements ProductCategoryPresenterInterface{
  use ViewHelper;
@@ -51,5 +51,10 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
     public function siblings()
     {
         return $this->resource->siblings()->whereLang(L::get())->get();
+    }
+
+    public function getLink()
+    {
+        return URLT::action('CategoryController@show', ['slug_lang' => $this->resource->slug_lang] );
     }
 }

@@ -4,7 +4,7 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-use Config, App;
+use Config, App, URLT;
 use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
@@ -172,5 +172,10 @@ use ViewHelper;
     public function urlVideo()
     {
         return $this->resource->video_link;
+    }
+
+    public function getLink()
+    {
+        return URLT::action('ProductController@show', ['slug_lang' => $this->resource->slug_lang] );
     }
 }

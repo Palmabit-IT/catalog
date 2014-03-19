@@ -9,4 +9,5 @@ interface ProductCategoryPresenterInterface
     public function featured_image();
     public function description();
     public function name();
+    public function getLink();
 }
