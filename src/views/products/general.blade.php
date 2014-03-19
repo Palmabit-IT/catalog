@@ -23,10 +23,10 @@
         <span class="text-danger">{{$errors->first('long_description')}}</span>
     </div>
     <div class="col-md-6">
-        {{FormField::video_link(["type" => "text", "label" => "URL video (youtube/vimeo):"])}}
+        {{FormField::video_link(["type" => "text", "label" => "URL video (youtube):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo1: ​</label>​
+            <label for=​"price1" class=​"control-label">​Prezzo1: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               <input type="text" name="price1" value="{{(isset($product->price1) && $product->price1) ? $product->price1 : '0.00' }}" class="form-control">
@@ -34,7 +34,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price1')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo2: ​</label>​
+            <label for=​"price2" class=​"control-label">​Prezzo2: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               <input type="text" name="price2" value="{{(isset($product->price2) && $product->price2) ? $product->price2 : '0.00' }}" class="form-control">
@@ -42,7 +42,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price2')}}</span>
         <div class="form-group">
-            <label for=​"video_link" class=​"control-label">​Prezzo3: ​</label>​
+            <label for=​"price3" class=​"control-label">​Prezzo3: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               <input type="text" name="price3" value="{{(isset($product->price3) && $product->price3) ? $product->price3 : '0.00' }}" class="form-control">
