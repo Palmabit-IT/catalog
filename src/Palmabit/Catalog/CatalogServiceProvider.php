@@ -30,6 +30,10 @@ class CatalogServiceProvider extends ServiceProvider {
         require __DIR__ . "/../../routes.php";
         // include view composers
         require __DIR__ . "/../../composers.php";
+        // include custom validators
+        require __DIR__ . "/../../validators.php";
+        // various includes
+        require __DIR__ . "/../../includes.php";
 
         $this->bindRepositories();
 	}
@@ -53,14 +57,12 @@ class CatalogServiceProvider extends ServiceProvider {
     {
         $this->app->register('Intervention\Image\ImageServiceProvider');
         $this->app->register('Palmabit\Multilanguage\MultilanguageServiceProvider');
+        $this->app->register('Palmabit\Authentication\AuthenticationServiceProvider');
     }
 
     protected function registerAliases()
     {
         AliasLoader::getInstance()->alias("Image", 'Intervention\Image\Facades\Image');
-        // for multilanguage
-        AliasLoader::getInstance()->alias("L", 'Palmabit\Multilanguage\Facades\Multilinguage');
-        AliasLoader::getInstance()->alias("URLT", 'Palmabit\Multilinguage\Facades\Urltranslator');
     }
 
 	/**

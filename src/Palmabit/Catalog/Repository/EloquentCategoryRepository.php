@@ -10,6 +10,7 @@ use Baum\MoveNotPossibleException;
 use Palmabit\Catalog\Interfaces\TreeInterface;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Library\Exceptions\InvalidException;
+use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
@@ -87,6 +88,11 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
                        ]);
     }
 
+    public function getRootNodes()
+    {
+        return $this->model->roots()->whereLang($this->getLang())->get();
+    }
+    
     /**
      * {@inheritdoc}
      * @override
@@ -112,11 +118,10 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
             ->whereLang($this->getLang())
             ->get();
 
-        if($cat->isEmpty()) throw new ModelNotFoundException;
+        if($cat->isEmpty()) throw new NotFoundException;
 
         return $cat->first();
     }
-
 
     /**
      * @param $id
@@ -140,9 +145,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      * @param $id
      * @param $parent_id
      * @throws \Palmabit\Library\Exceptions\NotFoundException
+     * @todo finish test
      */
     public function setParent($id, $parent_id)
     {
+        if(! ($parent_id)) return $this->setRoot($id);
+
         try
         {
             $this->find($id)->makeChildOf($parent_id);
@@ -160,5 +168,38 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function setRoot($id)
     {
         $this->find($id)->makeRoot();
+    }
+
+    /**
+     * @return mixed
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function getSiblians($id)
+    {
+        $cat = $this->find($id);
+        return $cat->getSiblings()->whereLang($this->getLang())->get();
+    }
+
+    /**
+     * @return mixed
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function getSiblingsAndSelf($id, Array $columns = ['*'] )
+    {
+        $cat = $this->find($id);
+        return $cat->siblingsAndSelf()->whereLang($this->getLang())->get($columns);
+    }
+
+    /**
+     *
+     * @todo test
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
+     */
+    public function hasChildrens($id)
+    {
+        $cat = $this->find($id);
+        return (boolean)$cat->children()->count();
     }
 }
