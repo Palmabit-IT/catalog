@@ -38,7 +38,8 @@ class CreateTableProduct extends Migration {
             $table->boolean("quantity_pricing_enabled")->default(0);
             $table->integer("quantity_pricing_quantity")->default(0);
             // for multilanguage
-            $table->string('slug_lang');
+            // nullable when you duplicate a product
+            $table->string('slug_lang')->nullable();
             $table->string('lang',2)->default('it');
             $table->timestamps();
         });

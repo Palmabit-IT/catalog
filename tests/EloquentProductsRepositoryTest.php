@@ -1,9 +1,11 @@
 <?php namespace Palmabit\Catalog\Tests;
 
+use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Models\Category;
 use Mockery as m;
+use App;
 
 class EloquentProductsRepositoryTest extends DbTestCase {
 
@@ -232,6 +234,39 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     }
 
     /**
+     * @test
+     * @group 2
+     **/
+    public function it_duplicates_products_cats_imgs_accessories()
+    {
+        // prepare product with related classes
+        $this->prepareFakeData(2);
+        $this->r->attachProduct(1,2);
+        Category::create([
+                         "description"=> "descrizione",
+                         "slug" => "slug",
+                         "slug_lang" => "slug",
+                         "lang" => "it"
+                         ]);
+        $this->r->associateCategory(1,1);
+
+        $mock_img_repo = new ImgRepoStub;
+        $img_data = [
+            "description" => "desc",
+            "product_id" => 1,
+            "featured" => 0,
+            "data" => 111
+        ];
+        $mock_img_repo->create($img_data);
+
+        $this->r->duplicate(1);
+
+//        $prod3 = $this->r->find(3);
+//        $prod1 = $this->r->find(1);
+//        $this->assertEquals($prod3->toArray(), $prod1->toArray() );
+    }
+    
+    /**
      * Creates n random products
      * @param $number
      */
@@ -256,8 +291,6 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         }
     }
 
-
-
 }
 
 class ProdRepoStubLang extends EloquentProductRepository
@@ -267,4 +300,12 @@ class ProdRepoStubLang extends EloquentProductRepository
         return 'it';
     }
 
+}
+
+class ImgRepoStub extends EloquentProductImageRepository
+{
+    public function getBinaryData()
+    {
+        return 1;
+    }
 }
