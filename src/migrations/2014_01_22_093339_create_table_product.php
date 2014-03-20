@@ -20,7 +20,7 @@ class CreateTableProduct extends Migration {
             $table->string('type');
             $table->string('name');
             $table->string('slug')->unique();
-			$table->text('description');
+			$table->text('description', 60);
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
             $table->integer("order")->default(0);
@@ -28,8 +28,14 @@ class CreateTableProduct extends Migration {
             $table->boolean("public")->default(1);
             $table->boolean("offer")->default(1);
             $table->boolean("with_vat")->default(0);
-            $table->integer("stock")->default(0);
+            $table->boolean("stock")->default(0);
+            $table->integer("professional")->default(0);
             $table->string("video_link")->nullable()->default(null);
+            $table->decimal("price1", 19,2)->nullable();
+            $table->decimal("price2", 19,2)->nullable();
+            $table->decimal("price3", 19,2)->nullable();
+            $table->boolean("quantity_pricing_enabled")->default(0);
+            $table->integer("quantity_pricing_quantity")->default(0);
             // for multilanguage
             $table->string('slug_lang');
             $table->string('lang',2)->default('it');
