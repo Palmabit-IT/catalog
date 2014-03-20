@@ -141,6 +141,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "price1" => $data["price1"],
                                     "price2" => $data["price2"],
                                     "price3" => $data["price3"],
+                                    "price4" => $data["price4"],
                                     'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
                                     'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
                                 ]);

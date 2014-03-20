@@ -32,7 +32,7 @@ class RowOrderTest extends DbTestCase {
 
         $mock_auth = $this->getProfessionalUserPriceMock();
         App::instance('authenticator', $mock_auth);
-        $expected_price = 16.42;
+        $expected_price = 10.24;
 
         $price = $row->calculatePrice($product,2);
 
@@ -145,7 +145,8 @@ class RowOrderTest extends DbTestCase {
                     "professional" => 1,
                     "price1" => "12.22",
                     "price2" => "8.21",
-                    "price3" => "2.12",
+                    "price3" => "5.12",
+                    "price4" => "2.12",
                     "quantity_pricing_quantity" => 10,
                     "quantity_pricing_enabled" => 1
                     ]);

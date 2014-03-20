@@ -37,7 +37,8 @@ class PresenterAccessoriesFactoryTest extends DbTestCase {
                        "professional" => 1,
                        "price1" => "12.22",
                        "price2" => "8.21",
-                       "price3" => "2.12",
+                       "price3" => "5.12",
+                       "price4" => "2.12",
                        "quantity_pricing_enabled" => 0,
                        "quantity_pricing_quantity" => 100
                    ];

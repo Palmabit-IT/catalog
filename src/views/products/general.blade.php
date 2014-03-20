@@ -48,7 +48,15 @@
               <input type="text" name="price3" value="{{(isset($product->price3) && $product->price3) ? $product->price3 : '0.00' }}" class="form-control">
             </div>
         </div>
-        <span class="text-danger">{{$errors->first('price3')}}</span>
+        <span class="text-danger">{{$errors->first('price4')}}</span>
+        <div class="form-group">
+            <label for=​"price4" class=​"control-label">​Prezzo4: ​</label>​
+            <div class="input-group">
+                <span class="input-group-addon">€</span>
+                <input type="text" name="price4" value="{{(isset($product->price4) && $product->price4) ? $product->price4 : '0.00' }}" class="form-control">
+            </div>
+        </div>
+        <span class="text-danger">{{$errors->first('price4')}}</span>
         <div class="form-group">
             {{Form::label("","Abilita gestione quantità: ")}}
             {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"], (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ? $product->quantity_pricing_enabled: "0", ["class"=> "form-control"] )}}

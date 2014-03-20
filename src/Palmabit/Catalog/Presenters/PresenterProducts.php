@@ -115,7 +115,7 @@ use ViewHelper;
 
         try
         {
-            if ( $authenticator->hasGroup($group_professional)) return $this->resource->price2;
+            if ( $authenticator->hasGroup($group_professional)) return $this->resource->price3;
             elseif ( $authenticator->hasGroup($group_logged)) return $this->resource->price1;
         }
         // if doesn't find any of the groups
@@ -140,7 +140,7 @@ use ViewHelper;
         {
             if ($this->resource->quantity_pricing_enabled)
             {
-                if($authenticator->hasGroup($group_professional)) return $this->resource->price3;
+                if($authenticator->hasGroup($group_professional)) return $this->resource->price4;
                 elseif($authenticator->hasGroup($group_logged)) return $this->resource->price2;
             }
             else

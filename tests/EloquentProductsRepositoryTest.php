@@ -89,7 +89,8 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "professional" => 1,
             "price1" => "12.22",
             "price2" => "8.21",
-            "price3" => "2.12",
+            "price3" => "5.12",
+            "price4" => "2.12",
             "quantity_pricing_enabled" => 0,
             "quantity_pricing_quantity" => 100,
         ];
@@ -104,7 +105,8 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals(1, $obj->professional);
         $this->assertEquals("12.22", $obj->price1);
         $this->assertEquals("8.21", $obj->price2);
-        $this->assertEquals("2.12", $obj->price3);
+        $this->assertEquals("5.12", $obj->price3);
+        $this->assertEquals("2.12", $obj->price4);
     }
 
     /**
