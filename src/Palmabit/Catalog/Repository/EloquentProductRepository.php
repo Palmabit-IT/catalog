@@ -12,10 +12,7 @@ use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Palmabit\Library\Exceptions\NotFoundException;
-use L;
-use Config;
-use DB;
-use Cache;
+use L, Config, DB, Cache, App;
 
 class EloquentProductRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
 {
@@ -260,17 +257,81 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $model->accessories()->get();
     }
 
+    /**
+     * Duplicate a product
+     * //@todo could extract the logic to another class
+     * @param $product_id
+     */
     public function duplicate($product_id)
     {
-        //duplicate product
-        // transaction
-//        $clone_product = clone( $this->r->find($product_id) );
-//        $clone_product->slug_lang = $clone_product
-        //copy the cats
+        $product = $this->find($product_id);
+        $cloned_product = $this->duplicateProduct($product);
+        // duplicate data
+        $this->duplicateCategories($product, $cloned_product);
+        $this->duplicateImages($product_id);
+        $this->duplicateAccessories($product, $cloned_product);
+    }
 
-        // copy the images
+    /**
+     * @param $product_id
+     */
+    protected function duplicateProduct($product)
+    {
+        // get data
+        $cloned_product = clone($product);
+        // prepare data
+        unset($cloned_product->slug_lang);
+        unset($cloned_product->slug);
+        unset($cloned_product->id);
+        $cloned_product->exists = false;
+        // save
+        $cloned_product->save();
 
-        // copy the accessories
+        return $cloned_product;
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateCategories($product, $cloned_product)
+    {
+        // get the cats
+        $cat_ids = $product->categories()->get()->lists('id');
+        // attach all the cats
+        foreach ($cat_ids as $cat_id)
+        {
+            $this->associateCategory($cloned_product->id, $cat_id);
+        }
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateAccessories($product, $cloned_product)
+    {
+        // get the accessories
+        $acc_ids = $product->accessories()->get()->lists('id');
+        // attach all the accessories
+        foreach ($acc_ids as $acc_id) {
+            $this->attachProduct($cloned_product->id, $acc_id);
+        }
+    }
+
+    /**
+     * @param $product_id
+     */
+    protected function duplicateImages($product_id)
+    {
+        $images = App::make('product_image_repository')->getByProductId($product_id);
+        // copy them
+        foreach ($images as $image) {
+            unset($image->id);
+            $image->exists     = false;
+            $image->product_id = $product_id;
+            $image->save();
+        }
     }
 
 }

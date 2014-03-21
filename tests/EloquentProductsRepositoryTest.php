@@ -220,7 +220,6 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     
     /**
      * @test
-     * @group take
      **/
     public function it_gets_n_products_prediliging_offers()
     {
@@ -261,9 +260,24 @@ class EloquentProductsRepositoryTest extends DbTestCase {
 
         $this->r->duplicate(1);
 
-//        $prod3 = $this->r->find(3);
-//        $prod1 = $this->r->find(1);
-//        $this->assertEquals($prod3->toArray(), $prod1->toArray() );
+        // product duplicated
+        $prod3 = $this->r->find(3);
+        $prod1 = $this->r->find(1);
+        $this->assertEquals($prod3->name, $prod1->name );
+        // categories
+        $cat_original = $prod3->categories()->get()->lists('id');
+        $cat_associated = $prod3->categories()->get()->lists('id');
+        $this->assertEquals($cat_original, $cat_associated);
+        // accessories
+        $acc_original = $prod3->accessories()->get()->lists('id');
+        $acc_associated = $prod3->accessories()->get()->lists('id');
+        $this->assertEquals($acc_original, $acc_associated);
+        // images
+        $image_original = App::make('product_image_repository')->getByProductId($prod1->id);
+        $image_associated = App::make('product_image_repository')->getByProductId($prod1->id);
+        $this->assertEquals(count($image_original), count($image_associated));
+        $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
+
     }
     
     /**
@@ -277,16 +291,16 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         foreach(range(1,$number) as $key)
         {
             Product::create([
-                             "code" => $faker->text(5),
-                             "name" => $faker->text(10),
-                             "slug" => $key,
-                             "slug_lang" => $key,
-                             "lang" => 'it',
-                             "description" => $faker->text(10),
-                             "description_long" => $faker->text(100),
-                             "featured" => $key == 5 ? true : false,
-                             "public" => rand(0,1),
-                             "offer" => 0
+                                 "code" => $faker->text(5),
+                                 "name" => $faker->text(10),
+                                 "slug" => $key,
+                                 "slug_lang" => $key,
+                                 "lang" => 'it',
+                                 "description" => $faker->text(10),
+                                 "description_long" => $faker->text(100),
+                                 "featured" => $key == 5 ? true : false,
+                                 "public" => rand(0,1),
+                                 "offer" => 0
                              ]);
         }
     }

@@ -276,4 +276,9 @@ class ProductsController extends Controller {
         return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
   }
 
+    public function postDuplicateProduct()
+    {
+        
+    }
+
 }

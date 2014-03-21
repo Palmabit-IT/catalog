@@ -19,7 +19,8 @@ class CreateTableProduct extends Migration {
             // for single table inheritance
             $table->string('type');
             $table->string('name');
-            $table->string('slug')->unique();
+            // nullable only when you duplicate a product
+            $table->string('slug')->unique()->nullable();
 			$table->text('description', 60);
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
