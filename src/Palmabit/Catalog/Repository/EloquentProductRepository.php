@@ -55,6 +55,26 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $products->isEmpty() ? null : $products;
     }
 
+    public function getOnlyFirstOffersMax($max = 8)
+    {
+        $products = $this->model->whereLang($this->getLang())
+            ->where("offer","1")
+            ->orderBy("offer","DESC")
+            ->take($max)
+            ->get();
+        return $products->isEmpty() ? null : $products;
+    }
+
+    public function getOnlyFeaturedMax($max = 8)
+    {
+        $products = $this->model->whereLang($this->getLang())
+            ->where("featured","1")
+            ->orderBy("offer","DESC")
+            ->take($max)
+            ->get();
+        return $products->isEmpty() ? null : $products;
+    }
+
     /**
      * Finds a product starting from the slug
      * @param $slug
@@ -79,6 +99,23 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function featuredProducts($max = 4)
     {
         $products = $this->model->whereFeatured(1)
+            ->whereLang($this->getLang())
+            ->orderBy($this->model->getCreatedAtColumn())
+            ->take($max)
+            ->rememberForever('featured-'.$this->getLang())
+            ->get();
+
+        return $products;
+    }
+
+    /**
+     * Get the products in offert
+     * @param int $max
+     * @return mixed
+     */
+    public function offertProducts($max = 4)
+    {
+        $products = $this->model->whereOffer(1)
             ->whereLang($this->getLang())
             ->orderBy($this->model->getCreatedAtColumn())
             ->take($max)

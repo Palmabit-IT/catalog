@@ -11,17 +11,36 @@
     {{L::t('Thanks')}} {{ $body['email'] }}
     <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}</strong>
     <br/>
-    <strong>Dettagli ordine:</strong>
-    <ul>
-        @foreach($body['order']->row_orders()->get() as $order)
-            <? $product = Product::find($order->product_id); ?>
+    <h3>Dettagli ordine:</h3>
+    @foreach($body['order']->row_orders()->get() as $order)
+        <ul>
+            <?php $product = Product::find($order->product_id); ?>
             <li>
                 <strong>{{L::t('Name')}}: </strong>{{$product->name}}
             </li>
-        @endforeach
+            <li>
+                <strong>{{L::t('Code')}}: </strong>{{$product->code}}
+            </li>
+            <li>
+                <strong>{{L::t('Quantity')}}: </strong>{{$order->quantity}}
+            </li>
+            <li>
+                <strong>{{L::t('Price')}}: </strong>{{$order->total_price}}
+            </li>
+        </ul>
+    @endforeach
+    <hr>
+    <h3>{{L::t('Billing')}}</h3>
+    <ul>
+        <li>{{L::t('Billing address')}}: {{$profile_info->billing_address}}, {{$profile_info->billing_address_zip}} {{$profile_info->billing_city}} {{$profile_info->billing_state}} {{$profile_info->billing_country}}</li>
+        <li>{{L::t('VAT')}}: {{$profile_info->vat}}</li>
     </ul>
-    {{-- i dettagli della spedizione sono in profile_info e sono uguali all'input del form dove si può modificare indirizzo spedizione e billing --}}
-    <a href="{{URL::to('/')}}" target="_blank">{{L::t('View your profile for details')}}</a>
+    <hr>
+    <h3>{{L::t('Shipping')}}</h3>
+    <ul>
+        <li>{{L::t('Shipping address')}}: {{$profile_info->shipping_address}}, {{$profile_info->shipping_address_zip}} {{$profile_info->shipping_city}} {{$profile_info->shipping_state}} {{$profile_info->shipping_country}}</li>
+    </ul>
+    <br>
 </div>
 </body>
 </html>
