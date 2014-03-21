@@ -15,6 +15,7 @@ Route::group( ['before' => ['logged'] ], function()
     Route::get('/admin/products/lists',['as'=>'products.lists','uses' =>'Palmabit\Catalog\Controllers\ProductsController@lists']);
     Route::get('/admin/products/edit',['as'=>'products.edit','uses' =>'Palmabit\Catalog\Controllers\ProductsController@getEdit']);
     Route::post('/admin/products/edit',['as'=>'products.edit', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postEdit']);
+    Route::any('/admin/product/duplicate', ['before' => 'csrf', 'uses' => 'Palmabit\Catalog\Controllers\ProductsController@duplicate']);
     //@todo add csrf ui
     Route::any('/admin/products/delete',['as'=>'products.delete','uses' =>'Palmabit\Catalog\Controllers\ProductsController@delete']);
     //////////////// PRODUCT ACCESSORIES //////////////////

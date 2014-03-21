@@ -52,6 +52,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $products->isEmpty() ? null : $products;
     }
 
+    /**
+     * @param int $max
+     * @return null
+     * @todo unit test
+     */
     public function getOnlyFirstOffersMax($max = 8)
     {
         $products = $this->model->whereLang($this->getLang())
@@ -62,6 +67,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $products->isEmpty() ? null : $products;
     }
 
+    /**
+     * @param int $max
+     * @return null
+     * @todo unit test
+     */
     public function getOnlyFeaturedMax($max = 8)
     {
         $products = $this->model->whereLang($this->getLang())
@@ -305,8 +315,10 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $cloned_product = $this->duplicateProduct($product);
         // duplicate data
         $this->duplicateCategories($product, $cloned_product);
-        $this->duplicateImages($product_id);
+        $this->duplicateImages($product_id, $cloned_product->id);
         $this->duplicateAccessories($product, $cloned_product);
+
+        return $cloned_product;
     }
 
     /**
@@ -323,6 +335,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $cloned_product->exists = false;
         // save
         $cloned_product->save();
+        // set new temporary slug_lang
+        $cloned_product->update(["slug_lang" => $cloned_product->id]);
 
         return $cloned_product;
     }
@@ -359,14 +373,14 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     /**
      * @param $product_id
      */
-    protected function duplicateImages($product_id)
+    protected function duplicateImages($product_id, $cloned_product_id)
     {
         $images = App::make('product_image_repository')->getByProductId($product_id);
         // copy them
         foreach ($images as $image) {
             unset($image->id);
             $image->exists     = false;
-            $image->product_id = $product_id;
+            $image->product_id = $cloned_product_id;
             $image->save();
         }
     }

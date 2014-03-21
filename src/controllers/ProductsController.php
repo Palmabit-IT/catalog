@@ -273,12 +273,24 @@ class ProductsController extends Controller {
             return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors($this->v_pp->getErrors());
         }
 
-        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
   }
 
-    public function postDuplicateProduct()
+    public function duplicate()
     {
-        
+        $id = Input::get('id');
+        $slug_lang = Input::get('slug_lang');
+
+        try
+        {
+            $obj = $this->r->duplicate($id);
+        }
+        catch(PalmabitExceptionsInterface $e)
+        {
+            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',['slug_lang' => $slug_lang])->withErrors(new MessageBag(["duplication" => "Problema nella duplicazione del prodotto."]));
+        }
+
+        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $obj->slug_lang]);
     }
 
 }

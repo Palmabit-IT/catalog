@@ -3,6 +3,10 @@
 @if( isset($message) )
 <div class="alert alert-success">{{$message}}</div>
 @endif
+{{-- error messages --}}
+@if( $errors->has('duplication') )
+<div class="alert alert-danger">{{$errors->first('duplication')}}</div>
+@endif
 
 <div class="row">
     <div class="col-md-12">
@@ -94,6 +98,7 @@
 <div class="row">
     <div class="col-md-12">
         {{Form::submit('Salva', array("class"=>"btn btn-primary tab-remember margin-bottom-30"))}}
+        <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $slug_lang, '_token' => csrf_token()])}}" class="btn btn-info margin-bottom-30" {{! empty($product->slug) ?: 'disabled="disabled"'}}>Duplica</a>
         {{Form::close()}}
     </div>
 </div>

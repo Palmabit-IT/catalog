@@ -70,6 +70,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
 
         $obj = $this->r->update(2, ["lang" => "en"]);
         $this->assertEquals("en", $obj->lang);
+        $this->assertEquals(2, $obj->slug_lang);
     }
 
     public function testCreateWorks()
@@ -234,9 +235,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
 
     /**
      * @test
-     * @group 2
+     * @group duplicate
      **/
-    public function it_duplicates_products_cats_imgs_accessories()
+    public function it_duplicates_products_cats_imgs_accessories_and_create_unique_slug_lang()
     {
         // prepare product with related classes
         $this->prepareFakeData(2);
@@ -258,12 +259,14 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         ];
         $mock_img_repo->create($img_data);
 
-        $this->r->duplicate(1);
+        $prod = $this->r->duplicate(1);
 
         // product duplicated
         $prod3 = $this->r->find(3);
         $prod1 = $this->r->find(1);
         $this->assertEquals($prod3->name, $prod1->name );
+        // check that i return a cloned product with no slug lang
+        $this->assertEquals($prod->id,$prod->slug_lang);
         // categories
         $cat_original = $prod3->categories()->get()->lists('id');
         $cat_associated = $prod3->categories()->get()->lists('id');
@@ -274,7 +277,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals($acc_original, $acc_associated);
         // images
         $image_original = App::make('product_image_repository')->getByProductId($prod1->id);
-        $image_associated = App::make('product_image_repository')->getByProductId($prod1->id);
+        $image_associated = App::make('product_image_repository')->getByProductId($prod3->id);
         $this->assertEquals(count($image_original), count($image_associated));
         $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
 

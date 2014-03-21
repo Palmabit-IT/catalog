@@ -25,7 +25,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
         $this->assertTrue($cat instanceof Category);
         $this->assertEquals($desc, $cat->description);
     }
-//
+
     public function testSearch()
     {
         $description = "description";
