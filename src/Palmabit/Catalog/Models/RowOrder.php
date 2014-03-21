@@ -24,7 +24,7 @@ class RowOrder extends Model
     {
         return $this->belongsTo('Palmabit\Catalog\Models\Product','product_id');
     }
-    
+
     /**
      * @param Product $product
      * @param Integer $quantity
