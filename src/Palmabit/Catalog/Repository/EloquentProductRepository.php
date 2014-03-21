@@ -145,8 +145,9 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $this->clearAllCache($slug);
 
-        if(isset($data["slug_lang"])) unset($data["slug_lang"]);
         $product = $this->find($id);
+
+        $this->updateSlugLang($data, $product);
 
         $product->update($data);
 
@@ -178,6 +179,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "price1" => $data["price1"],
                                     "price2" => $data["price2"],
                                     "price3" => $data["price3"],
+                                    "price4" => $data["price4"],
                                     'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
                                     'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
                                 ]);
@@ -293,6 +295,19 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $model = $this->find($id);
         return $model->accessories()->get();
+    }
+
+    public function duplicate($product_id)
+    {
+        //duplicate product
+        // transaction
+//        $clone_product = clone( $this->r->find($product_id) );
+//        $clone_product->slug_lang = $clone_product
+        //copy the cats
+
+        // copy the images
+
+        // copy the accessories
     }
 
 }

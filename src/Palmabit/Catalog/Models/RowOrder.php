@@ -49,13 +49,18 @@ class RowOrder extends Model
 
         if(! $authenticator->check()) throw new LoginRequiredException;
 
+        /**
+         * Calculate product price if buy more then the x quantity
+         */
         if($product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity)
         {
-            if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price3,$quantity);
+            if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price4,$quantity);
             if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price2,$quantity);
         }
-
-        if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price2,$quantity);
+        /**
+         * Calculate the price if you buy less then the x quantity or if the check is disabled
+         */
+        if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price3,$quantity);
         if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price1,$quantity);
     }
 

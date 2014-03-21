@@ -112,7 +112,8 @@ class ProductPresenterTest extends TestCase {
             "professional" => 1,
             "price1" => "12.22",
             "price2" => "8.21",
-            "price3" => "2.12",
+            "price3" => "5.12",
+            "price4" => "2.12",
             "quantity_pricing_quantity" => 10,
             "quantity_pricing_enabled" => 1
 
@@ -127,7 +128,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
-        $this->assertEquals("8.21", $presenter->price_small);
+        $this->assertEquals("5.12", $presenter->price_small);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -171,7 +172,8 @@ class ProductPresenterTest extends TestCase {
                                "professional" => 1,
                                "price1" => "12.22",
                                "price2" => "8.21",
-                               "price3" => "2.12",
+                               "price3" => "5.12",
+                               "price4" => "2.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
 
