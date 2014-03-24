@@ -23,6 +23,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     protected $is_admin;
 
+    protected static $copy_name = "_copia";
+
     public function __construct($is_admin = false, $model = null)
     {
         $this->is_admin = $is_admin;
@@ -333,6 +335,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         unset($cloned_product->slug);
         unset($cloned_product->id);
         $cloned_product->exists = false;
+        $this->updateProductName($cloned_product);
         // save
         $cloned_product->save();
         // set new temporary slug_lang
@@ -383,6 +386,15 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             $image->product_id = $cloned_product_id;
             $image->save();
         }
+    }
+
+    /**
+     * @param $cloned_product
+     */
+    protected function updateProductName($cloned_product)
+    {
+        // set new name with copy
+        $cloned_product->name.= self::$copy_name;
     }
 
 }

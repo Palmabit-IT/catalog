@@ -264,7 +264,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         // product duplicated
         $prod3 = $this->r->find(3);
         $prod1 = $this->r->find(1);
-        $this->assertEquals($prod3->name, $prod1->name );
+        // check that name contains copy
+        $expected_name = $prod1->name . "_copia";
+        $this->assertEquals($prod3->name, $expected_name );
         // check that i return a cloned product with no slug lang
         $this->assertEquals($prod->id,$prod->slug_lang);
         // categories

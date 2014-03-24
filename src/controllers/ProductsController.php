@@ -287,10 +287,10 @@ class ProductsController extends Controller {
         }
         catch(PalmabitExceptionsInterface $e)
         {
-            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',['slug_lang' => $slug_lang])->withErrors(new MessageBag(["duplication" => "Problema nella duplicazione del prodotto."]));
+            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists',['slug_lang' => $slug_lang])->withErrors(new MessageBag(["duplication" => "Problema nella duplicazione del prodotto."]));
         }
 
-        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $obj->slug_lang]);
+        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $obj->slug_lang])->withMessage("prodotto clonato con successo.");
     }
 
 }

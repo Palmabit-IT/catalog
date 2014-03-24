@@ -20,7 +20,7 @@ class CreateTableProduct extends Migration {
             $table->string('type');
             $table->string('name');
             // nullable only when you duplicate a product
-            $table->string('slug')->unique()->nullable();
+            $table->string('slug')->nullable();
 			$table->text('description', 60);
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
