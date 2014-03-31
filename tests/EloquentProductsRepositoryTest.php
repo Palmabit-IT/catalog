@@ -284,6 +284,50 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
 
     }
+    
+    /**
+     * @test
+     **/
+    public function it_gets_all_products_filtered_by_code_name_featured_public_offer_professional()
+    {
+        $this->prepareFakeSearchData();
+
+        $product = $this->r->all(["code" => "1234"]);
+        $this->assertEquals(1, $product->count());
+        $this->assertEquals("name1", $product->first()->name);
+
+        $product = $this->r->all(["name" => "name1"]);
+        $this->assertEquals(2, $product->count());
+        $this->assertEquals("name1", $product->first()->name);
+
+        $product = $this->r->all(["featured" => "1"]);
+        $this->assertEquals(1, $product->count());
+        $this->assertEquals(1, $product->first()->featured);
+
+        $product = $this->r->all(["public" => "1"]);
+        $this->assertEquals(1, $product->count());
+        $this->assertEquals(1, $product->first()->public);
+
+        $product = $this->r->all(["offer" => "1"]);
+        $this->assertEquals(1, $product->count());
+        $this->assertEquals(1, $product->first()->offer);
+
+        $product = $this->r->all(["professional" => "1"]);
+        $this->assertEquals(1, $product->count());
+        $this->assertEquals(1, $product->first()->professional);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_filter_producs_with_all_ignoring_empty_query_strings()
+    {
+        $this->prepareFakeSearchData();
+
+        $product = $this->r->all(["code" => ""]);
+        $this->assertEquals(2, $product->count());
+        $this->assertEquals("name1", $product->first()->name);
+    }
 
     /**
      * Creates n random products
@@ -308,6 +352,14 @@ class EloquentProductsRepositoryTest extends DbTestCase {
                                  "offer" => 0
                              ]);
         }
+    }
+
+    protected function prepareFakeSearchData()
+    {
+        Product::create([
+                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true]);
+        Product::create([
+                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false]);
     }
 
 }

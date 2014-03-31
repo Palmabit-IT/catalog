@@ -33,16 +33,52 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     }
 
     /**
-     * {@inheritdoc}
+     * @override
+     * @param array $input_filter
+     * @return mixed|void
      */
-    public function all()
+    public function all(array $input_filter = null)
     {
-        $per_page = Config::get('catalog::admin_per_page');
-        set_view_paginator('pagination::slider-3');
-        $products = $this->model->whereLang($this->getLang())
-            ->orderBy("order","name")
-            ->paginate($per_page);
-        return $products->isEmpty() ? null : $products;
+        $results_per_page = Config::get('catalog::admin_per_page');
+
+        $q = $this->model->whereLang($this->getLang())
+            ->orderBy("order","name");
+
+        $q = $this->applyFilters($input_filter, $q);
+
+        return $q->paginate($results_per_page);
+    }
+
+    /**
+     * @param array $input_filter
+     * @param       $q
+     * @return mixed
+     */
+    protected function applyFilters(array $input_filter = null, $q)
+    {
+        if($input_filter) foreach ($input_filter as $column => $value) {
+            if( $value !== '') switch ($column) {
+                case 'code':
+                    $q = $q->where('code', '=', $value);
+                    break;
+                case 'name':
+                    $q = $q->where('name', 'LIKE', "%{$value}%");
+                    break;
+                case 'featured':
+                    $q = $q->where('featured', '=', "{$value}");
+                    break;
+                case 'public':
+                    $q = $q->where('public', '=', "{$value}");
+                    break;
+                case 'offer':
+                    $q = $q->where('offer', '=', $value);
+                    break;
+                case 'professional':
+                    $q = $q->where('professional', '=', $value);
+                    break;
+            }
+        }
+        return $q;
     }
 
     public function getFirstOffersMax($max = 8)

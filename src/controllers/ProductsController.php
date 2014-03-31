@@ -67,7 +67,7 @@ class ProductsController extends Controller {
 
 	public function lists()
 	{
-        $products = $this->r->all();
+        $products = $this->r->all(Input::all());
         return View::make('catalog::products.show')->with(array("products" => $products));
 	}
 
