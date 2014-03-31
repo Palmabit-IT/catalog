@@ -40,12 +40,18 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function all(array $input_filter = null)
     {
         $results_per_page = Config::get('catalog::admin_per_page');
+        list($products_table, $product_category_table, $category_table) = $this->setupTableNames();
 
-        $q = $this->model->whereLang($this->getLang())
-            ->orderBy("order","DESC")
-            ->orderBy("name","ASC");
+        $q = DB::table($products_table)
+            ->leftJoin($product_category_table,$products_table.'.id', '=', $product_category_table.'.product_id')
+            ->leftJoin($category_table,$category_table.'.id', '=', $product_category_table.'.category_id')
+            // language check
+            ->where($products_table.'.lang', '=', $this->getLang())
+            // ordering
+            ->orderBy($products_table.".order","DESC")
+            ->orderBy($products_table.".name","ASC");
 
-        $q = $this->applyFilters($input_filter, $q);
+        $q = $this->applySearchFilters($input_filter, $products_table, $category_table, $q);
 
         return $q->paginate($results_per_page);
     }
@@ -55,27 +61,32 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      * @param       $q
      * @return mixed
      */
-    protected function applyFilters(array $input_filter = null, $q)
+    protected function applySearchFilters(array $input_filter = null, $products_table, $category_table, $q)
     {
         if($input_filter) foreach ($input_filter as $column => $value) {
             if( $value !== '') switch ($column) {
                 case 'code':
-                    $q = $q->where('code', '=', $value);
+                    $q = $q->where($products_table.'.code', '=', $value);
                     break;
                 case 'name':
-                    $q = $q->where('name', 'LIKE', "%{$value}%");
+                    $q = $q->where($products_table.'.name', 'LIKE', "%{$value}%");
                     break;
                 case 'featured':
-                    $q = $q->where('featured', '=', "{$value}");
+                    $q = $q->where($products_table.'.featured', '=', "{$value}");
                     break;
                 case 'public':
-                    $q = $q->where('public', '=', "{$value}");
+                    $q = $q->where($products_table.'.public', '=', "{$value}");
                     break;
                 case 'offer':
-                    $q = $q->where('offer', '=', $value);
+                    $q = $q->where($products_table.'.offer', '=', $value);
                     break;
                 case 'professional':
-                    $q = $q->where('professional', '=', $value);
+                    $q = $q->where($products_table.'.professional', '=', $value);
+                    break;
+                case 'category_id':
+                    $q = $q->where($category_table.'.id', '=', $value);
+                    break;
+                default:
                     break;
             }
         }
@@ -199,6 +210,18 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $product->update($data);
 
         return $product;
+    }
+
+    /**
+     * @return array
+     */
+    protected function setupTableNames()
+    {
+        $products_table         = 'product';
+        $product_category_table = 'product_category';
+        $category_table         = 'category';
+
+        return array($products_table, $product_category_table, $category_table);
     }
 
     /**

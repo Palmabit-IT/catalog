@@ -30,4 +30,6 @@ class Helper {
     {
         return Image::make(static::getPathFromInput($input_name))->resize($size, null, true);
     }
+
+
 } 

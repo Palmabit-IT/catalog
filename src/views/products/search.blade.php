@@ -22,6 +22,10 @@
             {{Form::label('professional', 'Professionale: ')}}
             {{Form::select('professional', ['' => '', 1 => 'Sì', 0 => 'No'], Input::get('professional',''), ["class" => "form-control"])}}
         </div>
+        <div class="form-group margin-bottom-20">
+            {{Form::label('category_id', 'Categoria: ')}}
+            {{Form::select('category_id', \App::make('category_repository')->getArrSelectCat(), Input::get('category_id',''), ["class" => "form-control"])}}
+        </div>
         {{Form::reset('Pulisci', ["class" => "btn btn-default"])}}
         {{Form::submit('Cerca', ["class" => "btn btn-primary"])}}
         {{Form::close()}}

@@ -316,6 +316,14 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals(1, $product->count());
         $this->assertEquals(1, $product->first()->professional);
     }
+    
+    /**
+     * @test
+     **/
+    public function it_gets_all_products_filtered_by_category()
+    {
+        
+    }
 
     /**
      * @test

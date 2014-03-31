@@ -16,6 +16,7 @@ use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Helpers\Helper as ImageHelper;
+use DB;
 
 class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface, TreeInterface
 {
@@ -100,7 +101,8 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function all()
     {
         $cat = $this->model->whereLang($this->getLang())
-            ->orderBy("description")
+            ->orderBy('depth','ASC')
+            ->orderBy("description",'ASC')
             ->get();
 
         return $cat->isEmpty() ? null : $cat->all();
@@ -201,5 +203,21 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $cat = $this->find($id);
         return (boolean)$cat->children()->count();
+    }
+
+    public function getArrSelectCat()
+    {
+        return array_merge([""=>""],$this->model->whereLang($this->getLang())->lists('description','id') );
+    }
+
+    /**
+     * @param $category_id
+     * @param $value
+     */
+    public function setDepth($category_id, $value)
+    {
+        DB::table('category')
+            ->where('id','=', $category_id)
+            ->update(["depth"=> $value]);
     }
 }
