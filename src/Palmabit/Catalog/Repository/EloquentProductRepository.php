@@ -42,7 +42,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $results_per_page = Config::get('catalog::admin_per_page');
 
         $q = $this->model->whereLang($this->getLang())
-            ->orderBy("order","name");
+            ->orderBy("order","DESC")
+            ->orderBy("name","ASC");
 
         $q = $this->applyFilters($input_filter, $q);
 
@@ -177,6 +178,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function searchByCatSlug($slug)
     {
        $cat = Category::whereSlug($slug)->with('product')
+           ->orderBy('order','name')
            ->get();
        return $cat->isEmpty() ? null : $cat->first();
     }
@@ -250,6 +252,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function findBySlugLang($slug_lang)
     {
         $product = $this->model->whereSlugLang($slug_lang)
+            ->orderBy('order','DESC')
+            ->orderBy('name','ASC')
             ->whereLang($this->getLang())
             ->get();
 

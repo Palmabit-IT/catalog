@@ -320,13 +320,16 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     /**
      * @test
      **/
-    public function it_filter_producs_with_all_ignoring_empty_query_strings()
+    public function it_filter_producs_with_all_ignoring_empty_query_strings_and_order_by_order_and_name()
     {
         $this->prepareFakeSearchData();
 
         $product = $this->r->all(["code" => ""]);
         $this->assertEquals(2, $product->count());
         $this->assertEquals("name1", $product->first()->name);
+        $this->assertEquals(2, $product->first()->order);
+
+
     }
 
     /**
@@ -357,9 +360,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     protected function prepareFakeSearchData()
     {
         Product::create([
-                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true]);
+                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 1]);
         Product::create([
-                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false]);
+                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 2]);
     }
 
 }
