@@ -284,7 +284,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
 
     }
-    
+
     /**
      * Creates n random products
      * @param $number

@@ -224,10 +224,10 @@ class ProductsController extends Controller {
         catch(PalmabitExceptionsInterface $e)
         {
             $errors = $form_model->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProdottoController@lists")->withInput()->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->withInput()->withErrors($errors);
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProdottoController@lists")->with(array("message"=>"Ordine modificato con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->with(array("message"=>"Ordine modificato con successo."));
     }
 
     public function postDetachProduct()
