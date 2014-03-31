@@ -29,7 +29,7 @@ class PresenterCategoryProductFactory
         if($this->r->hasChildrens($category->id))
         {
             $categories = ($category->children) ? $category->children()
-                ->orderBy('name')
+                ->orderBy('description')
                 ->paginate($per_page) : array();
             return ( ! empty($categories) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterCategory', $categories ) : new Collection();
         }
