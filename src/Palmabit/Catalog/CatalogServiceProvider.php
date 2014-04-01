@@ -1,6 +1,7 @@
 <?php namespace Palmabit\Catalog;
 
 use Illuminate\Support\ServiceProvider;
+use Palmabit\Catalog\Repository\EloquentOrderRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 use Palmabit\Catalog\Repository\EloquentCategoryRepository;
@@ -50,6 +51,10 @@ class CatalogServiceProvider extends ServiceProvider {
 
         $this->app->bind('product_image_repository', function ($app) {
             return new EloquentProductImageRepository();
+        });
+
+        $this->app->bind('order_repository', function ($app) {
+            return new EloquentOrderRepository();
         });
     }
 

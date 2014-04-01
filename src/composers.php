@@ -14,10 +14,11 @@ View::composer('catalog::category.*', function($view){
 /**
  * Passa le voci di menu al pannello admin prodotti
  */
-View::composer(['catalog::products.*'], function($view){
+View::composer(['catalog::products.*', 'catalog::orders.*'], function($view){
     $view->with('sidebar_items', array(
                                 "Lista prodotti" => URL::to('/admin/products/lists'),
-                                "Aggiungi prodotti" => URL::to('/admin/products/edit')
+                                "Aggiungi prodotti" => URL::to('/admin/products/edit'),
+                                "Lista Ordini" => URL::to('/admin/orders/lists')
                            ));
 });
 // elementi presenti nel carrello
