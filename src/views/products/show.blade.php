@@ -25,7 +25,7 @@
             @if(! $products->isEmpty() )
             @foreach($products as $product)
                 <li class="list-group-item">
-                    {{$product->name}}
+                    {{$product->name}} - {{$product->description}}
                     <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class="pull-right"><i class="glyphicon glyphicon-plus"></i> duplica</a>
                     <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}" class="pull-right cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i> cancella</a>
                     <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>

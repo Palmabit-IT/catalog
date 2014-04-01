@@ -295,6 +295,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $product = $this->r->all(["code" => "1234"]);
         $this->assertEquals(1, $product->count());
         $this->assertEquals("name1", $product->first()->name);
+        $this->assertEquals("1", $product->first()->id);
 
         $product = $this->r->all(["name" => "name1"]);
         $this->assertEquals(2, $product->count());
@@ -316,27 +317,46 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals(1, $product->count());
         $this->assertEquals(1, $product->first()->professional);
     }
-    
+
     /**
      * @test
      **/
-    public function it_gets_all_products_filtered_by_category()
+    public function it_gets_all_products_ordered_by_category_getting_only_one_row_per_product()
     {
-        
+        $this->createProductsForSearch();
+        $id = 1;
+        $this->associateMultipleCategoryToProduct($id);
+
+        $product = $this->r->all([]);
+        $this->assertEquals(2, $product->count());
     }
 
     /**
      * @test
      **/
-    public function it_filter_producs_with_all_ignoring_empty_query_strings_and_order_by_order_and_name()
+    public function it_gets_all_products_filtered_for_category()
+    {
+        $this->createProductsForSearch();
+        $id = 1;
+        $this->associateMultipleCategoryToProduct($id);
+
+        $product = $this->r->all(["category_id" => 1]);
+        $this->assertEquals("1234", $product->first()->code);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_filter_producs_with_all_ignoring_empty_query_strings_and_order_by_categorydescription_order_and_name()
     {
         $this->prepareFakeSearchData();
 
+        //@todo check that data is ordered by cat and show it in the view
         $product = $this->r->all(["code" => ""]);
         $this->assertEquals(2, $product->count());
-        $this->assertEquals("name1", $product->first()->name);
+        // check that ordering by cat is the most important
+        $this->assertEquals("slug1", $product->first()->slug);
         $this->assertEquals(2, $product->first()->order);
-
 
     }
 
@@ -367,10 +387,38 @@ class EloquentProductsRepositoryTest extends DbTestCase {
 
     protected function prepareFakeSearchData()
     {
+        $this->createProductsForSearch();
+
+        $this->associateCategoryForSearch();
+    }
+
+    protected function createProductsForSearch()
+    {
         Product::create([
-                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 1]);
+                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 2]);
         Product::create([
-                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 2]);
+                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 1]);
+    }
+
+    protected function associateCategoryForSearch()
+    {
+        App::make('category_repository')->create([
+                                                 "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1", "lang" => "it",]);
+        App::make('product_repository')->associateCategory(1, 1);
+
+        App::make('category_repository')->create([
+                                                 "description" => "desc_cat_2", "slug" => "slug_desc_2", "slug_lang" => "slug_2", "lang" => "it",]);
+        App::make('product_repository')->associateCategory(2, 2);
+    }
+
+    protected function associateMultipleCategoryToProduct($id)
+    {
+        App::make('category_repository')->create([
+                                                 "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1", "lang" => "it",]);
+        App::make('product_repository')->associateCategory($id, 1);
+        App::make('category_repository')->create([
+                                                 "description" => "desc_cat_1", "slug" => "slug_desc_2", "slug_lang" => "slug_1", "lang" => "it",]);
+        App::make('product_repository')->associateCategory($id, 2);
     }
 
 }

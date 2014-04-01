@@ -48,10 +48,15 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             // language check
             ->where($products_table.'.lang', '=', $this->getLang())
             // ordering
+            ->orderBy($category_table.'.description','ASC')
             ->orderBy($products_table.".order","DESC")
-            ->orderBy($products_table.".name","ASC");
+            ->orderBy($products_table.".name","ASC")
+            // get only a line per product
+            ->groupBy($products_table.'.id');
 
         $q = $this->applySearchFilters($input_filter, $products_table, $category_table, $q);
+
+        $q = $this->createAllSelect($q, $products_table, $category_table);
 
         return $q->paginate($results_per_page);
     }
@@ -90,6 +95,19 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                     break;
             }
         }
+        return $q;
+    }
+
+    /**
+     * @param $q
+     * @param $user_table_name
+     * @param $profile_table_name
+     * @return mixed
+     */
+    protected function createAllSelect($q, $products_table, $category_table)
+    {
+        $q = $q->select($products_table . '.*', $category_table.'.description');
+
         return $q;
     }
 
