@@ -379,7 +379,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
                                  "description" => $faker->text(10),
                                  "description_long" => $faker->text(100),
                                  "featured" => $key == 5 ? true : false,
-                                 "public" => rand(0,1),
+                                 "public" => 1,
                                  "offer" => 0
                              ]);
         }

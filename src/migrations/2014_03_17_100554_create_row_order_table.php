@@ -20,6 +20,7 @@ class CreateRowOrderTable extends Migration {
             $table->integer('product_id');
             $table->integer('quantity');
             $table->decimal("total_price", 19,2);
+            $table->string('slug_lang')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -115,6 +115,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $products = $this->model->whereLang($this->getLang())
             ->orderBy("offer","DESC")
+            ->where('public','=','1')
             ->take($max)
             ->get();
         return $products->isEmpty() ? null : $products;
@@ -128,7 +129,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function getOnlyFirstOffersMax($max = 8)
     {
         $products = $this->model->whereLang($this->getLang())
-            ->where("offer","1")
+            ->where("offer",'=',"1")
+            ->where('public','=','1')
             ->orderBy("offer","DESC")
             ->take($max)
             ->get();
@@ -145,6 +147,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $products = $this->model->whereLang($this->getLang())
             ->where("featured","1")
             ->orderBy("offer","DESC")
+            ->where('public','=','1')
             ->take($max)
             ->get();
         return $products->isEmpty() ? null : $products;
@@ -158,6 +161,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function findBySlug($slug)
     {
         $product = $this->model->whereSlug($slug)
+            ->where('public','=','1')
             ->rememberForever("product-{$slug}-".$this->getLang())
             ->get();
 
@@ -174,6 +178,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function featuredProducts($max = 4)
     {
         $products = $this->model->whereFeatured(1)
+            ->where('public','=','1')
             ->whereLang($this->getLang())
             ->orderBy($this->model->getCreatedAtColumn())
             ->take($max)
@@ -192,6 +197,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $products = $this->model->whereOffer(1)
             ->whereLang($this->getLang())
+            ->where('public','=','1')
             ->orderBy($this->model->getCreatedAtColumn())
             ->take($max)
             ->rememberForever('featured-'.$this->getLang())

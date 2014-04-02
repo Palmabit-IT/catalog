@@ -28,7 +28,7 @@ class PathHierarchyTest extends DbTestCase {
 
         $node_array = $this->path_hieararchy_helper->getHierarchyPathArray($this->product);
 
-        $expected_nodes = [$this->product, $this->category_bottom, $this->category_top];
+        $expected_nodes = [$this->category_top, $this->category_bottom, $this->product];
 
         // compare every category
         $this->assertEquals($expected_nodes[0]->toArray(),$node_array[0]->toArray());

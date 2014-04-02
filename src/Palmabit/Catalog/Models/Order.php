@@ -65,9 +65,23 @@ class Order extends Model
     public function addRow(Product $product, $quantity, RowOrder $row_order = null)
     {
         $row = $row_order ? $row_order : new RowOrder();
+
+        $quantity = $this->clearDuplicatesAndUpdateQuantity($product, $quantity);
+
         $row->setItem($product, $quantity);
 
         $this->row_orders->push($row);
+    }
+
+    public function clearDuplicatesAndUpdateQuantity($product, $quantity)
+    {
+        foreach ($this->row_orders as $key => $row_order) if($row_order->slug_lang == $product->slug_lang)
+        {
+            $this->row_orders->forget($key);
+            $quantity+= $row_order->quantity;
+        }
+
+        return $quantity;
     }
 
     /**
@@ -180,6 +194,5 @@ class Order extends Model
     {
         return $this->errors;
     }
-
 
 }

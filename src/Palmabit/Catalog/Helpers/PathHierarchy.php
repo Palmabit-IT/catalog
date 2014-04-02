@@ -35,7 +35,7 @@ class PathHierarchy implements PathHierarchyInterface
             $child = $parent;
         }
 
-        return $this->hierarchy_nodes;
+        return array_reverse($this->hierarchy_nodes);
     }
 
     protected function getParentNode($child)

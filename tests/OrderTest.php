@@ -1,4 +1,5 @@
 <?php  namespace Palmabit\Catalog\Tests;
+
 use Mockery as m;
 use App;
 use Carbon\Carbon;
@@ -108,6 +109,57 @@ class OrderTest extends DbTestCase
         $row = RowOrder::first();
         $this->assertEquals(10, $row->product_id);
         $this->assertEquals($order->id, $order->getRowOrders()->first()->order_id);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_clear_existing_product_and_update_quantity()
+    {
+        $order = new Order;
+        $product = $this->createAndSaveProduct();
+
+        $first_quantity = 10;
+        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')
+            ->makePartial()
+            ->shouldReceive('setItem')
+            ->once()
+            ->with($product, $first_quantity)
+            ->andReturn(true)
+            ->getMock();
+
+        $order->addRow($product, $first_quantity, $mock_row);
+        $second_quantity = 20;
+        $mock_row->quantity = $first_quantity;
+        $mock_row->slug_lang = $product->slug_lang;
+        $quantity = $order->clearDuplicatesAndUpdateQuantity($product, $second_quantity);
+
+        $this->assertEquals(30, $quantity);
+        $this->assertEquals(0, $order->getRowOrders()->count());
+    }
+
+    protected function createAndSaveProduct()
+    {
+        return Product::create([
+                    "description" => "desc",
+                    "code" => "code",
+                    "name" => "name",
+                    "slug" => "slug",
+                    "slug_lang" => "",
+                    "description_long" => "",
+                    "featured" => 1,
+                    "public" => 1,
+                    "offer" => 1,
+                    "stock" => 4,
+                    "with_vat" => 1,
+                    "video_link" => "http://www.google.com/video/12312422313",
+                    "professional" => 1,
+                    "price1" => "12.22",
+                    "price2" => "8.21",
+                    "price3" => "2.12",
+                    "quantity_pricing_quantity" => 10,
+                    "quantity_pricing_enabled" => 1
+                    ]);
     }
 
     /**
