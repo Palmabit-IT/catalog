@@ -19,7 +19,8 @@
         "palmabit/library" : "dev-superfx",
         "palmabit/multilanguage" : "dev-superfx",
         "palmabit/authentication" : "dev-superfx",
-        "jacopo/laravel-single-table-inheritance": "dev-master"
+        "jacopo/laravel-single-table-inheritance": "dev-master",
+        "jacopo/bootstrap-3-table-generator": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "0.9.0",

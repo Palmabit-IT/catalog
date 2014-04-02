@@ -3,6 +3,7 @@ use App, Controller, View;
 use Palmabit\Catalog\Presenters\OrderPresenter;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Presenters\PresenterCollection;
+use Palmabit\Library\Presenters\PresenterPagination;
 
 /**
  * Class OrderController
@@ -25,7 +26,7 @@ class OrderController extends Controller
     public function lists()
     {
         $users = $this->r->all();
-        $presenter = new PresenterCollection('Palmabit\Catalog\Presenters\OrderPresenter', $users);
+        $presenter = new PresenterPagination('Palmabit\Catalog\Presenters\OrderPresenter', $users);
         return View::make('catalog::orders.show')->with('orders', $presenter);
     }
 

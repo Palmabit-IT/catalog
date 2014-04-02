@@ -1,6 +1,6 @@
 @extends('catalog::layouts.base-2-cols-multilanguage')
-
-@section('title')
+<?php use Jacopo\Bootstrap3Table\BootstrapTable; ?>
+    @section('title')
 {{$app_name}} Admin area: ordine
 @stop
 @section('content')
@@ -17,17 +17,27 @@
 @endif
 {{-- Lists orders --}}
 <ul class="list-group">
-    @if(! empty($orders))
-    @foreach($orders as $order)
-    <li class="list-group-item">
-        {{$order->author_email}}
-        {{$order->date}}
-        {{$order->total_price}} €
-        <a href="{{URL::action('Palmabit\Catalog\Controllers\OrderController@show',['id' => $order->id])}}" class="pull-right"><i class="glyphicon glyphicon-briefcase"></i> dettaglio</a>
-            <span class="pull-right margin-right-30">
-        <span class="clearfix"></span>
-    </li>
-    @endforeach
+@if(! empty($orders))
+<?php
+
+    $table = new BootstrapTable();
+    $table->setConfig(["table-striped" => true]);
+    $table->setHeader(["Utente","Data ordine", "Importo totale",""] );
+
+    foreach($orders as $order)
+    {
+        $table->addRows([
+                        $order->author_email,
+                        $order->date,
+                        $order->total_price,
+                        link_to_action('Palmabit\Catalog\Controllers\OrderController@show', 'dettaglio', ['id' => $order->id])
+                        ]);
+    }
+
+    echo $table;
+
+    echo $orders->getLinks();
+?>
     @else
     <h5>Non ho trovato ordini.</h5>
     @endif

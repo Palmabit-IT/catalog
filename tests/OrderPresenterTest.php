@@ -34,18 +34,21 @@ class OrderPresenterTest extends DbTestCase {
     /**
      * @test
      **/
-    public function it_show_author_email()
+    public function it_show_author_info()
     {
         $date = Carbon::now();
         $order = $this->prepareOrderData($date);
 
         $user_stub = new \StdClass;
         $expected_email = $this->createMockAuthenticatorFindById($user_stub);
+        $expected_id = 1;
 
         $presenter = new OrderPresenter($order);
         $author_email = $presenter->author_email;
+        $author_id = $presenter->author->id;
 
         $this->assertEquals($expected_email,$author_email);
+        $this->assertEquals($expected_id,$author_id);
     }
 
 
@@ -102,6 +105,7 @@ class OrderPresenterTest extends DbTestCase {
     {
         $expected_email   = "mail@mail.com";
         $user_stub->email = $expected_email;
+        $user_stub->id = 1;
 
         $mock_authenticator = m::mock('StdClass')->shouldReceive('findById')->andReturn($user_stub)->getMock();
         App::instance('authenticator', $mock_authenticator);

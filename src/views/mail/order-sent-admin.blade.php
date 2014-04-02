@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php use Palmabit\Catalog\Models\Product; ?>
-<?php $profile_info = Session::get('profile_info'); ?>
+<?php $profile_info = (object)Session::get('profile_info'); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">

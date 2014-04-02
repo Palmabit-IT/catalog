@@ -8,7 +8,7 @@
     {{-- Lista dei prodotti --}}
     <h3>Catalogo prodotti</h3>
     <div class="col-md-12">
-        <div class="col-md-8">
+        <div class="col-md-9">
             {{-- messaggi vari --}}
             <?php $message = Session::get('message'); ?>
             @if( isset($message) )
@@ -50,7 +50,7 @@
                 {{ isset($products) ? $products->appends(Input::except(['page']) )->links() : ''}}
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             @include('catalog::products.search')
         </div>
     </div>

@@ -38,14 +38,22 @@ class OrderPresenter extends AbstractPresenter
     {
         $european_date = 'd/m/y';
 
-        return $this->resource->date->format($european_date);
+        $date = $this->resource->date;
+        return $date ? $date->format($european_date) : '';
     }
 
     public function author_email()
     {
-        $user = $this->authenticator->findById($this->resource->user_id);
+        $user = $this->author();
 
         return $user->email;
+    }
+
+    public function author()
+    {
+        $user = $this->authenticator->findById($this->resource->user_id);
+
+        return $user;
     }
 
 }

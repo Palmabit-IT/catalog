@@ -9,7 +9,7 @@
 @if($errors && ! $errors->isEmpty() )
     <div class="alert alert-danger">Errore nella visualizzazione del dettaglio ordine.</div>
 @else
-    <p><b>Utente:</b> {{$order_presenter->author_email}} <b>Data ordine:</b> {{$order_presenter->date}} <b>Importo totale: </b>{{$order_presenter->total_price}} €</p>
+    <p><b>Utente:</b> <a href="{{URL::action('Palmabit\Authentication\Controllers\UserController@editUser',['id' => $order_presenter->author->id])}}">{{$order_presenter->author_email}}</a> <b>Data ordine:</b> {{$order_presenter->date}} <b>Importo totale: </b>{{$order_presenter->total_price}} €</p>
     <h3>Righe ordine:</h3>
     <ul class="list-group">
     @foreach($order->row_orders()->get() as $row)

@@ -1,6 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests; 
 use Mockery as m;
 use App;
+use Palmabit\Authentication\Models\User;
 use Palmabit\Catalog\Models\Order;
 
 /**
@@ -30,12 +31,9 @@ class OrderControllerTest extends DbTestCase {
      **/
     public function it_show_detail_of_a_product()
     {
-        $mock_repo = m::mock('StdClass')
-            ->shouldReceive('find')
-            ->once()
-            ->andReturn(new Order)
-            ->getMock();
-        App::instance('order_repository', $mock_repo);
+        $this->mockOrderRepository();
+
+        $this->mockAuthenticatorFindById();
 
         $this->action('GET', 'Palmabit\Catalog\Controllers\OrderController@show',['id' => 1]);
 
@@ -43,6 +41,20 @@ class OrderControllerTest extends DbTestCase {
         $this->assertViewHas('order_presenter');
         $this->assertViewHas('order');
     }
-    
+
+    protected function mockOrderRepository()
+    {
+        $order = new Order();
+        $order->date = \Carbon\Carbon::now();
+        $mock_repo = m::mock('StdClass')->shouldReceive('find')->once()->andReturn(new Order($order))->getMock();
+        App::instance('order_repository', $mock_repo);
+    }
+
+    protected function mockAuthenticatorFindById()
+    {
+        $mock_auth = m::mock('StdClass')->shouldReceive('findById')->andReturn(new User())->getMock();
+        App::instance('authenticator', $mock_auth);
+    }
+
 }
  
