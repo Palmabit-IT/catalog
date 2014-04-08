@@ -62,16 +62,17 @@ class EloquentOrderRepositoryTest extends \PHPUnit_Framework_TestCase {
     public function it_get_order_by_order_id()
     {
         DB::table('order')->insert([
-                                   "user_id" => 1,
+                                   "user_id" => 2,
                                    "date" => Carbon::now(),
                                    "completed" => 1,
                                    "created_at" => Carbon::now(),
                                    "updated_at" => Carbon::now(),
                                    ]);
-        $user_id = 1;
+        $user_id = 2;
         $orders = $this->order_repository->getOrderByUserId($user_id);
 
         $this->assertCount(1, $orders);
+        $this->assertEquals($user_id, $orders->first()->user_id);
     }
 
 }
