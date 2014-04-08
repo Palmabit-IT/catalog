@@ -30,3 +30,12 @@ View::composer(['*'], function($view){
 
     $view->with('row_orders', $row_order);
 });
+
+/**
+ * Send to the view the logged user
+ */
+View::composer('*', function ($view){
+    $logged_user = App::make('authenticator')->getLoggedUser();
+
+    $view->with('logged_user', $logged_user );
+});

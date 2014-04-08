@@ -11,6 +11,7 @@ use App, L;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Palmabit\Catalog\Presenters\OrderPresenter;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\ValidationException;
 
@@ -195,4 +196,20 @@ class Order extends Model
         return $this->errors;
     }
 
+    public function calculateTotalAmount()
+    {
+        $total_amount = 0;
+
+        foreach ($this->row_orders()->get() as $row_order) {
+            $total_amount+= $row_order->total_price;
+        }
+
+        return $total_amount;
+    }
+
+    public function getPresenter()
+    {
+        return new OrderPresenter($this);
+    }
+    
 }

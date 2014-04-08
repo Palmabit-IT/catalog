@@ -42,6 +42,7 @@ class CreateTableProduct extends Migration {
             // nullable when you duplicate a product
             $table->string('slug_lang')->nullable();
             $table->string('lang',2)->default('it');
+            $table->unique(array('slug_lang', 'lang'));
             $table->timestamps();
         });
     }

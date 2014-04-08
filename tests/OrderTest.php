@@ -1,7 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests;
 
 use Mockery as m;
-use App;
+use App, DB;
 use Carbon\Carbon;
 use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Authentication\Models\User;
@@ -271,6 +271,48 @@ class OrderTest extends DbTestCase
 
     /**
      * @test
+     **/
+    public function it_calculate_total_amount()
+    {
+        $order_repository = App::make('order_repository');
+        DB::table('order')->insert([
+                                  "user_id" => 1,
+                                  "date" => Carbon::now(),
+                                  "completed" => 1,
+                                  "created_at" => Carbon::now(),
+                                  "updated_at" => Carbon::now(),
+                                  ]);
+
+        $this->createTwoOrderWithPrice(11.00,21.00);
+        $expected_total = 32.00;
+
+        $order_id =1;
+        $order = $order_repository->find($order_id);
+        $total = $order->calculateTotalAmount();
+
+        $this->assertEquals($expected_total, $total);
+    }
+
+    private function createTwoOrderWithPrice($price1, $price2)
+    {
+        $fist_row = [
+            "order_id" => 1,
+            "product_id" => 1,
+            "quantity" => 1,
+            "total_price" => $price1
+        ];
+        $second_row = [
+            "order_id" => 1,
+            "product_id" => 1,
+            "quantity" => 1,
+            "total_price" => $price2
+        ];
+        RowOrder::create($fist_row);
+        RowOrder::create($second_row);
+    }
+
+    /**
+     * @test
      * @expectedException Palmabit\Library\Exceptions\ValidationException
      **/
     public function it_throws_exception_on_save_if_validation_fails()
@@ -354,6 +396,19 @@ class OrderTest extends DbTestCase
         $mock_row->total_price = 1.00;
         $order->addRow($product, 10, $mock_row);
         $order->save();
+    }
+
+    /**
+     * @test
+     **/
+    public function it_getsThePresenterOfTheOrder()
+    {
+        $order = new Order;
+
+        $presenter = $order->getPresenter();
+
+        $this->assertInstanceOf('Palmabit\Catalog\Presenters\OrderPresenter', $presenter);
+        $this->assertEquals($order, $presenter->getResource());
     }
 
 }

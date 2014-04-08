@@ -33,7 +33,7 @@ class OrderControllerTest extends DbTestCase {
     {
         $this->mockOrderRepository();
 
-        $this->mockAuthenticatorFindById();
+        $this->mockAuthenticatorFindByIdAndGetLoggedUser();
 
         $this->action('GET', 'Palmabit\Catalog\Controllers\OrderController@show',['id' => 1]);
 
@@ -50,9 +50,17 @@ class OrderControllerTest extends DbTestCase {
         App::instance('order_repository', $mock_repo);
     }
 
-    protected function mockAuthenticatorFindById()
+    protected function mockAuthenticatorFindByIdAndGetLoggedUser()
     {
-        $mock_auth = m::mock('StdClass')->shouldReceive('findById')->andReturn(new User())->getMock();
+        $user_stub = new \StdClass;
+        $user_stub->email = "";
+
+        $mock_auth = m::mock('Palmabit\Authentication\Classes\SentryAuthenticator')->makePartial()
+        ->shouldReceive('findById')
+            ->andReturn(new User())
+            ->shouldReceive('getLoggedUser')
+            ->andReturn($user_stub)
+            ->getMock();
         App::instance('authenticator', $mock_auth);
     }
 
