@@ -12,6 +12,8 @@
     <div class="col-md-12">
         <h3>Anagrafica prodotto</h3>
     </div>
+    <?php dd(Session::all()); ?>
+
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
         {{Form::hidden("slug_lang", $slug_lang)}}

@@ -34,15 +34,15 @@
         },
         {
             "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/authenticator.git"
+            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/authenticator.git"
         },
         {
             "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/library.git"
+            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/library.git"
         },
         {
             "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/multilanguage.git"
+            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/multilanguage.git"
         }
     ],
     "autoload": {
