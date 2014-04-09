@@ -149,7 +149,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             ->orderBy("offer","DESC")
             ->where('public','=','1')
             ->take($max)
-            ->gect();
+            ->get();
         return $products->isEmpty() ? null : $products;
     }
 

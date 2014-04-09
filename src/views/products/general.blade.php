@@ -12,7 +12,7 @@
     <div class="col-md-12">
         <h3>Anagrafica prodotto</h3>
     </div>
-    <?php dd(Session::all()); ?>
+    <?php var_dump(Session::all()); ?>
 
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
@@ -103,6 +103,7 @@
         {{Form::close()}}
     </div>
 </div>
+<?php dd(Session::all()); ?>
 
 @section('footer_scripts')
 @parent
