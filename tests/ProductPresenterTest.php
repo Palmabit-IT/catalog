@@ -178,7 +178,6 @@ class ProductPresenterTest extends TestCase {
                                "quantity_pricing_enabled" => 1
 
                                ]);
-        $presenter = new PresenterProducts($product);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -188,6 +187,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
+        $presenter = new PresenterProducts($product);
         $this->assertEquals("2.12", $presenter->price_big);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
@@ -201,6 +201,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
+        $presenter = new PresenterProducts($product);
         $this->assertEquals("8.21", $presenter->price_big);
     }
     
@@ -240,5 +241,25 @@ class ProductPresenterTest extends TestCase {
         $presenter = new PresenterProducts($product);
         $this->assertEquals("name", $presenter->name);
         $this->assertEquals("desc", $presenter->description);
+    }
+    
+    /**
+     * @test
+     **/
+    public function it_show_IfCanBeBoughtByTheCurrentUser()
+    {
+        $authenticator = m::mock('StdClass')
+            ->shouldReceive("check")
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->andReturn(true)
+            ->getMock();
+        App::instance('authenticator', $authenticator);
+
+        $presenter = new PresenterProducts([]);
+        $can_buy = $presenter->canBeBought();
+
+        $this->assertTrue($can_buy);
     }
 }

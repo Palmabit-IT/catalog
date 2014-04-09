@@ -12,13 +12,23 @@ use Palmabit\Authentication\Exceptions\GroupNotFoundException;
 use Palmabit\Library\Presenters\AbstractPresenter;
 
 class PresenterProducts extends AbstractPresenter implements ProductCategoryPresenterInterface{
-use ViewHelper;
+    use ViewHelper;
+
+    protected $group_professional;
+
+    protected $group_logged;
+
+    protected $authenticator;
 
     protected $default_img_path;
 
     public function __construct($resource)
     {
         $this->default_img_path = public_path()."/packages/palmabit/catalog/img/no-photo.png";
+        $this->group_professional = Config::get('catalog::groups.professional_group_name');
+        $this->group_logged = Config::get('catalog::groups.logged_group_name');
+        $this->authenticator = App::make('authenticator');
+
         return parent::__construct($resource);
     }
     /**
@@ -129,19 +139,15 @@ use ViewHelper;
      */
     public function price_big()
     {
-        $group_professional = Config::get('catalog::groups.professional_group_name');
-        $group_logged = Config::get('catalog::groups.logged_group_name');
-        $authenticator = App::make('authenticator');
-
         // if not logged no price
-        if ( ! $authenticator->check()) return '';
+        if ( ! $this->authenticator->check()) return '';
 
         try
         {
             if ($this->resource->quantity_pricing_enabled)
             {
-                if($authenticator->hasGroup($group_professional)) return $this->resource->price4;
-                elseif($authenticator->hasGroup($group_logged)) return $this->resource->price2;
+                if($this->authenticator->hasGroup($this->group_professional)) return $this->resource->price4;
+                elseif($this->authenticator->hasGroup($this->group_logged)) return $this->resource->price2;
             }
             else
             {
@@ -177,5 +183,21 @@ use ViewHelper;
     public function getLink()
     {
         return URLT::action('ProductController@show', ['slug_lang' => $this->resource->slug_lang] );
+    }
+
+    public function canBeBought()
+    {
+        // if not logged no price
+        if ( ! $this->authenticator->check()) return false;
+
+        return $this->hasGroupToBuyProduct();
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasGroupToBuyProduct()
+    {
+        return $this->authenticator->hasGroup($this->group_logged) || $this->authenticator->hasGroup($this->group_professional);
     }
 }
