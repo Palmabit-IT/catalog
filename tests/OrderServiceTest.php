@@ -77,7 +77,7 @@ class OrderServiceTest extends DbTestCase {
      **/
     public function it_saves_db_data_on_commit_and_clear_session()
     {
-        $service = new OrderService();
+        $service = new OrderServiceStub();
         $product = Product::create([
                                "description" => "desc",
                                "code" => "code",
@@ -111,6 +111,8 @@ class OrderServiceTest extends DbTestCase {
             ->andReturn(true)
             ->shouldReceive('getLoggedUser')
             ->andReturn($user_stub)
+            ->shouldReceive('getLoggedUserProfile')
+            ->andReturn([])
             ->getMock();
         $quantity = 10;
         App::instance('authenticator', $mock_auth);
@@ -136,7 +138,12 @@ class OrderServiceTest extends DbTestCase {
     {
         $user_stub = new User();
         $user_stub->id = 1;
-        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        $mock_auth = m::mock('StdClass')
+            ->shouldReceive('getLoggedUser')
+            ->andReturn($user_stub)
+            ->shouldReceive('getLoggedUserProfile')
+            ->andReturn([])
+            ->getMock();
         App::instance('authenticator', $mock_auth);
         $service = new OrderService();
         $mock_mailer = m::mock('Palmabit\Library\Email\MailerInterface')->shouldReceive('sendTo')->andReturn(true)->getMock();
@@ -156,7 +163,12 @@ class OrderServiceTest extends DbTestCase {
     {
         $user_stub = new User();
         $user_stub->id = 1;
-        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        $mock_auth = m::mock('StdClass')
+            ->shouldReceive('getLoggedUser')
+            ->andReturn($user_stub)
+            ->shouldReceive('getLoggedUserProfile')
+            ->andReturn([])
+            ->getMock();
         App::instance('authenticator', $mock_auth);
         $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->andReturn([""])->getMock();
         App::instance('authentication_helper', $mock_auth_helper);
@@ -184,7 +196,12 @@ class OrderServiceTest extends DbTestCase {
     {
         $user_stub = new User();
         $user_stub->id = 1;
-        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->andReturn($user_stub)->getMock();
+        $mock_auth = m::mock('StdClass')
+            ->shouldReceive('getLoggedUser')
+            ->andReturn($user_stub)
+            ->shouldReceive('getLoggedUserProfile')
+            ->andReturn([])
+            ->getMock();
         App::instance('authenticator', $mock_auth);
         $mock_order = m::mock('Palmabit\Catalog\Models\Order')->makePartial()->shouldReceive('save')->getMock();
         $service = new OrderServiceStub($mock_order);
@@ -198,6 +215,7 @@ class OrderServiceTest extends DbTestCase {
         App::instance('palmamailer', $mock_mailer);
         $mock_auth_helper = m::mock('StdClass')->shouldReceive('getNotificationRegistrationUsersEmail')->once()->andReturn([""])->getMock();
         App::instance('authentication_helper', $mock_auth_helper);
+
         $gotcha = false; // if get the exceptions
         try
         {
@@ -207,6 +225,7 @@ class OrderServiceTest extends DbTestCase {
         {
             $gotcha = true;
         }
+
         $this->assertTrue($gotcha);
         $this->assertFalse($service->getErrors()->isEmpty());
     }
@@ -289,9 +308,14 @@ class OrderServiceTest extends DbTestCase {
 
 class OrderServiceStub extends OrderService
 {
-    public function __construct($order)
+    public function __construct($order = null)
     {
         parent::__construct();
-        $this->order = $order;
+        if($order) $this->order = $order;
+    }
+
+    private function getLoggedUserProfile()
+    {
+        return [];
     }
 }

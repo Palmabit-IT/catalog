@@ -94,7 +94,7 @@ class RowOrderTest extends DbTestCase {
 
     /**
      * @test
-     * @expectedException Palmabit\Authentication\Exceptions\LoginRequiredException
+     * @expectedException \Palmabit\Authentication\Exceptions\LoginRequiredException
      **/
     public function it_throws_exception_on_calculate_price_if_user_not_logged_in()
     {

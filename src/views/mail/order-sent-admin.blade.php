@@ -11,29 +11,43 @@
     Grazie, {{ $body['email'] }}
     <strong>Ordine numero {{$body['order']->id}}</strong>
     <br/>
+    <h3>Dettagli cliente: </h3>
+    <ul>
+        <li>
+            <?php $user_profile = $body['user_profile']; ?>
+            <strong>Codice cliente: </strong> {{$user_profile->code}}
+        </li>
+        <li>
+            <strong>Tipo utente: </strong> {{$user_profile->profile_type}}
+       </li>
+        <li>
+            <strong>Ragione sociale: </strong> {{$user_profile->company}}
+        </li>
+    </ul>
     <h3>Dettagli ordine: </h3>
     @foreach($body['order']->row_orders()->get() as $order)
         <ul>
             <?php $product = Product::find($order->product_id); ?>
             <li>
-                <strong>Nome</strong>{{$product->name}}
+                <strong>Nome: </strong>{{$product->name}}
             </li>
             <li>
-                <strong>Code</strong>{{$product->code}}
+                <strong>Code: </strong>{{$product->code}}
             </li>
             <li>
-                <strong>Quantità</strong>{{$order->quantity}}
+                <strong>Quantità: </strong>{{$order->quantity}}
             </li>
             <li>
-                <strong>Prezzo unitario</strong>{{round($order->total_price / $order->quantity, 2)}}
+                <strong>Prezzo unitario: </strong>{{round($order->total_price / $order->quantity, 2)}}
             </li>
             <li>
-                <strong>Prezzo totale</strong>{{$order->total_price}}
+                <strong>Prezzo totale: </strong>{{$order->total_price}}
             </li>
             <li>
-                <strong>Tipo prezzo applicato: </strong>
+                <strong>Tipo prezzo applicato: {{L::t($order->price_type_used)}}</strong>
             </li>
         </ul>
+
     @endforeach
     <hr>
     <h3>{{L::t('Billing')}}</h3>
