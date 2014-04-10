@@ -81,6 +81,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -93,6 +94,8 @@ class OrderTest extends DbTestCase
         $mock_row->product_id = 10;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
+        $mock_row->single_price = 1.00;
+        $mock_row->price_type_used = "price4";
         $order->addRow($product, 10, $mock_row);
         $user_stub = new User();
         $user_stub->id = 10;
@@ -157,6 +160,7 @@ class OrderTest extends DbTestCase
                     "price1" => "12.22",
                     "price2" => "8.21",
                     "price3" => "2.12",
+                    "price4" => "1.12",
                     "quantity_pricing_quantity" => 10,
                     "quantity_pricing_enabled" => 1
                     ]);
@@ -185,6 +189,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -226,6 +231,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -299,13 +305,17 @@ class OrderTest extends DbTestCase
             "order_id" => 1,
             "product_id" => 1,
             "quantity" => 1,
-            "total_price" => $price1
+            "total_price" => $price1,
+            "single_price" => $price1,
+            "price_type_used" => "price1"
         ];
         $second_row = [
             "order_id" => 1,
             "product_id" => 1,
             "quantity" => 1,
-            "total_price" => $price2
+            "total_price" => $price2,
+            "single_price" => $price2,
+            "price_type_used" => "price2"
         ];
         RowOrder::create($fist_row);
         RowOrder::create($second_row);
@@ -382,6 +392,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);

@@ -13,8 +13,8 @@
     <br/>
     <strong>{{L::t('Order details')}}:</strong>
     @foreach($body['order']->row_orders()->get() as $order)
-        <ul>
             <?php $product = Product::find($order->product_id); ?>
+        <ul>
             <li>
                 <strong>{{L::t('Name')}}: </strong>{{$product->name}}
             </li>
@@ -25,7 +25,10 @@
                 <strong>{{L::t('Quantity')}}: </strong>{{$order->quantity}}
             </li>
             <li>
-                <strong>{{L::t('Price')}}: </strong>{{$order->total_price}}
+                <strong>{{L::t('Unitary price')}} </strong>{{round($order->total_price / $order->quantity, 2)}}
+            </li>
+            <li>
+                <strong>{{L::t('Total Price')}}: </strong>{{$order->total_price}}
             </li>
         </ul>
     @endforeach

@@ -95,6 +95,7 @@ class OrderServiceTest extends DbTestCase {
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -106,7 +107,7 @@ class OrderServiceTest extends DbTestCase {
             ->once()
             ->andReturn(true)
             ->shouldReceive('hasGroup')
-            ->once()
+            ->times(3)
             ->andReturn(true)
             ->shouldReceive('getLoggedUser')
             ->andReturn($user_stub)
@@ -279,7 +280,7 @@ class OrderServiceTest extends DbTestCase {
             ->once()
             ->andReturn(true)
             ->shouldReceive('hasGroup')
-            ->once()
+            ->times(3)
             ->andReturn(true)
             ->getMock();
     }

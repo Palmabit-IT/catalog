@@ -6,26 +6,32 @@
     <meta charset="utf-8">
 </head>
 <body>
-<h2>{{Config::get('authentication::app_name')}}: {{L::t('Order submitted successfully')}}</h2>
+<h2>{{Config::get('authentication::app_name')}}: Ordine ricevuto</h2>
 <div>
-    {{L::t('Thanks')}} {{ $body['email'] }}
-    <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}</strong>
+    Grazie, {{ $body['email'] }}
+    <strong>Ordine numero {{$body['order']->id}}</strong>
     <br/>
-    <h3>Dettagli ordine:</h3>
+    <h3>Dettagli ordine: </h3>
     @foreach($body['order']->row_orders()->get() as $order)
         <ul>
             <?php $product = Product::find($order->product_id); ?>
             <li>
-                <strong>{{L::t('Name')}}: </strong>{{$product->name}}
+                <strong>Nome</strong>{{$product->name}}
             </li>
             <li>
-                <strong>{{L::t('Code')}}: </strong>{{$product->code}}
+                <strong>Code</strong>{{$product->code}}
             </li>
             <li>
-                <strong>{{L::t('Quantity')}}: </strong>{{$order->quantity}}
+                <strong>Quantità</strong>{{$order->quantity}}
             </li>
             <li>
-                <strong>{{L::t('Price')}}: </strong>{{$order->total_price}}
+                <strong>Prezzo unitario</strong>{{round($order->total_price / $order->quantity, 2)}}
+            </li>
+            <li>
+                <strong>Prezzo totale</strong>{{$order->total_price}}
+            </li>
+            <li>
+                <strong>Tipo prezzo applicato: </strong>
             </li>
         </ul>
     @endforeach

@@ -12,7 +12,6 @@
     <div class="col-md-12">
         <h3>Anagrafica prodotto</h3>
     </div>
-    <?php var_dump(Session::all()); ?>
 
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
@@ -100,10 +99,10 @@
 <div class="row">
     <div class="col-md-12">
         {{Form::submit('Salva', array("class"=>"btn btn-primary tab-remember margin-bottom-30"))}}
+        {{Form::updateOldLanguageInput()}}
         {{Form::close()}}
     </div>
 </div>
-<?php dd(Session::all()); ?>
 
 @section('footer_scripts')
 @parent
