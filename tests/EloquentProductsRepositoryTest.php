@@ -361,6 +361,29 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     }
 
     /**
+     * @test
+     **/
+    public function it_findProductBySlugLang()
+    {
+        $slug_lang = "slug lang";
+        $product_expected = Product::create([
+                                       "code" => "1234",
+                                       "name" => "product name",
+                                       "slug" => "slug",
+                                       "slug_lang" => $slug_lang,
+                                       "lang" => 'it',
+                                       "description" => "product description",
+                                       "description_long" => "product long description",
+                                       "featured" => 1,
+                                       "public" => 0,
+                                       "offer" => 0
+                                   ]);
+        $product = $this->r->findBySlugLang($slug_lang);
+
+        $this->assertContains($product_expected->code, $product->code);
+    }
+
+    /**
      * Creates n random products
      * @param $number
      */

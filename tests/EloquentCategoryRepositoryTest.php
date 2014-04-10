@@ -149,6 +149,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
 
         $this->assertEquals(1, $cat_saved->depth);
     }
+
 }
 
 class RepoStubLang extends EloquentCategoryRepository

@@ -36,6 +36,7 @@ class PresenterCategoryProductFactory
         else
         {
             $products = ($category->products) ? $category->products()
+                ->wherePublic(1)
                 ->orderBy('order','DESC')
                 ->orderBy('name','ASC')
                 ->paginate($per_page) : array();

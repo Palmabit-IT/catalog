@@ -298,11 +298,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function findBySlugLang($slug_lang)
     {
-        $product = $this->model->whereSlugLang($slug_lang)
+        $query = $this->model->whereSlugLang($slug_lang)
             ->orderBy('order','DESC')
             ->orderBy('name','ASC')
-            ->whereLang($this->getLang())
-            ->get();
+            ->whereLang($this->getLang());
+        $product = $query->get();
 
         if($product->isEmpty()) throw new NotFoundException;
 
@@ -323,7 +323,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         }
         catch(ModelNotFoundException $e)
         {
-        throw new NotFoundException;
+            throw new NotFoundException;
         }
         Event::fire('repository.products.attachCategory', [$product_id, $category_id]);
         $product->categories()->attach($category_id);
