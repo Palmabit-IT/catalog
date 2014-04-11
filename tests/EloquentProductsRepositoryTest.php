@@ -72,6 +72,46 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals("en", $obj->lang);
         $this->assertEquals(2, $obj->slug_lang);
     }
+  
+    /**
+     * @test
+     **/
+    public function it_doestNotUpdateSlugLang_IfAlreadyExistsOneWithTheSameLanguage()
+    {
+      $faker = $this->faker;
+      $first_product_slug_lang = 1;
+      Product::create([
+                      "code" => $faker->text(5),
+                      "name" => $faker->text(10),
+                      "slug" => "slug",
+                      "slug_lang" => $first_product_slug_lang,
+                      "lang" => 'it',
+                      "description" => $faker->text(10),
+                      "description_long" => $faker->text(100),
+                      "featured" => 1,
+                      "public" => 1,
+                      "offer" => 0
+                      ]);
+
+      $second_product_slug_lang = 25;
+      Product::create([
+                      "code" => $faker->text(5),
+                      "name" => $faker->text(10),
+                      "slug" => "",
+                      "slug_lang" => $second_product_slug_lang,
+                      "lang" => 'it',
+                      "description" => $faker->text(10),
+                      "description_long" => $faker->text(100),
+                      "featured" => 1,
+                      "public" => 1,
+                      "offer" => 0
+                      ]);
+
+      $second_product_id = 2;
+      $second_product = $this->r->update($second_product_id, ["slug" => $first_product_slug_lang, "slug_lang" => ""]);
+
+      $this->assertEquals($second_product_slug_lang, $second_product->slug_lang);
+    }
 
     public function testCreateWorks()
     {
