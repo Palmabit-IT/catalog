@@ -5,10 +5,12 @@
 @stop
 
 @section('content')
-    {{-- Lista dei prodotti --}}
-    <h3>Catalogo prodotti</h3>
-    <div class="col-md-12">
+<div class="row" style="margin-bottom: 20px;">
+    <!-- <div class="col-md-12"> -->
         <div class="col-md-9">
+            {{-- Lista dei prodotti --}}
+            <h3>Catalogo prodotti</h3>
+
             {{-- messaggi vari --}}
             <?php $message = Session::get('message'); ?>
             @if( isset($message) )
@@ -21,31 +23,44 @@
             @endif
 
             {{-- Lista prodotti --}}
-            <ul class="list-group">
-            @if(! $products->isEmpty() )
-            @foreach($products as $product)
-                <li class="list-group-item">
-                    {{$product->name}} - {{$product->description}}
-                    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class="pull-right"><i class="glyphicon glyphicon-plus"></i> duplica</a>
-                    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}" class="pull-right cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i> cancella</a>
-                    <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>
-                    <span class="pull-right margin-right-30">
-                        {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
-                        {{Form::label('order','Ordine')}}
-                        {{Form::select('order', get_select_order_arr(), $product->order, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
-                        {{Form::hidden('id', $product->id)}}
-                        {{Form::close()}}
-                    </span>
-                    <span class="clearfix"></span>
-                </li>
-            @endforeach
-            @else
-            <h5>Non ho trovato risultati.</h5>
-            @endif
-            </ul>
+            <table class="table table-striped">
+                <tr>
+                    <th>Codice</th>
+                    <th>Nome</th>
+                    <th>Ordine</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @if(! $products->isEmpty() )
+                @foreach($products as $product)
+                    <tr>
+                        <td>
+                            {{$product->code}}
+                        </td>
+                        <td>
+                            {{$product->name}}
+                        </td>
+                        <td>
+                            {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
+                            {{Form::select('order', get_select_order_arr(), $product->order, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
+                            {{Form::hidden('id', $product->id)}}
+                            {{Form::close()}}
+                        </td>
+                        <td>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-plus"></i> duplica</a>
+                        </td>
+                        <td>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}" class="cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i></a>
+                        </td>
+                    </tr>
+                @endforeach
+                @else
+                <h5>Non ho trovato risultati.</h5>
+                @endif
+            </table>
             {{-- Aggiunta nuovo prodotto --}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
-
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary "><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
             <div style="text-align: center">
                 {{ isset($products) ? $products->appends(Input::except(['page']) )->links() : ''}}
             </div>
@@ -53,7 +68,8 @@
         <div class="col-md-3">
             @include('catalog::products.search')
         </div>
-    </div>
+    <!-- </div> -->
+</div>
 @stop
 
 @section('footer_scripts')
