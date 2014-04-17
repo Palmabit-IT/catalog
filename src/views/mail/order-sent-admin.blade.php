@@ -26,7 +26,7 @@
         </li>
     </ul>
     <h3>Dettagli ordine: </h3>
-    @foreach($body['order']->row_orders()->get() as $order)
+    @foreach($body['order']->getRowOrders() as $order)
         <ul>
             <?php $product = Product::find($order->product_id); ?>
             <li>

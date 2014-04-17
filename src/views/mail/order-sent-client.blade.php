@@ -13,7 +13,7 @@
     <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}.</strong>
     <br/>
     <strong>{{L::t('Order details')}}:</strong>
-    @foreach($body['order']->row_orders()->get() as $order)
+    @foreach($body['order']->getRowOrders() as $order)
             <?php $product = Product::find($order->product_id); ?>
         <ul>
             <li>
