@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php use Palmabit\Catalog\Models\Product; ?>
 <?php $profile_info = (object)Session::get('profile_info'); ?>
+<?php $body['order'] = Session::get($body['session_order_key']); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -12,7 +13,7 @@
     <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}.</strong>
     <br/>
     <strong>{{L::t('Order details')}}:</strong>
-    @foreach($body['order']->row_orders()->get() as $order)
+    @foreach($body['order']->getRowOrders() as $order)
             <?php $product = Product::find($order->product_id); ?>
         <ul>
             <li>

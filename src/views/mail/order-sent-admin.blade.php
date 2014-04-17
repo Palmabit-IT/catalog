@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php use Palmabit\Catalog\Models\Product; ?>
 <?php $profile_info = (object)Session::get('profile_info'); ?>
+<?php $body['order'] = Session::get($body['session_order_key']); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -12,9 +13,10 @@
     <strong>Ordine numero {{$body['order']->id}}</strong>
     <br/>
     <h3>Dettagli cliente: </h3>
+    <?php $user_profile = $body['user_profile']; ?>
+    @if($user_profile)
     <ul>
         <li>
-            <?php $user_profile = $body['user_profile']; ?>
             <strong>Codice cliente: </strong> {{$user_profile->code}}
         </li>
         <li>
@@ -24,8 +26,11 @@
             <strong>Ragione sociale: </strong> {{$user_profile->company}}
         </li>
     </ul>
+    @else
+      <h3>Dettagli non disponibili.</h3>
+    @endif
     <h3>Dettagli ordine: </h3>
-    @foreach($body['order']->row_orders()->get() as $order)
+    @foreach($body['order']->getRowOrders() as $order)
         <ul>
             <?php $product = Product::find($order->product_id); ?>
             <li>
