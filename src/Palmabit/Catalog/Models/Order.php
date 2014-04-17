@@ -100,7 +100,7 @@ class Order extends Model
         $this->markCompleted();
         $this->setupUserId();
         $this->setupDate();
-        parent::save(func_get_args());
+        parent::save($options);
 
         $this->saveRows();
 
