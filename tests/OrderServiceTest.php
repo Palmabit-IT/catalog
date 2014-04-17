@@ -129,6 +129,7 @@ class OrderServiceTest extends DbTestCase {
         $this->assertEquals(1, $row->id);
 
         $this->assertFalse(Session::has($service->getSessionKey()));
+        $this->assertFalse(Session::has($service->getSessionMailOrder()));
     }
 
     /**

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php use Palmabit\Catalog\Models\Product; ?>
 <?php $profile_info = (object)Session::get('profile_info'); ?>
+<?php $body['order'] = Session::get($body['session_order_key']); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">

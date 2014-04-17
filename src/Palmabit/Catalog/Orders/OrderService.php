@@ -31,6 +31,8 @@ class OrderService
 
     protected $session_key = "catalog_order";
 
+    protected $session_mail_order = "catalog_mail_order";
+
     public function __construct()
     {
         $this->order = $this->getOrderInstance();
@@ -77,6 +79,7 @@ class OrderService
         try
         {
             $this->order->save();
+            $this->storeOrderInSession();
             $this->sendEmailToClient();
             $this->sendEmailToAdmin();
             $this->clearSession();
@@ -104,6 +107,7 @@ class OrderService
     protected function clearSession()
     {
         Session::forget($this->session_key);
+        Session::forget($this->session_mail_order);
     }
 
     public function sendEmailToClient()
@@ -112,7 +116,7 @@ class OrderService
         // get the client email
         $email = $this->getClientEmail();
         // send the email with the information
-        $mailer->sendTo($email, ["order" => $this->order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog::mail.order-sent-client');
+        $mailer->sendTo($email, ["session_order_key" => $this->session_mail_order, 'email' => $email] , L::t('Order number:').$this->order->id.' '.L::t('created succesfully'), 'catalog::mail.order-sent-client');
     }
 
     public function sendEmailToAdmin()
@@ -124,7 +128,7 @@ class OrderService
         $mails       = $mail_helper->getNotificationRegistrationUsersEmail();
         if (!empty($mails)) foreach ($mails as $email)
         {
-            $mailer->sendTo($email, ["order" => $this->order, 'email' => $email, 'user_profile' => $user_profile] , 'Ordine: '.$this->order->id.' creato', 'catalog::mail.order-sent-admin');
+            $mailer->sendTo($email, ["session_order_key" => $this->session_mail_order, 'email' => $email, 'user_profile' => $user_profile] , 'Ordine: '.$this->order->id.' creato', 'catalog::mail.order-sent-admin');
         }
     }
 
@@ -168,5 +172,18 @@ class OrderService
         Log::error('error sending email.');
         throw new InvalidException;
     }
+
+  protected function storeOrderInSession()
+  {
+    Session::put($this->session_mail_order, $this->order);
+  }
+
+  /**
+   * @return string
+   */
+  public function getSessionMailOrder()
+  {
+    return $this->session_mail_order;
+  }
 
 }
