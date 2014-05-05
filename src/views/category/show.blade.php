@@ -4,43 +4,52 @@
 {{$app_name}} Admin area: categorie
 @stop
 @section('content')
-    <h3>Lista categorie</h3>
-    {{-- messaggi vari --}}
-    <?php $message = Session::get('message'); ?>
-    @if( isset($message) )
-    <div class="alert alert-success">{{$message}}</div>
-    @endif
-    @if($errors && ! $errors->isEmpty() )
-    @foreach($errors->all() as $error)
-    <div class="alert alert-danger">{{$error}}</div>
-    @endforeach
-    @endif
-    {{-- Lists categories --}}
-    <ul class="list-group">
-    @if(! empty($categories))
-    @foreach($categories as $category)
-        <li class="list-group-item">
-            {{$category->description}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="delete pull-right"><i class="glyphicon glyphicon-trash"></i> cancella</a>
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}" class="pull-right"><i class="glyphicon glyphicon-edit"></i> modifica</a>
-            <span class="pull-right margin-right-30">
-            {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
-            <div class="form-group">
-                {{Form::label("categoria","Padre:")}}
-                {{Form::select("parent_id", get_cat_select_arr(true), $category->parent_id, ["class" => "form-control", "style" => "height:20px", "onchange" => "this.form.submit()"]) }}
-            </div>
-            {{Form::hidden("id", $category->id)}}
-            {{Form::close()}}
-            </span>
-            <span class="clearfix"></span>
-        </li>
-    @endforeach
-    @else
-        <h5>Non ho trovato risultati.</h5>
-    @endif
-    </ul>
-    {{-- Add new category --}}
-    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit')}}" class="btn btn-primary pull-right"><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
+<div class="row" style="margin-bottom: 20px;">
+    <div class="col-md-12">
+        <h3>Lista categorie</h3>
+        {{-- messaggi vari --}}
+        <?php $message = Session::get('message'); ?>
+        @if( isset($message) )
+        <div class="alert alert-success">{{$message}}</div>
+        @endif
+        @if($errors && ! $errors->isEmpty() )
+        @foreach($errors->all() as $error)
+        <div class="alert alert-danger">{{$error}}</div>
+        @endforeach
+        @endif
+        {{-- Lists categories --}}
+        <table class="table table-striped">
+            <tr>
+                <th>Nome</th>
+                <th>Categoria padre</th>
+                <th></th>
+            </tr>
+        @if(! empty($categories))
+        @foreach($categories as $category)
+            <tr>
+                <td>{{$category->description}}</td>
+                <td>
+                    {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
+                    <div class="form-group">
+                        {{Form::select("parent_id", get_cat_select_arr(true), $category->parent_id, ["class" => "form-control", "style" => "height:20px", "onchange" => "this.form.submit()"]) }}
+                    </div>
+                    {{Form::hidden("id", $category->id)}}
+                    {{Form::close()}}
+                </td>
+                <td>
+                    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}"><i class="glyphicon glyphicon-edit"></i></a>
+                    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="delete"><i class="glyphicon glyphicon-trash"></i></a>
+                </td>
+            </tr>
+        @endforeach
+        @else
+            <h5>Non ho trovato risultati.</h5>
+        @endif
+        </table>
+        {{-- Add new category --}}
+        <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit')}}" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Aggiungi nuova</a>
+    </div>
+</div>
 @stop
 
 @section('footer_scripts')

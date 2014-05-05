@@ -19,7 +19,8 @@ class CreateTableProduct extends Migration {
             // for single table inheritance
             $table->string('type');
             $table->string('name');
-            $table->string('slug')->unique();
+            // nullable only when you duplicate a product
+            $table->string('slug')->nullable();
 			$table->text('description', 60);
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
@@ -34,11 +35,14 @@ class CreateTableProduct extends Migration {
             $table->decimal("price1", 19,2)->nullable();
             $table->decimal("price2", 19,2)->nullable();
             $table->decimal("price3", 19,2)->nullable();
+            $table->decimal("price4", 19,2)->nullable();
             $table->boolean("quantity_pricing_enabled")->default(0);
             $table->integer("quantity_pricing_quantity")->default(0);
             // for multilanguage
-            $table->string('slug_lang');
+            // nullable when you duplicate a product
+            $table->string('slug_lang')->nullable();
             $table->string('lang',2)->default('it');
+            $table->unique(array('slug_lang', 'lang'));
             $table->timestamps();
         });
     }

@@ -20,7 +20,7 @@ class PresenterCategoryProductFactory
     /**
      * @param Category $category
      * @return Collection|PresenterPagination
-     * @todo test
+     * @todo unit test
      */
     public function create(Category $category)
     {
@@ -28,12 +28,18 @@ class PresenterCategoryProductFactory
         // if has childrens returns the subcategories
         if($this->r->hasChildrens($category->id))
         {
-            $categories = ($category->children) ? $category->children()->paginate($per_page) : array();
+            $categories = ($category->children) ? $category->children()
+                ->orderBy('description')
+                ->paginate($per_page) : array();
             return ( ! empty($categories) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterCategory', $categories ) : new Collection();
         }
         else
         {
-            $products = ($category->products) ? $category->products()->paginate($per_page) : array();
+            $products = ($category->products) ? $category->products()
+                ->wherePublic(1)
+                ->orderBy('order','DESC')
+                ->orderBy('name','ASC')
+                ->paginate($per_page) : array();
             return ( ! empty($products) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterProducts', $products ) : new Collection();
         }
     }

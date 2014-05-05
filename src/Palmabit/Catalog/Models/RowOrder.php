@@ -13,7 +13,18 @@ class RowOrder extends Model
 {
     protected $table = "row_order";
 
-    protected $fillable = ["order_id", "product_id", "quantity", "total_price"];
+    protected $fillable = ["order_id", "product_id", "quantity", "total_price", "slug_lang", "price_type_used", "single_price"];
+
+    protected $authenticator;
+
+    protected $group_professional;
+
+    protected $group_logged;
+
+    public function getAuthenticator()
+    {
+        return isset($this->authenticator) ? $this->authenticator : App::make('authenticator');
+    }
 
     public function order()
     {
@@ -24,7 +35,7 @@ class RowOrder extends Model
     {
         return $this->belongsTo('Palmabit\Catalog\Models\Product','product_id');
     }
-    
+
     /**
      * @param Product $product
      * @param Integer $quantity
@@ -32,31 +43,46 @@ class RowOrder extends Model
     public function setItem(Product $product, $quantity)
     {
         $this->setAttribute('product_id', $product->id);
+        $this->setAttribute('slug_lang', $product->slug_lang);
         $this->setAttribute('quantity', $quantity);
         $this->setAttribute('total_price', $this->calculatePrice($product, $quantity));
+        $this->setAttribute('single_price', $this->getSingleProductPriceToUse($product, $quantity));
+        $this->setAttribute('price_type_used', $this->getPriceTypeStringToUse($product, $quantity));
     }
 
     /**
-     * Calculates the total price
      * @param Product $product
      * @param Integer $quantity
      */
     public function calculatePrice(Product $product, $quantity)
     {
-        $group_professional = Config::get('catalog::groups.professional_group_name');
-        $group_logged = Config::get('catalog::groups.logged_group_name');
-        $authenticator = App::make('authenticator');
+        $this->group_professional = Config::get('catalog::groups.professional_group_name');
+        $this->group_logged = Config::get('catalog::groups.logged_group_name');
 
-        if(! $authenticator->check()) throw new LoginRequiredException;
+        if(! $this->getAuthenticator()->check()) throw new LoginRequiredException;
 
-        if($product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity)
+        return $this->multiplyMoney($this->getSingleProductPriceToUse($product, $quantity
+        ), $quantity);
+    }
+
+    public function getSingleProductPriceToUse($product, $quantity)
+    {
+        $price_type = $this->getPriceTypeStringToUse($product, $quantity);
+
+        return $product->$price_type;
+    }
+
+    public function getPriceTypeStringToUse($product, $quantity)
+    {
+
+        if($this->productQuantityIsMoreThenQuantityStep($product, $quantity))
         {
-            if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price3,$quantity);
-            if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price2,$quantity);
+            if($this->getAuthenticator()->hasGroup($this->group_professional)) return "price4";
+            if($this->getAuthenticator()->hasGroup($this->group_logged)) return "price2";
         }
 
-        if($authenticator->hasGroup($group_professional)) return $this->multiplyMoney($product->price2,$quantity);
-        if($authenticator->hasGroup($group_logged)) return $this->multiplyMoney($product->price1,$quantity);
+        if($this->getAuthenticator()->hasGroup($this->group_professional)) return "price3";
+        if($this->getAuthenticator()->hasGroup($this->group_logged)) return "price1";
     }
 
     protected function multiplyMoney($price, $quantity)
@@ -67,6 +93,16 @@ class RowOrder extends Model
     public function getProductPresenter()
     {
         return new PresenterProducts($this->product);
+    }
+
+    /**
+     * @param $product
+     * @param $quantity
+     * @return bool
+     */
+    private function productQuantityIsMoreThenQuantityStep($product, $quantity)
+    {
+        return $product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity;
     }
 
 } 

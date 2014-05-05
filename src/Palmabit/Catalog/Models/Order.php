@@ -11,6 +11,7 @@ use App, L;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Palmabit\Catalog\Presenters\OrderPresenter;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\ValidationException;
 
@@ -65,9 +66,23 @@ class Order extends Model
     public function addRow(Product $product, $quantity, RowOrder $row_order = null)
     {
         $row = $row_order ? $row_order : new RowOrder();
+
+        $quantity = $this->clearDuplicatesAndUpdateQuantity($product, $quantity);
+
         $row->setItem($product, $quantity);
 
         $this->row_orders->push($row);
+    }
+
+    public function clearDuplicatesAndUpdateQuantity($product, $quantity)
+    {
+        foreach ($this->row_orders as $key => $row_order) if($row_order->slug_lang == $product->slug_lang)
+        {
+            $this->row_orders->forget($key);
+            $quantity+= $row_order->quantity;
+        }
+
+        return $quantity;
     }
 
     /**
@@ -85,7 +100,7 @@ class Order extends Model
         $this->markCompleted();
         $this->setupUserId();
         $this->setupDate();
-        parent::save(func_get_args());
+        parent::save($options);
 
         $this->saveRows();
 
@@ -181,5 +196,20 @@ class Order extends Model
         return $this->errors;
     }
 
+    public function calculateTotalAmount()
+    {
+        $total_amount = 0;
 
+        foreach ($this->row_orders()->get() as $row_order) {
+            $total_amount+= $row_order->total_price;
+        }
+
+        return $total_amount;
+    }
+
+    public function getPresenter()
+    {
+        return new OrderPresenter($this);
+    }
+    
 }

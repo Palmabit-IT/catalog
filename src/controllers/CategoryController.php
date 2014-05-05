@@ -27,11 +27,11 @@ class CategoryController extends BaseController
      */
     protected $v;
     /**
-     * @var Palmabit\Library\Form\FormModel
+     * @var \Palmabit\Library\Form\FormModel
      */
     protected $f;
     /**
-     * @var Palmabit\Catalog\Presenters\PresenterCategoria
+     * @var \Palmabit\Catalog\Presenters\PresenterCategoria
      */
     protected $p;
 

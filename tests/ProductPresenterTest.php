@@ -112,7 +112,8 @@ class ProductPresenterTest extends TestCase {
             "professional" => 1,
             "price1" => "12.22",
             "price2" => "8.21",
-            "price3" => "2.12",
+            "price3" => "5.12",
+            "price4" => "2.12",
             "quantity_pricing_quantity" => 10,
             "quantity_pricing_enabled" => 1
 
@@ -127,7 +128,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
-        $this->assertEquals("8.21", $presenter->price_small);
+        $this->assertEquals("5.12", $presenter->price_small);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -171,12 +172,12 @@ class ProductPresenterTest extends TestCase {
                                "professional" => 1,
                                "price1" => "12.22",
                                "price2" => "8.21",
-                               "price3" => "2.12",
+                               "price3" => "5.12",
+                               "price4" => "2.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
 
                                ]);
-        $presenter = new PresenterProducts($product);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -186,6 +187,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
+        $presenter = new PresenterProducts($product);
         $this->assertEquals("2.12", $presenter->price_big);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
@@ -199,6 +201,7 @@ class ProductPresenterTest extends TestCase {
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $mock_auth);
+        $presenter = new PresenterProducts($product);
         $this->assertEquals("8.21", $presenter->price_big);
     }
     
@@ -238,5 +241,25 @@ class ProductPresenterTest extends TestCase {
         $presenter = new PresenterProducts($product);
         $this->assertEquals("name", $presenter->name);
         $this->assertEquals("desc", $presenter->description);
+    }
+    
+    /**
+     * @test
+     **/
+    public function it_show_IfCanBeBoughtByTheCurrentUser()
+    {
+        $authenticator = m::mock('StdClass')
+            ->shouldReceive("check")
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->andReturn(true)
+            ->getMock();
+        App::instance('authenticator', $authenticator);
+
+        $presenter = new PresenterProducts([]);
+        $can_buy = $presenter->canBeBought();
+
+        $this->assertTrue($can_buy);
     }
 }

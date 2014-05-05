@@ -14,10 +14,11 @@ View::composer('catalog::category.*', function($view){
 /**
  * Passa le voci di menu al pannello admin prodotti
  */
-View::composer(['catalog::products.*'], function($view){
+View::composer(['catalog::products.*', 'catalog::orders.*'], function($view){
     $view->with('sidebar_items', array(
                                 "Lista prodotti" => URL::to('/admin/products/lists'),
-                                "Aggiungi prodotti" => URL::to('/admin/products/edit')
+                                "Aggiungi prodotti" => URL::to('/admin/products/edit'),
+                                "Lista Ordini" => URL::to('/admin/orders/lists')
                            ));
 });
 // elementi presenti nel carrello
@@ -28,4 +29,13 @@ View::composer(['*'], function($view){
     $row_order = $order->getRowOrders();
 
     $view->with('row_orders', $row_order);
+});
+
+/**
+ * Send to the view the logged user
+ */
+View::composer('*', function ($view){
+    $logged_user = App::make('authenticator')->getLoggedUser();
+
+    $view->with('logged_user', $logged_user );
 });

@@ -67,7 +67,7 @@ class ProductsController extends Controller {
 
 	public function lists()
 	{
-        $products = $this->r->all();
+        $products = $this->r->all(Input::all());
         return View::make('catalog::products.show')->with(array("products" => $products));
 	}
 
@@ -224,10 +224,10 @@ class ProductsController extends Controller {
         catch(PalmabitExceptionsInterface $e)
         {
             $errors = $form_model->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProdottoController@lists")->withInput()->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->withInput()->withErrors($errors);
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProdottoController@lists")->with(array("message"=>"Ordine modificato con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")->with(array("message"=>"Ordine modificato con successo."));
     }
 
     public function postDetachProduct()
@@ -273,7 +273,24 @@ class ProductsController extends Controller {
             return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->withErrors($this->v_pp->getErrors());
         }
 
-        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $slug_lang])->with(array("message_accessories"=>"Prodotto associato con successo."));
   }
+
+    public function duplicate()
+    {
+        $id = Input::get('id');
+        $slug_lang = Input::get('slug_lang');
+
+        try
+        {
+            $obj = $this->r->duplicate($id);
+        }
+        catch(PalmabitExceptionsInterface $e)
+        {
+            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists',['slug_lang' => $slug_lang])->withErrors(new MessageBag(["duplication" => "Problema nella duplicazione del prodotto."]));
+        }
+
+        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $obj->slug_lang])->withMessage("prodotto clonato con successo.");
+    }
 
 }

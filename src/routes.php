@@ -15,6 +15,7 @@ Route::group( ['before' => ['logged'] ], function()
     Route::get('/admin/products/lists',['as'=>'products.lists','uses' =>'Palmabit\Catalog\Controllers\ProductsController@lists']);
     Route::get('/admin/products/edit',['as'=>'products.edit','uses' =>'Palmabit\Catalog\Controllers\ProductsController@getEdit']);
     Route::post('/admin/products/edit',['as'=>'products.edit', "before" => "csrf", 'uses' =>'Palmabit\Catalog\Controllers\ProductsController@postEdit']);
+    Route::any('/admin/product/duplicate', ['before' => 'csrf', 'uses' => 'Palmabit\Catalog\Controllers\ProductsController@duplicate']);
     //@todo add csrf ui
     Route::any('/admin/products/delete',['as'=>'products.delete','uses' =>'Palmabit\Catalog\Controllers\ProductsController@delete']);
     //////////////// PRODUCT ACCESSORIES //////////////////
@@ -29,5 +30,8 @@ Route::group( ['before' => ['logged'] ], function()
     Route::any('/admin/products/images/delete',['as'=>'products.images.delete','uses' => 'Palmabit\Catalog\Controllers\ProductsController@deleteImage']);
     //@todo add csrf ui
     Route::any('/admin/products/images/featured/{id}/{product_id}',['as'=>'products.immagini.evidenza','uses' =>'Palmabit\Catalog\Controllers\ProductsController@postFeatured']);
+    ////////////////////// PRODUCT ORDER ////////////////////////
     Route::post('/admin/products/order', ["before" => "csrf", 'uses' => 'Palmabit\Catalog\Controllers\ProductsController@postChangeOrder']);
+    Route::get('/admin/orders/lists', ["as" => "products.order.lists", 'uses' => 'Palmabit\Catalog\Controllers\OrderController@lists']);
+    Route::get('/admin/orders/show/{id}', ["as" => "products.order.show", 'uses' => 'Palmabit\Catalog\Controllers\OrderController@show']);
 });

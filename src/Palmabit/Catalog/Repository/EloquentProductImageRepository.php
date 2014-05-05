@@ -75,4 +75,10 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
         }
         DB::connection()->getPdo()->commit();
     }
+
+    public function getByProductId($product_id)
+    {
+        return $this->model->where("product_id", "=", $product_id)
+            ->get();
+    }
 }

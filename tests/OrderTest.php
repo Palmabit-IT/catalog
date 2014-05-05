@@ -1,6 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests;
+
 use Mockery as m;
-use App;
+use App, DB;
 use Carbon\Carbon;
 use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Authentication\Models\User;
@@ -80,6 +81,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -92,6 +94,8 @@ class OrderTest extends DbTestCase
         $mock_row->product_id = 10;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
+        $mock_row->single_price = 1.00;
+        $mock_row->price_type_used = "price4";
         $order->addRow($product, 10, $mock_row);
         $user_stub = new User();
         $user_stub->id = 10;
@@ -108,6 +112,58 @@ class OrderTest extends DbTestCase
         $row = RowOrder::first();
         $this->assertEquals(10, $row->product_id);
         $this->assertEquals($order->id, $order->getRowOrders()->first()->order_id);
+    }
+
+    /**
+     * @test
+     **/
+    public function it_clear_existing_product_and_update_quantity()
+    {
+        $order = new Order;
+        $product = $this->createAndSaveProduct();
+
+        $first_quantity = 10;
+        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')
+            ->makePartial()
+            ->shouldReceive('setItem')
+            ->once()
+            ->with($product, $first_quantity)
+            ->andReturn(true)
+            ->getMock();
+
+        $order->addRow($product, $first_quantity, $mock_row);
+        $second_quantity = 20;
+        $mock_row->quantity = $first_quantity;
+        $mock_row->slug_lang = $product->slug_lang;
+        $quantity = $order->clearDuplicatesAndUpdateQuantity($product, $second_quantity);
+
+        $this->assertEquals(30, $quantity);
+        $this->assertEquals(0, $order->getRowOrders()->count());
+    }
+
+    protected function createAndSaveProduct()
+    {
+        return Product::create([
+                    "description" => "desc",
+                    "code" => "code",
+                    "name" => "name",
+                    "slug" => "slug",
+                    "slug_lang" => "",
+                    "description_long" => "",
+                    "featured" => 1,
+                    "public" => 1,
+                    "offer" => 1,
+                    "stock" => 4,
+                    "with_vat" => 1,
+                    "video_link" => "http://www.google.com/video/12312422313",
+                    "professional" => 1,
+                    "price1" => "12.22",
+                    "price2" => "8.21",
+                    "price3" => "2.12",
+                    "price4" => "1.12",
+                    "quantity_pricing_quantity" => 10,
+                    "quantity_pricing_enabled" => 1
+                    ]);
     }
 
     /**
@@ -133,6 +189,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -174,6 +231,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -215,6 +273,52 @@ class OrderTest extends DbTestCase
         $this->assertFalse($order->validate());
 
         $this->assertFalse($order->getErrors()->isEmpty());
+    }
+
+    /**
+     * @test
+     **/
+    public function it_calculate_total_amount()
+    {
+        $order_repository = App::make('order_repository');
+        DB::table('order')->insert([
+                                  "user_id" => 1,
+                                  "date" => Carbon::now(),
+                                  "completed" => 1,
+                                  "created_at" => Carbon::now(),
+                                  "updated_at" => Carbon::now(),
+                                  ]);
+
+        $this->createTwoOrderWithPrice(11.00,21.00);
+        $expected_total = 32.00;
+
+        $order_id =1;
+        $order = $order_repository->find($order_id);
+        $total = $order->calculateTotalAmount();
+
+        $this->assertEquals($expected_total, $total);
+    }
+
+    private function createTwoOrderWithPrice($price1, $price2)
+    {
+        $fist_row = [
+            "order_id" => 1,
+            "product_id" => 1,
+            "quantity" => 1,
+            "total_price" => $price1,
+            "single_price" => $price1,
+            "price_type_used" => "price1"
+        ];
+        $second_row = [
+            "order_id" => 1,
+            "product_id" => 1,
+            "quantity" => 1,
+            "total_price" => $price2,
+            "single_price" => $price2,
+            "price_type_used" => "price2"
+        ];
+        RowOrder::create($fist_row);
+        RowOrder::create($second_row);
     }
 
     /**
@@ -288,6 +392,7 @@ class OrderTest extends DbTestCase
                                "price1" => "12.22",
                                "price2" => "8.21",
                                "price3" => "2.12",
+                               "price4" => "1.12",
                                "quantity_pricing_quantity" => 10,
                                "quantity_pricing_enabled" => 1
                                ]);
@@ -302,6 +407,19 @@ class OrderTest extends DbTestCase
         $mock_row->total_price = 1.00;
         $order->addRow($product, 10, $mock_row);
         $order->save();
+    }
+
+    /**
+     * @test
+     **/
+    public function it_getsThePresenterOfTheOrder()
+    {
+        $order = new Order;
+
+        $presenter = $order->getPresenter();
+
+        $this->assertInstanceOf('Palmabit\Catalog\Presenters\OrderPresenter', $presenter);
+        $this->assertEquals($order, $presenter->getResource());
     }
 
 }

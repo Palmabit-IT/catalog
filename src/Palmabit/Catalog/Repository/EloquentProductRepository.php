@@ -12,10 +12,7 @@ use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Palmabit\Library\Exceptions\NotFoundException;
-use L;
-use Config;
-use DB;
-use Cache;
+use L, Config, DB, Cache, App;
 
 class EloquentProductRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
 {
@@ -26,6 +23,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     protected $is_admin;
 
+    protected static $copy_name = "_copia";
+
     public function __construct($is_admin = false, $model = null)
     {
         $this->is_admin = $is_admin;
@@ -34,22 +33,121 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     }
 
     /**
-     * {@inheritdoc}
+     * @override
+     * @param array $input_filter
+     * @return mixed|void
      */
-    public function all()
+    public function all(array $input_filter = null)
     {
-        $per_page = Config::get('catalog::admin_per_page');
-        set_view_paginator('pagination::slider-3');
-        $products = $this->model->whereLang($this->getLang())
-            ->orderBy("order","name")
-            ->paginate($per_page);
-        return $products->isEmpty() ? null : $products;
+        $results_per_page = Config::get('catalog::admin_per_page');
+        list($products_table, $product_category_table, $category_table) = $this->setupTableNames();
+
+        $q = DB::table($products_table)
+            ->leftJoin($product_category_table,$products_table.'.id', '=', $product_category_table.'.product_id')
+            ->leftJoin($category_table,$category_table.'.id', '=', $product_category_table.'.category_id')
+            // language check
+            ->where($products_table.'.lang', '=', $this->getLang())
+            // ordering
+            ->orderBy($category_table.'.description','ASC')
+            ->orderBy($products_table.".order","DESC")
+            ->orderBy($products_table.".name","ASC")
+            // get only a line per product
+            ->groupBy($products_table.'.id');
+
+        $q = $this->applySearchFilters($input_filter, $products_table, $category_table, $q);
+
+        $q = $this->createAllSelect($q, $products_table, $category_table);
+
+        return $q->paginate($results_per_page);
+    }
+
+    /**
+     * @param array $input_filter
+     * @param       $q
+     * @return mixed
+     */
+    protected function applySearchFilters(array $input_filter = null, $products_table, $category_table, $q)
+    {
+        if($input_filter) foreach ($input_filter as $column => $value) {
+            if( $value !== '') switch ($column) {
+                case 'code':
+                    $q = $q->where($products_table.'.code', '=', $value);
+                    break;
+                case 'name':
+                    $q = $q->where($products_table.'.name', 'LIKE', "%{$value}%");
+                    break;
+                case 'featured':
+                    $q = $q->where($products_table.'.featured', '=', "{$value}");
+                    break;
+                case 'public':
+                    $q = $q->where($products_table.'.public', '=', "{$value}");
+                    break;
+                case 'offer':
+                    $q = $q->where($products_table.'.offer', '=', $value);
+                    break;
+                case 'professional':
+                    $q = $q->where($products_table.'.professional', '=', $value);
+                    break;
+                case 'category_id':
+                    $q = $q->where($category_table.'.id', '=', $value);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $q;
+    }
+
+    /**
+     * @param $q
+     * @param $user_table_name
+     * @param $profile_table_name
+     * @return mixed
+     */
+    protected function createAllSelect($q, $products_table, $category_table)
+    {
+        $q = $q->select($products_table . '.*', $category_table.'.description');
+
+        return $q;
     }
 
     public function getFirstOffersMax($max = 8)
     {
         $products = $this->model->whereLang($this->getLang())
             ->orderBy("offer","DESC")
+            ->where('public','=','1')
+            ->take($max)
+            ->get();
+        return $products->isEmpty() ? null : $products;
+    }
+
+    /**
+     * @param int $max
+     * @return null
+     * @todo unit test
+     */
+    public function getOnlyFirstOffersMax($max = 8)
+    {
+        $products = $this->model->whereLang($this->getLang())
+            ->where("offer",'=',"1")
+            ->where('public','=','1')
+            ->orderBy("offer","DESC")
+            ->take($max)
+            ->get();
+        return $products->isEmpty() ? null : $products;
+    }
+
+    /**
+     * @param int $max
+     * @return null
+     * @todo unit test
+     */
+    public function getOnlyFeaturedMax($max = 8)
+    {
+        $products = $this->model->whereLang($this->getLang())
+            ->where("featured","1")
+            ->orderBy("offer","DESC")
+            ->where('public','=','1')
             ->take($max)
             ->get();
         return $products->isEmpty() ? null : $products;
@@ -63,6 +161,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function findBySlug($slug)
     {
         $product = $this->model->whereSlug($slug)
+            ->where('public','=','1')
             ->rememberForever("product-{$slug}-".$this->getLang())
             ->get();
 
@@ -79,7 +178,26 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function featuredProducts($max = 4)
     {
         $products = $this->model->whereFeatured(1)
+            ->where('public','=','1')
             ->whereLang($this->getLang())
+            ->orderBy($this->model->getCreatedAtColumn())
+            ->take($max)
+            ->rememberForever('featured-'.$this->getLang())
+            ->get();
+
+        return $products;
+    }
+
+    /**
+     * Get the products in offert
+     * @param int $max
+     * @return mixed
+     */
+    public function offertProducts($max = 4)
+    {
+        $products = $this->model->whereOffer(1)
+            ->whereLang($this->getLang())
+            ->where('public','=','1')
             ->orderBy($this->model->getCreatedAtColumn())
             ->take($max)
             ->rememberForever('featured-'.$this->getLang())
@@ -95,6 +213,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function searchByCatSlug($slug)
     {
        $cat = Category::whereSlug($slug)->with('product')
+           ->orderBy('order','name')
            ->get();
        return $cat->isEmpty() ? null : $cat->first();
     }
@@ -108,12 +227,25 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $this->clearAllCache($slug);
 
-        if(isset($data["slug_lang"])) unset($data["slug_lang"]);
         $product = $this->find($id);
+
+        $this->updateSlugLang($data, $product);
 
         $product->update($data);
 
         return $product;
+    }
+
+    /**
+     * @return array
+     */
+    protected function setupTableNames()
+    {
+        $products_table         = 'product';
+        $product_category_table = 'product_category';
+        $category_table         = 'category';
+
+        return array($products_table, $product_category_table, $category_table);
     }
 
     /**
@@ -141,6 +273,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "price1" => $data["price1"],
                                     "price2" => $data["price2"],
                                     "price3" => $data["price3"],
+                                    "price4" => $data["price4"],
                                     'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
                                     'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
                                 ]);
@@ -165,9 +298,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function findBySlugLang($slug_lang)
     {
-        $product = $this->model->whereSlugLang($slug_lang)
-            ->whereLang($this->getLang())
-            ->get();
+        $query = $this->model->whereSlugLang($slug_lang)
+            ->orderBy('order','DESC')
+            ->orderBy('name','ASC')
+            ->whereLang($this->getLang());
+        $product = $query->get();
 
         if($product->isEmpty()) throw new NotFoundException;
 
@@ -188,7 +323,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         }
         catch(ModelNotFoundException $e)
         {
-        throw new NotFoundException;
+            throw new NotFoundException;
         }
         Event::fire('repository.products.attachCategory', [$product_id, $category_id]);
         $product->categories()->attach($category_id);
@@ -256,6 +391,97 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $model = $this->find($id);
         return $model->accessories()->get();
+    }
+
+    /**
+     * Duplicate a product
+     * //@todo could extract the logic to another class
+     * @param $product_id
+     */
+    public function duplicate($product_id)
+    {
+        $product = $this->find($product_id);
+        $cloned_product = $this->duplicateProduct($product);
+        // duplicate data
+        $this->duplicateCategories($product, $cloned_product);
+        $this->duplicateImages($product_id, $cloned_product->id);
+        $this->duplicateAccessories($product, $cloned_product);
+
+        return $cloned_product;
+    }
+
+    /**
+     * @param $product_id
+     */
+    protected function duplicateProduct($product)
+    {
+        // get data
+        $cloned_product = clone($product);
+        // prepare data
+        unset($cloned_product->slug_lang);
+        unset($cloned_product->slug);
+        unset($cloned_product->id);
+        $cloned_product->exists = false;
+        $this->updateProductName($cloned_product);
+        // save
+        $cloned_product->save();
+        // set new temporary slug_lang
+        $cloned_product->update(["slug_lang" => $cloned_product->id]);
+
+        return $cloned_product;
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateCategories($product, $cloned_product)
+    {
+        // get the cats
+        $cat_ids = $product->categories()->get()->lists('id');
+        // attach all the cats
+        foreach ($cat_ids as $cat_id)
+        {
+            $this->associateCategory($cloned_product->id, $cat_id);
+        }
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateAccessories($product, $cloned_product)
+    {
+        // get the accessories
+        $acc_ids = $product->accessories()->get()->lists('id');
+        // attach all the accessories
+        foreach ($acc_ids as $acc_id) {
+            $this->attachProduct($cloned_product->id, $acc_id);
+        }
+    }
+
+    /**
+     * @param $product_id
+     */
+    protected function duplicateImages($product_id, $cloned_product_id)
+    {
+        $images = App::make('product_image_repository')->getByProductId($product_id);
+        // copy them
+        foreach ($images as $image) {
+            unset($image->id);
+            $image->exists     = false;
+            $image->product_id = $cloned_product_id;
+            $image->save();
+        }
+    }
+
+    /**
+     * @param $cloned_product
+     */
+    protected function updateProductName($cloned_product)
+    {
+        // set new name with copy
+        $cloned_product->name.= self::$copy_name;
     }
 
 }

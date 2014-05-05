@@ -122,5 +122,35 @@ class ProductsControllerTest extends TestCase {
         $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit',['slug_lang' => $slug_lang]);
         $this->assertSessionHasErrors(['model']);
     }
+
+    /**
+     * @test
+     **/
+    public function it_call_duplicate_and_redirect_with_success()
+    {
+        $prod_stub = new \StdClass();
+        $slug_lang = "sl";
+        $prod_stub->slug_lang = $slug_lang;
+        $mock_repo = m::mock('StdClass')->shouldReceive('duplicate')->once()->with(1)->andReturn($prod_stub)->getMock();
+        App::instance('product_repository', $mock_repo);
+        $this->action('POST','Palmabit\Catalog\Controllers\ProductsController@duplicate','', ["id" => 1, "slug_lang" => "old_slug_lang"]);
+
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $slug_lang]);
+        $this->assertSessionHas('message');
+    }
+
+    /**
+     * @test
+     **/
+    public function it_call_duplicate_and_redirects_with_errors()
+    {
+        $mock_repo = m::mock('StdClass')->shouldReceive('duplicate')->once()->with(1)->andThrow(new NotFoundException())->getMock();
+        App::instance('product_repository', $mock_repo);
+        $slug_lang = "sl";
+        $this->action('POST','Palmabit\Catalog\Controllers\ProductsController@duplicate','', ["id" => 1, "slug_lang" => $slug_lang]);
+
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists',['slug_lang' => $slug_lang]);
+        $this->assertSessionHasErrors();
+    }
 }
  

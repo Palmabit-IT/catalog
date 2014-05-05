@@ -32,6 +32,24 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
         $this->assertEquals('desc', $obj->description);
     }
 
+    /**
+     * @test
+     **/
+    public function it_gets_images_of_a_product_id()
+    {
+        $this->createProduct();
+        $data = [
+            "description" => "desc",
+            "product_id" => 1,
+            "featured" => 1,
+            "image" => "1"
+        ];
+        $obj = $this->repo->create($data);
+
+        $objs = $this->repo->getByProductId(1);
+        $this->assertEquals($objs->first()->toArray(), $obj->toArray());
+    }
+
     public function testDeleteWorks()
     {
         $this->createProduct();
