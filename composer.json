@@ -1,62 +1,62 @@
 {
-    "name": "palmabit/catalog",
-    "description": "",
-    "version" : "0.1.0",
-    "license" : "proprietary",
-    "authors": [
-        {
-            "name": "jacopo",
-            "email": "j.beschi@palmabit.com",
-            "homepage": "http://www.jacopobeschi.com"
-        }
+  "name": "palmabit/catalog",
+  "description": "",
+  "version" : "0.1.0",
+  "license" : "proprietary",
+  "authors": [
+    {
+      "name": "Palmabit",
+      "email": "hello@palmabit.com",
+      "homepage": "http://www.palmabit.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4.0",
+    "illuminate/support": "4.1.*",
+    "baum/baum": "1.0.9",
+    "way/form": "dev-master",
+    "intervention/image": "dev-master",
+    "palmabit/library" : "0.1.1",
+    "palmabit/multilanguage" : "0.1.1",
+    "palmabit/authentication" : "0.1.1",
+    "jacopo/laravel-single-table-inheritance": "dev-master"
+  },
+  "require-dev": {
+    "mockery/mockery": "0.9.0",
+    "orchestra/testbench": "2.1.*",
+    "fzaninotto/faker": "1.4.*@dev"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git://github.com/orchestral/phpseclib.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/authenticator.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/library.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/multilanguage.git"
+    }
+  ],
+  "autoload": {
+    "psr-0": {
+      "Palmabit\\Catalog\\": "src/"
+    },
+    "psr-4": {
+      "Palmabit\\Catalog\\Tests\\" : "tests/"
+    },
+    "files" : [
+      "src/Palmabit/Catalog/Helpers/helpers.php"
     ],
-    "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "4.1.*",
-        "baum/baum": "1.0.9",
-        "way/form": "dev-master",
-        "intervention/image": "dev-master",
-        "palmabit/library" : "dev-master",
-        "palmabit/multilanguage" : "dev-master",
-        "palmabit/authentication" : "dev-master",
-        "jacopo/laravel-single-table-inheritance": "dev-master"
-    },
-    "require-dev": {
-        "mockery/mockery": "0.9.0",
-        "orchestra/testbench": "2.1.*",
-        "fzaninotto/faker": "1.4.*@dev"
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git://github.com/orchestral/phpseclib.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/authenticator.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/library.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://intrip@bitbucket.org/palmabit/multilanguage.git"
-        }
-    ],
-    "autoload": {
-        "psr-0": {
-            "Palmabit\\Catalog\\": "src/"
-        },
-        "psr-4": {
-            "Palmabit\\Catalog\\Tests\\" : "tests/"
-        },
-        "files" : [
-            "src/Palmabit/Catalog/Helpers/helpers.php"
-        ],
-        "classmap" : [
-            "src/controllers"
-        ]
-    },
-    "minimum-stability": "stable"
+    "classmap" : [
+      "src/controllers"
+    ]
+  },
+  "minimum-stability": "stable"
 }
