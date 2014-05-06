@@ -113,7 +113,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
         ];
         $this->repo->create($cat_values);
 
-        $expected_data = ["" => "", "0" => "desc"];
+        $expected_data = ["" => "Qualsiasi", "1" => "desc"];
         $data =  $this->repo->getArrSelectCat();
 
         $this->assertEquals($expected_data, $data);

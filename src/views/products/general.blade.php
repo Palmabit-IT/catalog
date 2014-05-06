@@ -7,7 +7,6 @@
 @if( $errors->has('duplication') )
 <div class="alert alert-danger">{{$errors->first('duplication')}}</div>
 @endif
-
 <div class="row">
     <div class="col-md-12">
         <h3>Anagrafica prodotto</h3>
@@ -37,6 +36,7 @@
               {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
               {{Form::text('price', null, ['class' => 'form-control'])}}
             </div>
+            <span class="text-danger">{{$errors->first('price')}}</span>
         </div>
         <div class="form-group">
             {{Form::label("stock","Giacenza (disponibilità in magazzino)")}}

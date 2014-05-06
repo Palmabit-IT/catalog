@@ -98,7 +98,7 @@ class ProductsController extends Controller {
         catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit")->withInput()->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $input["slug_lang"]] )->withInput()->withErrors($errors);
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit",["slug_lang" => $obj->slug_lang])->with(array("message"=>"Prodotto modificato con successo."));
