@@ -270,10 +270,10 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "with_vat" => (boolean)$data["with_vat"],
                                     "video_link" => isset($data["video_link"]) ? $data["video_link"] : null,
                                     "professional" => (boolean)$data["professional"],
-                                    "price1" => $data["price1"],
-                                    "price2" => $data["price2"],
-                                    "price3" => $data["price3"],
-                                    "price4" => $data["price4"],
+                                    "price1" => isset($data["price1"]) ? $data["price1"] : null,
+                                    "price2" => isset($data["price2"]) ? $data["price2"] : null,
+                                    "price3" => isset($data["price3"]) ? $data["price3"]:  null,
+                                    "price4" => isset($data["price4"]) ? $data["price4"] : null,
                                     'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
                                     'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
                                 ]);

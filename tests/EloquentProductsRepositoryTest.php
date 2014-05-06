@@ -72,6 +72,25 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals("en", $obj->lang);
         $this->assertEquals(2, $obj->slug_lang);
     }
+
+    /**
+     * @test
+     **/
+    public function itCanUpdateEmptyPrice()
+    {
+        $this->prepareFakeData();
+
+        $obj = $this->r->update(2, [
+                                   "price1" => "",
+                                   "price2" => "",
+                                   "price3" => "",
+                                   "price4" => "",
+                                   ]);
+        $this->assertNull($obj->price1);
+        $this->assertNull($obj->price2);
+        $this->assertNull($obj->price3);
+        $this->assertNull($obj->price4);
+    }
   
     /**
      * @test
