@@ -30,14 +30,8 @@ class CreateTableProduct extends Migration {
             $table->boolean("offer")->default(1);
             $table->boolean("with_vat")->default(0);
             $table->boolean("stock")->default(0);
-            $table->integer("professional")->default(0);
             $table->string("video_link")->nullable()->default(null);
-            $table->decimal("price1", 19,2)->nullable();
-            $table->decimal("price2", 19,2)->nullable();
-            $table->decimal("price3", 19,2)->nullable();
-            $table->decimal("price4", 19,2)->nullable();
-            $table->boolean("quantity_pricing_enabled")->default(0);
-            $table->integer("quantity_pricing_quantity")->default(0);
+            $table->decimal("price", 19,2)->nullable();
             // for multilanguage
             // nullable when you duplicate a product
             $table->string('slug_lang')->nullable();

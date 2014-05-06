@@ -31,58 +31,16 @@
         {{FormField::video_link(["type" => "text", "label" => "URL video (youtube):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
-            <label for=​"price1" class=​"control-label">​Prezzo1: ​</label>​
+            <label for=​"price1" class=​"control-label">​Prezzo: ​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
-              {{Form::text('price1', null, ['class' => 'form-control'])}}
+              {{Form::text('price', null, ['class' => 'form-control'])}}
             </div>
-        </div>
-        <span class="text-danger">{{$errors->first('price1')}}</span>
-        <div class="form-group">
-            <label for=​"price2" class=​"control-label">​Prezzo2: ​</label>​
-            <div class="input-group">
-              <span class="input-group-addon">€</span>
-                {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
-                {{Form::text('price2', null, ['class' => 'form-control'])}}
-            </div>
-        </div>
-        <span class="text-danger">{{$errors->first('price2')}}</span>
-        <div class="form-group">
-            <label for=​"price3" class=​"control-label">​Prezzo3: ​</label>​
-            <div class="input-group">
-              <span class="input-group-addon">€</span>
-                {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
-                {{Form::text('price3',null, ['class' => 'form-control'])}}
-            </div>
-        </div>
-        <span class="text-danger">{{$errors->first('price3')}}</span>
-        <div class="form-group">
-            <label for=​"price4" class=​"control-label">​Prezzo4: ​</label>​
-            <div class="input-group">
-                <span class="input-group-addon">€</span>
-                {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
-                {{Form::text('price4', null, ['class' => 'form-control'])}}
-            </div>
-        </div>
-        <span class="text-danger">{{$errors->first('price4')}}</span>
-        <div class="form-group">
-            {{Form::label("","Abilita gestione quantità: ")}}
-            {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"], (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ? $product->quantity_pricing_enabled: "0", ["class"=> "form-control"] )}}
-        </div>
-        {{FormField::quantity_pricing_quantity(["label" => "Quantità"])}}
-        <span class="text-danger">{{$errors->first('quantity_pricing_quantity')}}</span>
-        <div class="form-group">
-            {{Form::label("with_vat","Iva inclusa: ")}}
-            {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], null, ["class"=> "form-control"] )}}
         </div>
         <div class="form-group">
             {{Form::label("stock","Giacenza (disponibilità in magazzino)")}}
             {{Form::select('stock', ["1" => "Sì", "0" => "No"], null, ["class"=> "form-control"] )}}
-        </div>
-        <div class="form-group">
-            {{Form::label("professional","Prodotto professionale")}}
-            {{Form::select('professional', ["0" => "No", "1" => "Sì"], null, ["class"=> "form-control"] )}}
         </div>
         <div class="form-group">
             {{Form::label("public","Prodotto pubblico")}}

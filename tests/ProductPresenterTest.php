@@ -94,120 +94,6 @@ class ProductPresenterTest extends TestCase {
     /**
      * @test
      **/
-    public function it_obtain_price_small()
-    {
-        $product = new Product([
-            "description" => "desc",
-            "code" => "code",
-            "name" => "name",
-            "slug" => "slug",
-            "slug_lang" => "",
-            "description_long" => "",
-            "featured" => 1,
-            "public" => 1,
-            "offer" => 1,
-            "stock" => 4,
-            "with_vat" => 1,
-            "video_link" => "http://www.google.com/video/12312422313",
-            "professional" => 1,
-            "price1" => "12.22",
-            "price2" => "8.21",
-            "price3" => "5.12",
-            "price4" => "2.12",
-            "quantity_pricing_quantity" => 10,
-            "quantity_pricing_enabled" => 1
-
-        ]);
-        $presenter = new PresenterProducts($product);
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        App::instance('authenticator', $mock_auth);
-        $this->assertEquals("5.12", $presenter->price_small);
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(false)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        App::instance('authenticator', $mock_auth);
-        $this->assertEquals("12.22", $presenter->price_small);
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(false)
-            ->getMock();
-        App::instance('authenticator', $mock_auth);
-        $this->assertEquals("", $presenter->price_small);
-    }
-
-    /**
-     * @test
-     **/
-    public function it_obtain_price_big()
-    {
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "5.12",
-                               "price4" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-
-                               ]);
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        App::instance('authenticator', $mock_auth);
-        $presenter = new PresenterProducts($product);
-        $this->assertEquals("2.12", $presenter->price_big);
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(false)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        App::instance('authenticator', $mock_auth);
-        $presenter = new PresenterProducts($product);
-        $this->assertEquals("8.21", $presenter->price_big);
-    }
-    
-    /**
-     * @test
-     **/
     public function it_returns_the_featured_image()
     {
         $presenter = m::mock('Palmabit\Catalog\Presenters\PresenterProducts')->makePartial()->shouldReceive('features')->once()->andReturn(22)->getMock();
@@ -234,9 +120,6 @@ class ProductPresenterTest extends TestCase {
                                "with_vat" => 1,
                                "video_link" => "http://www.google.com/video/12312422313",
                                "professional" => 1,
-                               "public_price" => "12.22",
-                               "logged_price" => "8.21",
-                               "professional_price" => "2.12",
                                ]);
         $presenter = new PresenterProducts($product);
         $this->assertEquals("name", $presenter->name);

@@ -18,78 +18,36 @@ class RowOrderTest extends DbTestCase {
     /**
      * @test
      */
-    public function it_set_item_price_and_saved_row_data_below_quantity()
+    public function it_set_item_price_and_saved_row_data()
     {
         $row = new RowOrder();
         $product = $this->getStandardProduct();
         $mock_auth = $this->getLoggedUserMock();
         App::instance('authenticator', $mock_auth);
-        $expected_price = 24.44;
-
-        $price = $row->calculatePrice($product,2);
-
-        $this->assertEquals($expected_price, $price);
-
-        $mock_auth = $this->getProfessionalUserPriceMock();
-        App::instance('authenticator', $mock_auth);
-        $expected_price = 10.24;
-
-        $row->setItem($product,2);
-
-        $this->assertEquals($expected_price, $row->total_price);
-        $this->assertEquals(5.12, $row->single_price);
-        $this->assertEquals("price3", $row->price_type_used);
-
-    }
-
-    /**
-     * @test
-     */
-    public function it_set_item_price_and_saved_row_data_over_quantity()
-    {
-        $row = new RowOrder();
-        $product = $this->getStandardProduct();
-        $mock_auth = $this->getLoggedUserMock();
-        App::instance('authenticator', $mock_auth);
-        $expected_price = 82.1;
+        $expected_price = 11.00;
 
         $price = $row->calculatePrice($product, 10);
 
         $this->assertEquals($expected_price, $price);
-
-        $mock_auth = $this->getProfessionalUserPriceMock();
-        App::instance('authenticator', $mock_auth);
-        $expected_price = 21.2;
-
-        $row->setItem($product,10);
-
-        $this->assertEquals($expected_price, $row->total_price);
-        $this->assertEquals(2.12, $row->single_price);
-        $this->assertEquals("price4", $row->price_type_used);
     }
 
     /**
      * @test
      **/
-    public function it_set_an_item_given_a_prdouct()
+    public function it_set_an_item_given_a_product()
     {
-        $row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()->shouldReceive('calculatePrice')
-            ->once()
-            ->andReturn(10)
-            ->shouldReceive('getSingleProductPriceToUse')
-            ->once()
-            ->andReturn(1)
-            ->shouldReceive('getPriceTypeStringToUse')
-            ->once()
-            ->andReturn('price2')
-            ->getMock();
+        $row = new RowOrder();
         $product = $this->getStandardProduct();
+        $login_mock = $this->getLoggedUserMock();
+        App::instance('authenticator',$login_mock);
 
-        $row->setItem($product, 10);
+        $quantity = 10;
+        $row->setItem($product, $quantity);
 
-        $this->assertEquals(10, $row->quantity);
+        $this->assertEquals($quantity, $row->quantity);
         $this->assertEquals($product->id, $row->product_id);
-        $this->assertEquals(10, $row->total_price);
+        $expected_total_price = 11.00;
+        $this->assertEquals($expected_total_price, $row->total_price);
     }
 
     /**
@@ -135,15 +93,8 @@ class RowOrderTest extends DbTestCase {
                     "public" => 1,
                     "offer" => 1,
                     "stock" => 4,
-                    "with_vat" => 1,
                     "video_link" => "http://www.google.com/video/12312422313",
-                    "professional" => 1,
-                    "price1" => "12.22",
-                    "price2" => "8.21",
-                    "price3" => "5.12",
-                    "price4" => "2.12",
-                    "quantity_pricing_quantity" => 10,
-                    "quantity_pricing_enabled" => 1
+                    "price" => "1.10",
                     ]);
     }
 
@@ -153,23 +104,7 @@ class RowOrderTest extends DbTestCase {
             ->shouldReceive('check')
             ->once()
             ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->once()
-            ->andReturn(false)
-            ->shouldReceive('hasGroup')
-            ->andReturn(true)
             ->getMock();
     }
-
-        public function getProfessionalUserPriceMock()
-        {
-            return m::mock('StdClass')
-                ->shouldReceive('check')
-                ->once()
-                ->andReturn(true)
-                ->shouldReceive('hasGroup')
-                ->andReturn(true)
-                ->getMock();
-        }
 }
  

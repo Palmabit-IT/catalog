@@ -109,57 +109,6 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
         return (! $prod->isEmpty()) ? $prod->all(): null;
     }
 
-    /**
-     * Obtain the price if you buy low quantity or if quantity handling is not enabled
-     * @return mixed
-     * @todo add the test for groupnotfoundexception
-     */
-    public function price_small()
-    {
-        $group_professional = Config::get('catalog::groups.professional_group_name');
-        $group_logged = Config::get('catalog::groups.logged_group_name');
-        $authenticator = App::make('authenticator');
-
-        // if not logged no price
-        if ( ! $authenticator->check()) return '';
-
-        try
-        {
-            if ( $authenticator->hasGroup($group_professional)) return $this->resource->price3;
-            elseif ( $authenticator->hasGroup($group_logged)) return $this->resource->price1;
-        }
-        // if doesn't find any of the groups
-        catch(GroupNotFoundException $e) {}
-
-        return '';
-    }
-
-    /**
-     * Obtain the price if quantity handling is enabled and you buy more than quantity_pricing_quantity
-     */
-    public function price_big()
-    {
-        // if not logged no price
-        if ( ! $this->authenticator->check()) return '';
-
-        try
-        {
-            if ($this->resource->quantity_pricing_enabled)
-            {
-                if($this->authenticator->hasGroup($this->group_professional)) return $this->resource->price4;
-                elseif($this->authenticator->hasGroup($this->group_logged)) return $this->resource->price2;
-            }
-            else
-            {
-                return $this->price_small();
-            }
-        }
-        // if doesn't find any of the groups
-        catch(GroupNotFoundException $e) {}
-
-        return '';
-    }
-
     public function featured_image()
     {
         return $this->features();

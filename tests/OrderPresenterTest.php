@@ -80,7 +80,6 @@ class OrderPresenterTest extends DbTestCase {
                  "quantity" => 222,
                  "total_price" => 22.22,
                  "single_price" => 0.22,
-                 "price_type_used" => "price1",
                  "created_at" => $date,
                  "updated_at" => $date,
             ]
@@ -92,7 +91,6 @@ class OrderPresenterTest extends DbTestCase {
             "quantity" => 222,
             "total_price" => 22.22,
             "single_price" => 0.22,
-            "price_type_used" => "price1",
             "created_at" => $date,
             "updated_at" => $date,
             ]

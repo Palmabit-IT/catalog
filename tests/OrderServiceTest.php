@@ -7,7 +7,7 @@ use Palmabit\Catalog\Orders\OrderService;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Authentication\Models\User;
-use Session, App, Event;
+use Session, App;
 use Mockery as m;
 /**
  * Test OrderServiceTest
@@ -53,17 +53,11 @@ class OrderServiceTest extends DbTestCase {
                                "public" => 1,
                                "offer" => 1,
                                "stock" => 4,
-                               "with_vat" => 1,
                                "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
+                               "price" => "12.22",
                                ]);
         $quantity = 10;
-        $mock_auth = $this->getPriceMockProfessional();
+        $mock_auth = $this->getAuthCheckMock();
         App::instance('authenticator', $mock_auth);
         $service->addRow($product, $quantity);
 
@@ -89,15 +83,8 @@ class OrderServiceTest extends DbTestCase {
                                "public" => 1,
                                "offer" => 1,
                                "stock" => 4,
-                               "with_vat" => 1,
                                "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "2.12",
-                               "price4" => "1.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
+                               "price" => "1.12",
                                ]);
         $user_stub = new User;
         $user_stub->id = 1;
@@ -105,9 +92,6 @@ class OrderServiceTest extends DbTestCase {
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->times(3)
             ->andReturn(true)
             ->shouldReceive('getLoggedUser')
             ->andReturn($user_stub)
@@ -293,14 +277,10 @@ class OrderServiceTest extends DbTestCase {
         $service->sendEmailToClient($mock_mailer);
     }
 
-    protected function getPriceMockProfessional()
+    protected function getAuthCheckMock()
     {
         return m::mock('StdClass')
             ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->shouldReceive('hasGroup')
-            ->times(3)
             ->andReturn(true)
             ->getMock();
     }

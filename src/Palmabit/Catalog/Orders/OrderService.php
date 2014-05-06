@@ -8,7 +8,7 @@ use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
 use Palmabit\Library\Exceptions\InvalidException;
 use Palmabit\Library\Exceptions\ValidationException;
-use Session, Event, App, L, Log;
+use Session, App, L, Log;
 use Palmabit\Catalog\Models\Order;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Library\Email\MailerInterface;

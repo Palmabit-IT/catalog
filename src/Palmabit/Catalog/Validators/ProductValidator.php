@@ -25,9 +25,19 @@ class ProductValidator  extends OverrideConnectionValidator{
     {
         Event::listen('validating', function($input)
         {
-            if(isset($input["id"]))
+            /**
+             * @param $input
+             * @return bool
+             */
+            function isUpdate($input)
+            {
+                return isset($input["id"]);
+            }
+
+            if(isUpdate($input))
             {
                 static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
+                static::$rules["code"][] = "unique:product,code,{$input['id']}";
             }
         });
     }

@@ -10,7 +10,9 @@ class Product extends Model
 {
     protected $table = "product";
 
-    protected $fillable = array("id","code","name","slug","long_description","description","featured","lang", "slug_lang", "order", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", "price4", 'quantity_pricing_enabled', 'quantity_pricing_quantity');
+    protected $fillable = array(
+        "id", "code", "name", "slug", "long_description", "description", "featured", "lang",
+        "slug_lang", "order", "public", "offer", "stock", "video_link", "price");
 
     protected $table_type = 'General';
     /**
@@ -22,7 +24,10 @@ class Product extends Model
      * The list of attributes that belongs to the class
      * @var array
      */
-    protected static $my_attributes = array("id","code","name","slug","long_description","image","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", "price4" , 'quantity_pricing_enabled', 'quantity_pricing_quantity', 'price_small', 'price_big','categories');
+    protected static $my_attributes = array(
+        "id", "code", "name", "slug", "long_description", "image", "description", "featured",
+        "lang", "pivot", "slug_lang", "order", "category", "public", "offer", "stock", "video_link",
+        'price', 'categories');
 
     public function categories()
     {
@@ -39,23 +44,8 @@ class Product extends Model
         return $this->belongsToMany('Palmabit\Catalog\Models\Product', "products_products", "first_product_id", "second_product_id");
     }
 
-    public function setPrice1Attribute($value)
+    public function setPriceAttribute($value)
     {
-        $this->attributes['price1'] = $value ? $value : null;
-    }
-
-    public function setPrice2Attribute($value)
-    {
-        $this->attributes['price2'] = $value ? $value : null;
-    }
-
-    public function setPrice3Attribute($value)
-    {
-        $this->attributes['price3'] = $value ? $value : null;
-    }
-
-    public function setPrice4Attribute($value)
-    {
-        $this->attributes['price4'] = $value ? $value : null;
+        $this->attributes['price'] = $value ? $value : null;
     }
 }

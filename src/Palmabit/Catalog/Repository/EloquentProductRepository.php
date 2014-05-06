@@ -85,9 +85,6 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                 case 'offer':
                     $q = $q->where($products_table.'.offer', '=', $value);
                     break;
-                case 'professional':
-                    $q = $q->where($products_table.'.professional', '=', $value);
-                    break;
                 case 'category_id':
                     $q = $q->where($category_table.'.id', '=', $value);
                     break;
@@ -224,7 +221,6 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function update($id , array $data)
     {
         $slug = isset($data["slug"]) ? $data["slug"] : '';
-        $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $this->clearAllCache($slug);
 
         $product = $this->find($id);
@@ -267,15 +263,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "public" => (boolean)$data["public"],
                                     "offer" => (boolean)$data["offer"],
                                     "stock" => (boolean)$data["stock"],
-                                    "with_vat" => (boolean)$data["with_vat"],
                                     "video_link" => isset($data["video_link"]) ? $data["video_link"] : null,
-                                    "professional" => (boolean)$data["professional"],
-                                    "price1" => $data["price1"],
-                                    "price2" => $data["price2"],
-                                    "price3" => $data["price3"],
-                                    "price4" => $data["price4"],
-                                    'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
-                                    'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
+                                    "price" => $data["price"],
                                 ]);
     }
 
