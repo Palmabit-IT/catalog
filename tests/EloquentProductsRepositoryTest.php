@@ -68,9 +68,29 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     {
         $this->prepareFakeData();
 
-        $obj = $this->r->update(2, ["lang" => "en"]);
+        $obj = $this->r->update(2, ["lang" => "en",
+                                   ]);
         $this->assertEquals("en", $obj->lang);
         $this->assertEquals(2, $obj->slug_lang);
+    }
+
+    /**
+     * @test
+     **/
+    public function itCanUpdateEmptyPrice()
+    {
+        $this->prepareFakeData();
+
+        $obj = $this->r->update(2, [
+                                   "price1" => "",
+                                   "price2" => "",
+                                   "price3" => "",
+                                   "price4" => "",
+                                   ]);
+        $this->assertEquals(null, $obj->price1);
+        $this->assertEquals(null, $obj->price2);
+        $this->assertEquals(null, $obj->price3);
+        $this->assertEquals(null, $obj->price4);
     }
   
     /**
@@ -131,7 +151,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
             "video_link" => "http://www.google.com/video/12312422313",
             "professional" => 1,
             "price1" => "12.22",
-            "price2" => "8.21",
+            "price2" => "",
             "price3" => "5.12",
             "price4" => "2.12",
             "quantity_pricing_enabled" => 0,
@@ -147,7 +167,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $this->assertEquals("http://www.google.com/video/12312422313", $obj->video_link);
         $this->assertEquals(1, $obj->professional);
         $this->assertEquals("12.22", $obj->price1);
-        $this->assertEquals("8.21", $obj->price2);
+        $this->assertNull($obj->price2);
         $this->assertEquals("5.12", $obj->price3);
         $this->assertEquals("2.12", $obj->price4);
     }

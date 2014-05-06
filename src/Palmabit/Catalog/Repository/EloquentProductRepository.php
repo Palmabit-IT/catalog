@@ -12,7 +12,7 @@ use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
 use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Palmabit\Library\Exceptions\NotFoundException;
-use L, Config, DB, Cache, App;
+use Config, DB, Cache, App;
 
 class EloquentProductRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
 {

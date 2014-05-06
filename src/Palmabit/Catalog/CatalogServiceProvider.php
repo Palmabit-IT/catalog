@@ -63,6 +63,7 @@ class CatalogServiceProvider extends ServiceProvider {
         $this->app->register('Intervention\Image\ImageServiceProvider');
         $this->app->register('Palmabit\Multilanguage\MultilanguageServiceProvider');
         $this->app->register('Palmabit\Authentication\AuthenticationServiceProvider');
+        $this->app->register('Palmabit\Library\Form\HtmlServiceProvider');
     }
 
     protected function registerAliases()

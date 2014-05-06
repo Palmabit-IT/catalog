@@ -38,4 +38,24 @@ class Product extends Model
     {
         return $this->belongsToMany('Palmabit\Catalog\Models\Product', "products_products", "first_product_id", "second_product_id");
     }
+
+    public function setPrice1Attribute($value)
+    {
+        $this->attributes['price1'] = $value ? $value : null;
+    }
+
+    public function setPrice2Attribute($value)
+    {
+        $this->attributes['price2'] = $value ? $value : null;
+    }
+
+    public function setPrice3Attribute($value)
+    {
+        $this->attributes['price3'] = $value ? $value : null;
+    }
+
+    public function setPrice4Attribute($value)
+    {
+        $this->attributes['price4'] = $value ? $value : null;
+    }
 }
