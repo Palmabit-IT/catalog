@@ -19,7 +19,8 @@
     "palmabit/library" : "0.1.1",
     "palmabit/multilanguage" : "0.1.1",
     "palmabit/authentication" : "0.1.1",
-    "jacopo/laravel-single-table-inheritance": "dev-master"
+    "jacopo/laravel-single-table-inheritance": "dev-master",
+    "jacopo/bootstrap-3-table-generator": "dev-master"
   },
   "require-dev": {
     "mockery/mockery": "0.9.0",
