@@ -26,7 +26,7 @@
             {{Form::label('category_id', 'Categoria: ')}}
             {{Form::select('category_id', \App::make('category_repository')->getArrSelectCat(), Input::get('category_id',''), ["class" => "form-control"])}}
         </div>
-        {{Form::reset('Pulisci', ["class" => "btn btn-default"])}}
+        <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@lists')}}" class="btn btn-default">Pulisci</a>
         {{Form::submit('Cerca', ["class" => "btn btn-primary"])}}
         {{Form::close()}}
     </div>
