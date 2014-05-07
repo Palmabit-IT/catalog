@@ -172,6 +172,7 @@ class Order extends Model
     protected function setupUserId()
     {
         $logged_user = App::make('authenticator')->getLoggedUser();
+
         if (!$logged_user) throw new LoginRequiredException;
         $this->setAttribute('user_id', $logged_user->id);
     }

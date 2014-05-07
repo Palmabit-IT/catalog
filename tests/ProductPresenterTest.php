@@ -117,9 +117,7 @@ class ProductPresenterTest extends TestCase {
                                "public" => 1,
                                "offer" => 1,
                                "stock" => 4,
-                               "with_vat" => 1,
                                "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
                                ]);
         $presenter = new PresenterProducts($product);
         $this->assertEquals("name", $presenter->name);

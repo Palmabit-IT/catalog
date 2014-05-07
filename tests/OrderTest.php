@@ -27,32 +27,10 @@ class OrderTest extends DbTestCase
     public function it_add_row_order_to_his_collection()
     {
         $order = new Order;
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, 10)
-            ->andReturn(true)
-            ->getMock();
+        $product  = $this->createAProduct();
+
+        $quantity = 10;
+        $mock_row = $this->mockRowOrderSetItem($product,$quantity);
         $order->addRow($product, 10, $mock_row);
 
         $this->assertEquals(1, $order->getRowOrders()->count());
@@ -64,37 +42,18 @@ class OrderTest extends DbTestCase
     public function it_saves_himself_and_his_collection_to_db_and_set_completed_and_user_id()
     {
         $order = new Order;
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "price" => "1.00",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, 10)
-            ->andReturn(true)
-            ->getMock();
+        $product  = $this->createAProduct();
+
+        $quantity = 10;
+        $mock_row = $this->mockRowOrderSetItem($product,$quantity);
         $mock_row->product_id = 10;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
         $mock_row->single_price = 1.00;
         $order->addRow($product, 10, $mock_row);
-        $user_stub = new User();
-        $user_stub->id = 10;
-        $mock_auth = m::mock('StdClass')->shouldReceive('getLoggedUser')->once()->andReturn($user_stub)->getMock();
-        App::instance('authenticator',$mock_auth);
+
+        $user_id = 10;
+        $this->mockAuthenticatorReturnUserWithId($user_id);
 
         $order->save();
 
@@ -117,18 +76,13 @@ class OrderTest extends DbTestCase
         $product = $this->createAndSaveProduct();
 
         $first_quantity = 10;
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')
-            ->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, $first_quantity)
-            ->andReturn(true)
-            ->getMock();
+        $mock_row = $this->mockRowOrderSetItem($product,$first_quantity);
 
         $order->addRow($product, $first_quantity, $mock_row);
-        $second_quantity = 20;
         $mock_row->quantity = $first_quantity;
         $mock_row->slug_lang = $product->slug_lang;
+
+        $second_quantity = 20;
         $quantity = $order->clearDuplicatesAndUpdateQuantity($product, $second_quantity);
 
         $this->assertEquals(30, $quantity);
@@ -159,29 +113,13 @@ class OrderTest extends DbTestCase
     public function it_deletes_a_row_given_product_id()
     {
         $order = new Order;
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "price1" => "1.00",
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
+        $product = $this->createAndSaveProduct();
+        $quantity = 10;
+        $mock_row = $this->mockRowOrderSetItem($product,$quantity);
         $mock_row->product_id = 1;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
-        $order->addRow($product, 10, $mock_row);
+        $order->addRow($product, $quantity, $mock_row);
 
         $order->deleteRowOrder(1);
 
@@ -194,40 +132,15 @@ class OrderTest extends DbTestCase
     public function it_change_quantity_of_an_order()
     {
         $order = new Order;
-        $product = Product::create([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "1.00",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
+        $product = $this->createAndSaveProduct();
+        $quantity = 10;
+        $mock_row = $this->mockRowOrderSetItem($product, $quantity);
         $mock_row->product_id = 1;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
-        $order->addRow($product, 10, $mock_row);
-        // mock price calculation
-        $mock_auth = m::mock('StdClass')
-            ->shouldReceive('check')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
-        App::instance("authenticator", $mock_auth);
+        $order->addRow($product, $quantity, $mock_row);
+        $this->mockAuthLoggedIn();
+
         $order->changeRowQuantity(1,3);
 
         $this->assertEquals(3, $order->getRowOrders()->first()->quantity);
@@ -344,30 +257,13 @@ class OrderTest extends DbTestCase
     public function it_throws_exception_if_no_user_is_logged()
     {
         $order = new Order();
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "price" => "10.00",
-                               ]);
-        $mock_row = m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()
-            ->shouldReceive('setItem')
-            ->once()
-            ->with($product, 10)
-            ->andReturn(true)
-            ->getMock();
+        $product = $this->createAndSaveProduct();
+        $quantity = 10;
+        $mock_row = $this->mockRowOrderSetItem($product, $quantity);
         $mock_row->product_id = 10;
         $mock_row->quantity= 1;
         $mock_row->total_price = 1.00;
-        $order->addRow($product, 10, $mock_row);
+        $order->addRow($product, $quantity, $mock_row);
         $order->save();
     }
 
@@ -382,6 +278,44 @@ class OrderTest extends DbTestCase
 
         $this->assertInstanceOf('Palmabit\Catalog\Presenters\OrderPresenter', $presenter);
         $this->assertEquals($order, $presenter->getResource());
+    }
+
+    /**
+     * @param $product
+     * @return mixed
+     */
+    private function mockRowOrderSetItem($product, $quantity)
+    {
+        return m::mock('Palmabit\Catalog\Models\RowOrder')->makePartial()->shouldReceive('setItem')->once()->with($product, $quantity)->andReturn(true)->getMock();
+    }
+
+    /**
+     * @return Product
+     */
+    private function createAProduct()
+    {
+        $product = new Product([
+                               "description" => "desc", "code" => "code", "name" => "name",
+                               "slug"        => "slug", "slug_lang" => "", "description_long" => "",
+                               "featured"    => 1, "public" => 1, "offer" => 1, "stock" => 4,
+                               "video_link"  => "http://www.google.com/video/12312422313",
+                               "price"       => "1.00",
+                               ]);
+        return $product;
+    }
+
+    private function mockAuthenticatorReturnUserWithId($id)
+    {
+        $user_stub     = new User();
+        $user_stub->id = $id;
+        $mock_auth     = m::mock('StdClass')->shouldReceive('getLoggedUser')->once()->andReturn($user_stub)->getMock();
+        App::instance('authenticator', $mock_auth);
+    }
+
+    private function mockAuthLoggedIn()
+    {
+        $mock_auth = m::mock('StdClass')->shouldReceive('check')->once()->andReturn(true)->getMock();
+        App::instance("authenticator", $mock_auth);
     }
 
 }

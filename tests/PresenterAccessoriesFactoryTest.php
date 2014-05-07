@@ -35,11 +35,13 @@ class PresenterAccessoriesFactoryTest extends DbTestCase {
                        "video_link" => "http://www.google.com/video/12312422313",
                        "price" => "12.22",
                    ];
-        $data2 = $data1;
-        $data2["slug"] = "slug2";
         $repo_product = App::make('product_repository');
         $prod1 = $repo_product->create($data1);
+
+        $data2 = $data1;
+        $data2["slug"] = "slug2";
         $prod2 = $repo_product->create($data2);
+
         $repo_product->attachProduct($prod1->id, $prod2->id);
         $factory = new PresenterAccessoriesFactory();
 

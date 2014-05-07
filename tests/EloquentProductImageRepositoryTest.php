@@ -21,13 +21,8 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
     public function testCreateWorks()
     {
         $this->createProduct();
-        $data = [
-            "description" => "desc",
-            "product_id" => 1,
-            "featured" => 1,
-            "image" => "1"
-        ];
-        $obj = $this->repo->create($data);
+        $obj = $this->createStandardImage();
+
         $this->assertTrue(is_a($obj,'\Palmabit\Catalog\Models\ProductImage') );
         $this->assertEquals('desc', $obj->description);
     }
@@ -38,13 +33,7 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
     public function it_gets_images_of_a_product_id()
     {
         $this->createProduct();
-        $data = [
-            "description" => "desc",
-            "product_id" => 1,
-            "featured" => 1,
-            "image" => "1"
-        ];
-        $obj = $this->repo->create($data);
+        $obj = $this->createStandardImage();
 
         $objs = $this->repo->getByProductId(1);
         $this->assertEquals($objs->first()->toArray(), $obj->toArray());
@@ -53,13 +42,8 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
     public function testDeleteWorks()
     {
         $this->createProduct();
-        $data = [
-            "description" => "desc",
-            "product_id" => 1,
-            "featured" => 1,
-            "image" => "",
-        ];
-        $obj = $this->repo->create($data);
+        $obj = $this->createStandardImage();
+
         $this->repo->delete(1);
         $numero_cat = Category::all()->count();
         $this->assertEquals(0, $numero_cat);
@@ -105,9 +89,8 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
 
     protected function createProduct()
     {
-        $description= "desc";
         $data = [
-            "description" => $description,
+            "description" => "desc",
             "code" => "code",
             "name" => "name",
             "slug" => "slug",
@@ -124,6 +107,18 @@ class EloquentProductImageRepositoryTest extends DbTestCase {
     public function testChangeFeaturedThrowsNotFoundException()
     {
         $this->repo->changeFeatured(1,1);
+    }
+
+    /**
+     * @return mixed
+     */
+    private function createStandardImage()
+    {
+        $data = [
+            "description" => "desc", "product_id" => 1, "featured" => 1, "image" => "1"
+        ];
+        $obj  = $this->repo->create($data);
+        return $obj;
     }
 
 }

@@ -37,19 +37,7 @@ class EloquentOrderRepositoryTest extends \PHPUnit_Framework_TestCase {
     public function it_calculate_total_price()
     {
         $expected_amount = 10;
-        $user_mock = m::mock('StdClass')
-            ->shouldReceive('calculateTotalAmount')
-            ->once()
-            ->andReturn($expected_amount)
-            ->getMock();
-
-        $repo_mock = m::mock('Palmabit\Catalog\Repository\EloquentOrderRepository')
-            ->makePartial()
-            ->shouldReceive('find')
-            ->once()
-            ->andReturn($user_mock)
-            ->getMock();
-
+        $repo_mock = $this->mockCalculationOfTotalAmount($expected_amount);
 
         $total_amount = $repo_mock->calculateTotalAmount(1);
 
@@ -73,6 +61,18 @@ class EloquentOrderRepositoryTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertCount(1, $orders);
         $this->assertEquals($user_id, $orders->first()->user_id);
+    }
+
+    /**
+     * @param $expected_amount
+     * @return mixed
+     */
+    private function mockCalculationOfTotalAmount($expected_amount)
+    {
+        $user_mock = m::mock('StdClass')->shouldReceive('calculateTotalAmount')->once()->andReturn($expected_amount)->getMock();
+
+        $repo_mock = m::mock('Palmabit\Catalog\Repository\EloquentOrderRepository')->makePartial()->shouldReceive('find')->once()->andReturn($user_mock)->getMock();
+        return $repo_mock;
     }
 
 }

@@ -1,6 +1,9 @@
 <?php  namespace Palmabit\Catalog\Tests; 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\Paginator;
 use Mockery as m;
 use App;
+use Palmabit\Catalog\Models\Product;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\ValidationException;
 use Illuminate\Support\MessageBag;
@@ -9,7 +12,7 @@ use Illuminate\Support\MessageBag;
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-class ProductsControllerTest extends TestCase {
+class ProductsControllerTest extends DbTestCase {
 
     public function setUp()
     {
@@ -152,5 +155,42 @@ class ProductsControllerTest extends TestCase {
         $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists',['slug_lang' => $slug_lang]);
         $this->assertSessionHasErrors();
     }
+
+    /**
+     * @test
+     **/
+    public function itShowAllProducts()
+    {
+        $this->action('GET','Palmabit\Catalog\Controllers\ProductsController@lists');
+
+        $this->assertResponseOk();
+    }
+
+    /**
+     * @test
+     **/
+    public function itShowProductsEditPage()
+    {
+        $this->action('GET','Palmabit\Catalog\Controllers\ProductsController@getEdit');
+
+        $this->assertResponseOk();
+    }
+
+    /**
+     * @test
+     **/
+    public function itEditProduct()
+    {
+        $fake_input = [
+            "code" => "1234",
+            "slug" => "slug",
+            "slug_lang" => "",
+            "description" => "desc",
+        ];
+
+        $this->action('POST','Palmabit\Catalog\Controllers\ProductsController@postEdit',$fake_input);
+    }
+
+
 }
  

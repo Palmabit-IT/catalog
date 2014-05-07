@@ -48,8 +48,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             // language check
             ->where($products_table.'.lang', '=', $this->getLang())
             // ordering
-            ->orderBy($category_table.'.description','ASC')
             ->orderBy($products_table.".order","DESC")
+            ->orderBy($category_table.'.description','ASC')
             ->orderBy($products_table.".name","ASC")
             // get only a line per product
             ->groupBy($products_table.'.id');

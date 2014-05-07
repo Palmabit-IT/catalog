@@ -32,8 +32,8 @@ class PathHierarchyTest extends DbTestCase {
 
         // compare every category
         $this->assertEquals($expected_nodes[0]->toArray(),$node_array[0]->toArray());
-        $this->assertEquals($expected_nodes[1]->description,$node_array[1]->description);
-        $this->assertEquals($expected_nodes[2]->description,$node_array[2]->description);
+        $this->assertEquals($expected_nodes[1]->toArray(),$node_array[1]->toArray());
+        $this->assertEquals($expected_nodes[2]->toArray(),$node_array[2]->toArray());
     }
 
     protected function createCategoryHierarchy()

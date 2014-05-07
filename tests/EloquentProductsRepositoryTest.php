@@ -393,13 +393,23 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     {
         $this->prepareFakeSearchData();
 
-        //@todo check that data is ordered by cat and show it in the view
         $product = $this->r->all(["code" => ""]);
         $this->assertEquals(2, $product->count());
         // check that ordering by cat is the most important
         $this->assertEquals("slug1", $product->first()->slug);
         $this->assertEquals(2, $product->first()->order);
+    }
+    
+    /**
+     * @test
+     **/
+    public function canGetAllProductsOrderedByOrder()
+    {
+        $this->prepareFakeSearchData();
 
+        $product = $this->r->all();
+
+        $this->assertEquals("1234", $product->first()->code);
     }
 
     /**
