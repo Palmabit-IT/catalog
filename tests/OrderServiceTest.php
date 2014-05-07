@@ -142,8 +142,6 @@ class OrderServiceTest extends DbTestCase {
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('getLoggedUser')
             ->andReturn($user_stub)
-            ->shouldReceive('getLoggedUserProfile')
-            ->andReturn([])
             ->getMock();
         App::instance('authenticator', $mock_auth);
         $service = new OrderService();

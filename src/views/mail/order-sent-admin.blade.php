@@ -2,6 +2,7 @@
 <?php use Palmabit\Catalog\Models\Product; ?>
 <?php $profile_info = (object)Session::get('profile_info'); ?>
 <?php $body['order'] = Session::get($body['session_order_key']); ?>
+<?php $user_profile = App::make('authenticator')->getLoggedUser()->user_profile()->first(); ?>
 <html lang="it">
 <head>
     <meta charset="utf-8">
@@ -37,7 +38,7 @@
                 <strong>Nome: </strong>{{$product->name}}
             </li>
             <li>
-                <strong>Code: </strong>{{$product->code}}
+                <strong>Codice: </strong>{{$product->code}}
             </li>
             <li>
                 <strong>Quantità: </strong>{{$order->quantity}}

@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">Ricerca prodotti</h3>
+        <h3 class="panel-title"><i class="glyphicon glyphicon-search"></i> Ricerca prodotti</h3>
     </div>
     <div class="panel-body">
         {{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@lists','method' => 'get'])}}
@@ -24,7 +24,7 @@
         </div>
         <div class="form-group margin-bottom-20">
             {{Form::label('category_id', 'Categoria: ')}}
-            {{Form::select('category_id', \App::make('category_repository')->getArrSelectCat(), Input::get('category_id',''), ["class" => "form-control"])}}
+            {{Form::select('category_id', \App::make('category_repository',true)->getArrSelectCat(), Input::get('category_id',''), ["class" => "form-control"])}}
         </div>
         <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@lists')}}" class="btn btn-default">Pulisci</a>
         {{Form::submit('Cerca', ["class" => "btn btn-primary"])}}

@@ -122,13 +122,12 @@ class OrderService
     public function sendEmailToAdmin()
     {
         $mailer = App::make('palmamailer');
-        $user_profile = $this->getLoggedUserProfile();
         // get the admin emails
         $mail_helper = App::make('authentication_helper');
         $mails       = $mail_helper->getNotificationRegistrationUsersEmail();
         if (!empty($mails)) foreach ($mails as $email)
         {
-            $mailer->sendTo($email, ["session_order_key" => $this->session_mail_order, 'email' => $email, 'user_profile' => $user_profile] , 'Ordine: '.$this->order->id.' creato', 'catalog::mail.order-sent-admin');
+            $mailer->sendTo($email, ["session_order_key" => $this->session_mail_order, 'email' => $email] , 'Ordine: '.$this->order->id.' creato', 'catalog::mail.order-sent-admin');
         }
     }
 
