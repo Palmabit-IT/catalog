@@ -14,7 +14,6 @@
     <strong>Ordine numero {{$body['order']->id}}</strong>
     <br/>
     <h3>Dettagli cliente: </h3>
-    <?php $user_profile = $body['user_profile']; ?>
     @if($user_profile)
     <ul>
         <li>
