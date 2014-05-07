@@ -17,13 +17,13 @@
     @if($user_profile)
     <ul>
         <li>
-            <strong>Codice cliente: </strong> {{$user_profile->code}}
+            <strong>Codice cliente: </strong> {{isset($user_profile->code) ? $user_profile->code : 'non disponibile'}}
         </li>
         <li>
-            <strong>Tipo utente: </strong> {{$user_profile->profile_type}}
+            <strong>Tipo utente: </strong> {{isset($user_profile->profile_type) ? $user_profile->profile_type : 'Non disponibile'}}
        </li>
         <li>
-            <strong>Ragione sociale: </strong> {{$user_profile->company}}
+            <strong>Ragione sociale: </strong> {{isset($user_profile->company) ? $user_profile->company : 'Non disponibile'}}
         </li>
     </ul>
     @else
