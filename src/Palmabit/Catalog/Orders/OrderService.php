@@ -104,7 +104,7 @@ class OrderService
         return $this;
     }
 
-    protected function clearSession()
+    public function clearSession()
     {
         Session::forget($this->session_key);
         Session::forget($this->session_mail_order);
