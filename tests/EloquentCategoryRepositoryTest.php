@@ -93,14 +93,26 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
     public function it_gets_select_items_for_category_in_a_given_language()
     {
         $cat_values = [
-            "description" => "desc",
-            "slug" => "slug",
-            "slug_lang" => "slug",
+            "description" => "desc2",
+            "slug" => "slug2",
+            "slug_lang" => "slug2",
             "lang" => 'it'
         ];
         $this->repo->create($cat_values);
 
-        $expected_data = ["" => "Qualsiasi", "1" => "desc"];
+        $cat_values = [
+            "description" => "desc1",
+            "slug" => "slug1",
+            "slug_lang" => "slug1",
+            "lang" => 'it'
+        ];
+
+        $this->repo->create($cat_values);
+        $expected_data = [
+            "" => "Qualsiasi",
+            "2" => "desc1",
+            "1" => "desc2"
+        ];
         $data =  $this->repo->getArrSelectCat();
 
         $this->assertEquals($expected_data, $data);

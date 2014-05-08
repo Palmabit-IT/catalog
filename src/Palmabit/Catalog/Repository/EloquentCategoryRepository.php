@@ -209,7 +209,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
 
     public function getArrSelectCat()
     {
-        $all_cats = $this->model->whereLang($this->getLang())->lists('description','id') ;
+        $all_cats = $this->model->whereLang($this->getLang())
+                ->orderBy('description')
+                ->lists('description','id') ;
         $all_cats[""] = "Qualsiasi";
 
         return $all_cats;
