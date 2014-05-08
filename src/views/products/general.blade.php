@@ -70,8 +70,10 @@
             {{Form::label("","Abilita gestione quantità: ")}}
             {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"], (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ? $product->quantity_pricing_enabled: "0", ["class"=> "form-control"] )}}
         </div>
-        {{FormField::quantity_pricing_quantity(["label" => "Quantità"])}}
+        {{FormField::quantity_pricing_quantity(["label" => "Quantità professionista"])}}
         <span class="text-danger">{{$errors->first('quantity_pricing_quantity')}}</span>
+        {{FormField::quantity_pricing_quantity_non_professional(["label" => "Quantità non professionista"])}}
+        <span class="text-danger">{{$errors->first('quantity_pricing_quantity_non_professional')}}</span>
         <div class="form-group">
             {{Form::label("with_vat","Iva inclusa: ")}}
             {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], null, ["class"=> "form-control"] )}}

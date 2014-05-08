@@ -2,13 +2,32 @@
 use Palmabit\Catalog\Models\RowOrder;
 use Palmabit\Catalog\Models\Product;
 use Mockery as m;
-use App;
+use App, Config;
 /**
  * Test RowOrderTest
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
 class RowOrderTest extends DbTestCase {
+
+    protected $group_professional;
+    protected $group_logged;
+    protected $row;
+    protected $product;
+    protected $quantity_professional;
+    protected $quantity_non_professional;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->group_professional = Config::get('catalog::groups.professional_group_name');
+        $this->group_logged = Config::get('catalog::groups.logged_group_name');
+        $this->row = new RowOrder();
+        $this->quantity_professional = 10;
+        $this->quantity_non_professional = 5;
+        $this->product = $this->getStandardProduct($this->quantity_professional, $this->quantity_non_professional);
+    }
 
     public function tearDown()
     {
@@ -17,56 +36,71 @@ class RowOrderTest extends DbTestCase {
 
     /**
      * @test
-     */
-    public function it_set_item_price_and_saved_row_data_below_quantity()
+     **/
+    public function itSetPrice1()
     {
-        $row = new RowOrder();
-        $product = $this->getStandardProduct();
         $mock_auth = $this->getLoggedUserMock();
         App::instance('authenticator', $mock_auth);
-        $expected_price = 24.44;
+        $expected_single_price = 12.22;
+        $expected_price = $expected_single_price * 4;
 
-        $price = $row->calculatePrice($product,2);
+        $this->row->setItem($this->product,$this->quantity_non_professional-1);
 
-        $this->assertEquals($expected_price, $price);
-
-        $mock_auth = $this->getProfessionalUserPriceMock();
-        App::instance('authenticator', $mock_auth);
-        $expected_price = 10.24;
-
-        $row->setItem($product,2);
-
-        $this->assertEquals($expected_price, $row->total_price);
-        $this->assertEquals(5.12, $row->single_price);
-        $this->assertEquals("price3", $row->price_type_used);
-
+        $this->assertEquals($expected_price, $this->row->total_price);
+        $this->assertEquals($expected_single_price, $this->row->single_price);
+        $this->assertEquals("price1", $this->row->price_type_used);
     }
 
     /**
      * @test
-     */
-    public function it_set_item_price_and_saved_row_data_over_quantity()
+     **/
+    public function itSetPrice2()
     {
-        $row = new RowOrder();
-        $product = $this->getStandardProduct();
         $mock_auth = $this->getLoggedUserMock();
         App::instance('authenticator', $mock_auth);
-        $expected_price = 82.1;
+        $expected_single_price = 8.21;
+        $expected_price = $expected_single_price * 5;
 
-        $price = $row->calculatePrice($product, 10);
+        $this->row->setItem($this->product, $this->quantity_non_professional);
 
-        $this->assertEquals($expected_price, $price);
-
-        $mock_auth = $this->getProfessionalUserPriceMock();
-        App::instance('authenticator', $mock_auth);
-        $expected_price = 21.2;
-
-        $row->setItem($product,10);
-
-        $this->assertEquals($expected_price, $row->total_price);
-        $this->assertEquals(2.12, $row->single_price);
-        $this->assertEquals("price4", $row->price_type_used);
+        $this->assertEquals($expected_price, $this->row->total_price);
+        $this->assertEquals($expected_single_price, $this->row->single_price);
+        $this->assertEquals("price2", $this->row->price_type_used);
     }
+
+   /**
+    * @test
+    **/
+   public function itSetPrice3()
+   {
+       $mock_auth = $this->getProfessionalUserPriceMock();
+       App::instance('authenticator', $mock_auth);
+       $expected_single_price = 5.12;
+       $expected_price = $expected_single_price * 9;
+
+       $this->row->setItem($this->product,$this->quantity_professional-1);
+
+       $this->assertEquals($expected_price, $this->row->total_price);
+       $this->assertEquals($expected_single_price, $this->row->single_price);
+       $this->assertEquals("price3", $this->row->price_type_used);
+   }
+
+   /**
+    * @test
+    **/
+   public function itSetPrice4()
+   {
+       $mock_auth = $this->getProfessionalUserPriceMock();
+       App::instance('authenticator', $mock_auth);
+       $expected_single_price = 2.12;
+       $expected_price = $expected_single_price * 10;
+
+       $this->row->setItem($this->product,$this->quantity_professional);
+
+       $this->assertEquals($expected_price, $this->row->total_price);
+       $this->assertEquals($expected_single_price, $this->row->single_price);
+       $this->assertEquals("price4", $this->row->price_type_used);
+   }
 
     /**
      * @test
@@ -83,7 +117,7 @@ class RowOrderTest extends DbTestCase {
             ->once()
             ->andReturn('price2')
             ->getMock();
-        $product = $this->getStandardProduct();
+        $product = $this->getStandardProduct($this->quantity_professional,$this->quantity_non_professional);
 
         $row->setItem($product, 10);
 
@@ -112,7 +146,7 @@ class RowOrderTest extends DbTestCase {
     public function it_gets_the_product_presenter()
     {
         $row = new RowOrder();
-        $product = $this->getStandardProduct();
+        $product = $this->getStandardProduct($this->quantity_professional,$this->quantity_non_professional);
         $product->save();
         $row->product_id = $product->id;
 
@@ -122,7 +156,7 @@ class RowOrderTest extends DbTestCase {
         $this->assertEquals($product->id, $presenter->id);
     }
 
-    protected function getStandardProduct()
+    protected function getStandardProduct($quantity_professional, $quantity_non_professional)
     {
         return new Product([
                     "description" => "desc",
@@ -142,7 +176,8 @@ class RowOrderTest extends DbTestCase {
                     "price2" => "8.21",
                     "price3" => "5.12",
                     "price4" => "2.12",
-                    "quantity_pricing_quantity" => 10,
+                    "quantity_pricing_quantity" => $quantity_professional,
+                    "quantity_pricing_quantity_non_professional" => $quantity_non_professional,
                     "quantity_pricing_enabled" => 1
                     ]);
     }
@@ -151,25 +186,28 @@ class RowOrderTest extends DbTestCase {
     {
         return m::mock('StdClass')
             ->shouldReceive('check')
-            ->once()
             ->andReturn(true)
             ->shouldReceive('hasGroup')
-            ->once()
+            ->with($this->group_logged)
+            ->andReturn(true)
+            ->shouldReceive('hasGroup')
+            ->with($this->group_professional)
             ->andReturn(false)
-            ->shouldReceive('hasGroup')
-            ->andReturn(true)
             ->getMock();
     }
 
-        public function getProfessionalUserPriceMock()
-        {
-            return m::mock('StdClass')
+    public function getProfessionalUserPriceMock()
+    {
+        return m::mock('StdClass')
                 ->shouldReceive('check')
-                ->once()
                 ->andReturn(true)
                 ->shouldReceive('hasGroup')
+                ->with($this->group_logged)
+                ->andReturn(false)
+                ->shouldReceive('hasGroup')
+                ->with($this->group_professional)
                 ->andReturn(true)
                 ->getMock();
-        }
+    }
 }
  

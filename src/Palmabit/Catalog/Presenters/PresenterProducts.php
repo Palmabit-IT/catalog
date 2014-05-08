@@ -193,6 +193,11 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
         return $this->hasGroupToBuyProduct();
     }
 
+    public function quantity_pricing_quantity_used()
+    {
+        return $this->authenticator->hasGroup($this->group_professional) ? $this->resource->quantity_pricing_quantity : $this->resource->quantity_pricing_quantity_non_professional;
+    }
+
     /**
      * @return bool
      */

@@ -9,8 +9,24 @@ use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use Mockery as m;
+use Config;
 
 class ProductPresenterTest extends TestCase {
+
+    protected $group_professional;
+    protected $group_logged;
+    protected $quantity_professional;
+    protected $quantity_non_professional;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->group_professional = Config::get('catalog::groups.professional_group_name');
+        $this->group_logged = Config::get('catalog::groups.logged_group_name');
+        $this->quantity_professional = 10;
+        $this->quantity_non_professional = 5;
+    }
 
     public function tearDown()
     {
@@ -96,28 +112,7 @@ class ProductPresenterTest extends TestCase {
      **/
     public function it_obtain_price_small()
     {
-        $product = new Product([
-            "description" => "desc",
-            "code" => "code",
-            "name" => "name",
-            "slug" => "slug",
-            "slug_lang" => "",
-            "description_long" => "",
-            "featured" => 1,
-            "public" => 1,
-            "offer" => 1,
-            "stock" => 4,
-            "with_vat" => 1,
-            "video_link" => "http://www.google.com/video/12312422313",
-            "professional" => 1,
-            "price1" => "12.22",
-            "price2" => "8.21",
-            "price3" => "5.12",
-            "price4" => "2.12",
-            "quantity_pricing_quantity" => 10,
-            "quantity_pricing_enabled" => 1
-
-        ]);
+        $product   = $this->createAProduct();
         $presenter = new PresenterProducts($product);
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
@@ -156,28 +151,7 @@ class ProductPresenterTest extends TestCase {
      **/
     public function it_obtain_price_big()
     {
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "price1" => "12.22",
-                               "price2" => "8.21",
-                               "price3" => "5.12",
-                               "price4" => "2.12",
-                               "quantity_pricing_quantity" => 10,
-                               "quantity_pricing_enabled" => 1
-
-                               ]);
+        $product   = $this->createAProduct();
         $mock_auth = m::mock('StdClass')
             ->shouldReceive('check')
             ->once()
@@ -208,6 +182,25 @@ class ProductPresenterTest extends TestCase {
     /**
      * @test
      **/
+    public function canObtainQuantityPricingQuantityUsedNonProfessional()
+    {
+        App::instance('authenticator',$this->getLoggedUserMock() );
+        $presenter = new PresenterProducts($this->createAProduct());
+
+        $this->assertEquals($this->quantity_non_professional, $presenter->quantity_pricing_quantity_used);
+    }
+
+    public function canObtainQuantityPricingQuantityUsedProfessional()
+    {
+        App::instance('authenticator',$this->getProfessionalUserMock() );
+        $presenter = new PresenterProducts($this->createAProduct());
+
+        $this->assertEquals($this->quantity_professional, $presenter->quantity_pricing_quantity_used);
+    }
+
+    /**
+     * @test
+     **/
     public function it_returns_the_featured_image()
     {
         $presenter = m::mock('Palmabit\Catalog\Presenters\PresenterProducts')->makePartial()->shouldReceive('features')->once()->andReturn(22)->getMock();
@@ -220,24 +213,7 @@ class ProductPresenterTest extends TestCase {
      **/
     public function it_returns_the_description_and_name()
     {
-        $product = new Product([
-                               "description" => "desc",
-                               "code" => "code",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               "description_long" => "",
-                               "featured" => 1,
-                               "public" => 1,
-                               "offer" => 1,
-                               "stock" => 4,
-                               "with_vat" => 1,
-                               "video_link" => "http://www.google.com/video/12312422313",
-                               "professional" => 1,
-                               "public_price" => "12.22",
-                               "logged_price" => "8.21",
-                               "professional_price" => "2.12",
-                               ]);
+        $product = $this->createAProduct();
         $presenter = new PresenterProducts($product);
         $this->assertEquals("name", $presenter->name);
         $this->assertEquals("desc", $presenter->description);
@@ -261,5 +237,54 @@ class ProductPresenterTest extends TestCase {
         $can_buy = $presenter->canBeBought();
 
         $this->assertTrue($can_buy);
+    }
+
+    /**
+     * @return Product
+     */
+    protected function createAProduct()
+    {
+        return new Product([
+                               "description"               => "desc", "code" => "code",
+                               "name"                      => "name", "slug" => "slug",
+                               "slug_lang"                 => "", "description_long" => "",
+                               "featured"                  => 1, "public" => 1, "offer" => 1,
+                               "stock"                     => 4, "with_vat" => 1,
+                               "video_link"                => "http://www.google.com/video/12312422313",
+                               "professional"              => 1, "price1" => "12.22",
+                               "price2"                    => "8.21", "price3" => "5.12",
+                               "price4"                    => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_quantity_non_professional" => 5,
+                               "quantity_pricing_enabled" => 1
+                               ]);
+    }
+
+    protected function getLoggedUserMock()
+    {
+        return m::mock('StdClass')
+                ->shouldReceive('check')
+                ->andReturn(true)
+                ->shouldReceive('hasGroup')
+                ->with($this->group_logged)
+                ->andReturn(true)
+                ->shouldReceive('hasGroup')
+                ->with($this->group_professional)
+                ->andReturn(false)
+                ->getMock();
+    }
+
+    public function getProfessionalUserMock()
+    {
+        return m::mock('StdClass')
+                ->shouldReceive('check')
+                ->andReturn(true)
+                ->shouldReceive('hasGroup')
+                ->with($this->group_logged)
+                ->andReturn(false)
+                ->shouldReceive('hasGroup')
+                ->with($this->group_professional)
+                ->andReturn(true)
+                ->getMock();
     }
 }

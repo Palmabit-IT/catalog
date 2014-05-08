@@ -225,6 +225,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $slug = isset($data["slug"]) ? $data["slug"] : '';
         $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
+        $data['quantity_pricing_quantity_non_professional'] = (! empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0;
         $this->clearAllCache($slug);
 
         $product = $this->find($id);
@@ -275,7 +276,8 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                                     "price3" => isset($data["price3"]) ? $data["price3"]:  null,
                                     "price4" => isset($data["price4"]) ? $data["price4"] : null,
                                     'quantity_pricing_enabled' => (boolean)$data['quantity_pricing_enabled'],
-                                    'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0
+                                    'quantity_pricing_quantity' => (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0,
+                                    'quantity_pricing_quantity_non_professional' => (! empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0
                                 ]);
     }
 

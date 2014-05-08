@@ -74,15 +74,21 @@ class RowOrder extends Model
 
     public function getPriceTypeStringToUse($product, $quantity)
     {
+        if($this->getAuthenticator()->hasGroup($this->group_professional)
+        &&
+        $this->productQuantityIsMoreThenQuantityStep($product, $quantity))
+            return "price4";
+        elseif($this->getAuthenticator()->hasGroup($this->group_professional)
+                &&
+               ! $this->productQuantityIsMoreThenQuantityStep($product, $quantity))
+            return "price3";
+        elseif($this->getAuthenticator()->hasGroup($this->group_logged)
+                &&
+           $this->productQuantityIsMoreThenQuantityStepNonProfessional($product, $quantity))
+            return "price2";
+        else
+            return "price1";
 
-        if($this->productQuantityIsMoreThenQuantityStep($product, $quantity))
-        {
-            if($this->getAuthenticator()->hasGroup($this->group_professional)) return "price4";
-            if($this->getAuthenticator()->hasGroup($this->group_logged)) return "price2";
-        }
-
-        if($this->getAuthenticator()->hasGroup($this->group_professional)) return "price3";
-        if($this->getAuthenticator()->hasGroup($this->group_logged)) return "price1";
     }
 
     protected function multiplyMoney($price, $quantity)
@@ -103,6 +109,11 @@ class RowOrder extends Model
     private function productQuantityIsMoreThenQuantityStep($product, $quantity)
     {
         return $product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity;
+    }
+
+    private function productQuantityIsMoreThenQuantityStepNonProfessional($product, $quantity)
+    {
+        return $product->quantity_pricing_enabled && $quantity >= $product->quantity_pricing_quantity_non_professional;
     }
 
 } 
