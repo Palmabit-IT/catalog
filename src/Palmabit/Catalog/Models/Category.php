@@ -10,7 +10,7 @@ class Category extends Model{
 
     protected $table = "category";
 
-    protected $fillable = array("description","slug","image", "slug_lang", "lang", "name", "parent_id");
+    protected $fillable = array("description","slug","image", "slug_lang", "lang", "name", "parent_id","order");
 
     public function products()
     {
@@ -25,6 +25,13 @@ class Category extends Model{
     public function getImageAttribute()
     {
         return isset($this->attributes['image']) ? base64_encode($this->attributes['image']) : null;
+    }
+
+    /**
+     * @override
+     */
+    public function children() {
+        return $this->hasMany(get_class($this), $this->getParentColumnName());
     }
 
 }

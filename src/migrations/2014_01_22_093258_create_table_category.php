@@ -19,6 +19,7 @@ class CreateTableCategory extends Migration {
                 $table->string('slug')->unique();
                 // for hierarchy with nested sets
                 $table->integer('parent_id')->nullable();
+                $table->integer("order")->unsigned()->default(0);
                 $table->integer('lft')->nullable();
                 $table->integer('rgt')->nullable();
                 $table->integer('depth')->nullable();

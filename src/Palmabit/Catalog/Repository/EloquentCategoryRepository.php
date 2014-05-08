@@ -73,7 +73,8 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
                                       "description" =>$data["description"],
                                       "slug" => $data["slug"],
                                       "slug_lang" => $data["slug_lang"] ? $data["slug_lang"] : $this->generateSlugLang($data),
-                                      "lang" => $this->getLang()
+                                      "lang" => $this->getLang(),
+                                      "order" => isset($data["order"]) ? $data["order"] : 0
                                  ));
     }
 
@@ -101,8 +102,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function all()
     {
         $cat = $this->model->whereLang($this->getLang())
-            ->orderBy('depth','ASC')
-            ->orderBy("description",'ASC')
+            ->orderBy('order', 'DESC')
+            ->orderBy('depth', 'ASC')
+            ->orderBy("description", 'ASC')
             ->get();
 
         return $cat->isEmpty() ? null : $cat->all();

@@ -21,6 +21,7 @@
         <table class="table table-striped">
             <tr>
                 <th>Nome</th>
+                <th>Ordine</th>
                 <th>Categoria padre</th>
                 <th></th>
             </tr>
@@ -28,6 +29,12 @@
         @foreach($categories as $category)
             <tr>
                 <td>{{$category->description}}</td>
+                <td>
+                    {{Form::open(["action" => "Palmabit\Catalog\Controllers\CategoryController@postChangeOrder", "class" => "form-inline"])}}
+                    {{Form::select('order', get_select_order_arr(), $category->order, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
+                    {{Form::hidden('id', $category->id)}}
+                    {{Form::close()}}
+                </td>
                 <td>
                     {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postSetParentList', 'method' => 'post', 'id' => 'form-select-cat','class' => 'form-inline'])}}
                     <div class="form-group">

@@ -69,34 +69,21 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
         $results = $this->repo->getRootNodes();
         $this->assertEquals(2, count($results));
     }
-    /**
-     * @test
-     * need to fix invalidattribute exception with multiple nodes
-     **/
-//    public function it_associate_a_parent_node()
-//    {
-//        $cat1 = $this->repo->create(array("description"=> "1", "slug" => "1", "slug_lang" => "slug1") );
-//        $cat2 = $this->repo->create(array("description"=> "2", "slug" => "2", "slug_lang" => "slug2") );
-//        $this->repo->setParent($cat1->id, $cat2->id);
-//
-//        $cat1 = $this->repo->find(1);
-//        $this->assertEquals($cat2->id, $cat1->parent_id);
-//    }
 
     /**
      * @test
      * @group all
      **/
-    public function it_gets_all_products_order_by_depth_and_description()
+    public function it_gets_all_products_order_by_order_depth_and_description()
     {
         $this->prepareCategoryHierarchy();
 
         $cats = $this->repo->all();
 
         //check the ordering depending on depth and description
-        $this->assertEquals("slug1", $cats[0]->slug);
-        $this->assertEquals("slug2", $cats[1]->slug);
-        $this->assertEquals("slug3", $cats[2]->slug);
+        $this->assertEquals("slug2", $cats[0]->slug);
+        $this->assertEquals("slug3", $cats[1]->slug);
+        $this->assertEquals("slug1", $cats[2]->slug);
     }
 
     /**
@@ -122,15 +109,15 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
     protected function prepareCategoryHierarchy()
     {
         $cat_values = [
-            "description" => "description2", "slug" => "slug2", "slug_lang" => "slug2", "lang" => 'it'];
+            "description" => "description2", "slug" => "slug1", "slug_lang" => "slug2", "lang" => 'it', 'order' => 0];
         $this->repo->create($cat_values);
         $this->repo->setDepth(1,1);
         $cat_values = [
-            "description" => "description4", "slug" => "slug1", "slug_lang" => "slug1", "lang" => 'it', "depth" => 0,];
+            "description" => "description4", "slug" => "slug2", "slug_lang" => "slug1", "lang" => 'it', "depth" => 0, 'order' => 1];
         $this->repo->create($cat_values);
         $this->repo->setDepth(2,0);
         $cat_values = [
-            "description" => "description3", "slug" => "slug3", "slug_lang" => "slug3", "lang" => 'it', "depth" => 1];
+            "description" => "description3", "slug" => "slug3", "slug_lang" => "slug3", "lang" => 'it', "depth" => 1, 'order' => 1];
         $this->repo->create($cat_values);
         $this->repo->setDepth(3,1);
     }

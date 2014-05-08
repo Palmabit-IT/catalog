@@ -24,7 +24,7 @@ class CreateTableProduct extends Migration {
 			$table->text('description', 60);
             $table->text('long_description')->nullable();
             $table->boolean('featured')->default(0);
-            $table->integer("order")->default(0);
+            $table->integer("order")->unsigned()->default(0);
             $table->boolean("blocked")->default(0);
             $table->boolean("public")->default(1);
             $table->boolean("offer")->default(1);

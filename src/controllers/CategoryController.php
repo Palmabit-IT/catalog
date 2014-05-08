@@ -1,7 +1,8 @@
 <?php namespace Palmabit\Catalog\Controllers;
 
-use BaseController, View, Input, Redirect, App;
+use Controller, View, Input, Redirect, App;
 use Illuminate\Support\MessageBag;
+use Palmabit\Catalog\Validators\ProductCategoryOrderValidator;
 use Palmabit\Library\Exceptions\InvalidException;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\PalmabitExceptionsInterface;
@@ -13,7 +14,7 @@ use Palmabit\Catalog\Models\Category;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
-class CategoryController extends BaseController
+class CategoryController extends Controller
 {
     /**
      * Repository for the categories
@@ -142,6 +143,25 @@ class CategoryController extends BaseController
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->with([ "message" => "Padre modificato con successo." ]);
+    }
+
+    public function postChangeOrder()
+    {
+        $input = Input::all();
+        $validator = new ProductCategoryOrderValidator;
+        $form_model = new FormModel($validator, $this->repo);
+
+        try
+        {
+            $form_model->process($input);
+        }
+        catch(PalmabitExceptionsInterface $e)
+        {
+            $errors = $form_model->getErrors();
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->withInput()->withErrors($errors);
+        }
+
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->with(array("message"=>"Ordine modificato con successo."));
     }
 
     public function postUpdateImage()
