@@ -37,10 +37,14 @@ class MenuCategoryFactory
 
             // create the menuitems
             //@todo handle multiple recursive subitems with a better algorithm
-            $cat_menu_item = new MenuItem($category->description, $category->slug_lang, $this->cat_type, null, $this->getActive($category->slug_lang));
+            $is_active     = $this->getActive($category->slug_lang);
+            $cat_menu_item = new MenuItem($category->description, $category->slug_lang, $this->cat_type, null, $is_active);
+            $this->setOpenState($cat_menu_item, $is_active);
             if($childrens) foreach ($childrens as $children)
             {
-                $children_item = new MenuItem($children->description, $children->slug_lang, $this->cat_type, null, $this->getActive($children->slug_lang));
+                $is_active     = $this->getActive($children->slug_lang);
+                if($is_active) $this->setOpenState($cat_menu_item, $is_active);
+                $children_item = new MenuItem($children->description, $children->slug_lang, $this->cat_type, null, $is_active);
                 // if has sub-subcategories
                 if($children->children()->whereDepth($children->depth + 1)->whereLang(L::get())->count())
                 {
@@ -64,5 +68,15 @@ class MenuCategoryFactory
     protected function getActive($menu_slug)
     {
         return ($this->slug == $menu_slug) ? true : false;
+    }
+
+    /**
+     * @param $cat_menu_item
+     * @param $is_active
+     * @return mixed
+     */
+    protected function setOpenState($cat_menu_item, $is_active)
+    {
+        return $cat_menu_item->setOpen($is_active);
     }
 } 

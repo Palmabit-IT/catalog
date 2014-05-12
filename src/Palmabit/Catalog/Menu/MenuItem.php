@@ -76,6 +76,14 @@ class MenuItem
     }
 
     /**
+     * @param boolean $active
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    }
+
+    /**
      * @return String
      */
     public function getType()
