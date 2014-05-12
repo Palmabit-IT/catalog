@@ -2,6 +2,11 @@
 namespace Palmabit\Catalog\Validators;
 
 use Event;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\MessageBag;
+use L;
+use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Library\Validators\OverrideConnectionValidator;
 
 class ProductValidator  extends OverrideConnectionValidator{
@@ -18,16 +23,34 @@ class ProductValidator  extends OverrideConnectionValidator{
         "price2" => "currency",
         "price3" => "required|currency",
         "price4" => "currency",
-        'quantity_pricing_quantity' => 'integer|max:1000000'
+        'quantity_pricing_quantity' => 'integer|max:1000000',
+        'quantity_pricing_quantity_non_professional' => 'integer|max:1000000'
     ];
 
     public function __construct()
     {
         Event::listen('validating', function($input)
         {
-            if(isset($input["id"]))
+            if(! isset($input['form_name']) || $input['form_name'] != 'products.general') return true;
+
+            if(App::environment() != 'testing' && isset($input["id"]))
             {
                 static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
+            }
+
+            $found = false;
+            try
+            {
+                $found = App::make('product_repository')->findByCodeAndLang($input['code'],L::get_admin());
+                // ignore found if it's an update of the same row
+                if(isset($input['id']) && $found->id == $input['id']) $found = false;
+            }
+            catch(ModelNotFoundException $e)
+            {}
+            if ($found)
+            {
+                $this->errors = new MessageBag(["code" => "codice già presente in questa lingua."]);
+                throw new ValidationException;
             }
         });
     }

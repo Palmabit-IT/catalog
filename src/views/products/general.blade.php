@@ -99,6 +99,7 @@
             {{Form::select('offer', ["0" => "No", "1" => "Sì"], null, ["class"=> "form-control"] )}}
         </div>
         {{Form::hidden('id')}}
+        {{Form::hidden('form_name','products.general')}}
     </div>
 </div>
 <hr>

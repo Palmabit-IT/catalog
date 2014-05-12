@@ -432,7 +432,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
                                        "slug_lang" => $slug_lang,
                                        "lang" => 'it',
                                        "description" => "product description",
-                                       "description_long" => "product long description",
+                                       "long_description" => "product long description",
                                        "featured" => 1,
                                        "public" => 0,
                                        "offer" => 0
@@ -440,6 +440,40 @@ class EloquentProductsRepositoryTest extends DbTestCase {
         $product = $this->r->findBySlugLang($slug_lang);
 
         $this->assertContains($product_expected->code, $product->code);
+    }
+
+    /**
+     * @test
+     */
+    public function itFindProductsByCodeAndLang()
+    {
+        $lang = "it";
+        $code = "1";
+        $attributes = [
+            "code"             => $code,
+            "name"             => "name",
+            "slug"             => "",
+            "slug_lang"        => "",
+            "lang"             => $lang,
+            "description"      => "",
+            "long_description" => "",
+            "featured"         => 0,
+            "public"           => 1,
+            "offer"            => 0
+        ];
+        Product::create($attributes);
+
+        $product = $this->r->findByCodeAndLang($code, $lang);
+        $this->objectHasAllArrayAttributes($attributes, $product);
+    }
+
+    /**
+     * @test
+     * @expectedException Illuminate\Database\Eloquent\ModelNotFoundException
+     **/
+    public function itThrowExceptionIfCannotFindModel()
+    {
+        $product = $this->r->findByCodeAndLang("1", "id");
     }
 
     /**
@@ -459,7 +493,7 @@ class EloquentProductsRepositoryTest extends DbTestCase {
                                  "slug_lang" => $key,
                                  "lang" => 'it',
                                  "description" => $faker->text(10),
-                                 "description_long" => $faker->text(100),
+                                 "long_description" => $faker->text(100),
                                  "featured" => $key == 5 ? true : false,
                                  "public" => 1,
                                  "offer" => 0
@@ -477,9 +511,9 @@ class EloquentProductsRepositoryTest extends DbTestCase {
     protected function createProductsForSearch()
     {
         Product::create([
-                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 2]);
+                        "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "long_description" => "long_description", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 2]);
         Product::create([
-                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "description_long" => "description_long", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 1]);
+                        "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "long_description" => "long_description", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 1]);
     }
 
     protected function associateCategoryForSearch()

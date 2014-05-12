@@ -412,6 +412,14 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         return $cloned_product;
     }
 
+    public function findByCodeAndLang($code, $lang)
+    {
+        return $this->model
+                ->whereCode($code)
+                ->whereLang($lang)
+                ->firstOrFail();
+    }
+
     /**
      * @param $product_id
      */

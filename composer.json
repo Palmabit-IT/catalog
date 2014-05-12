@@ -56,7 +56,8 @@
             "src/Palmabit/Catalog/Helpers/helpers.php"
         ],
         "classmap" : [
-            "src/controllers"
+            "src/controllers",
+            "src/commands"
         ]
     },
     "minimum-stability": "stable"

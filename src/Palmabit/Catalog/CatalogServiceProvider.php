@@ -1,5 +1,6 @@
 <?php namespace Palmabit\Catalog;
 
+use AlignProductsLang;
 use Illuminate\Support\ServiceProvider;
 use Palmabit\Catalog\Repository\EloquentOrderRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
@@ -39,6 +40,7 @@ class CatalogServiceProvider extends ServiceProvider {
         require __DIR__ . "/../../events.php";
 
         $this->bindRepositories();
+        $this->bindCommands();
 	}
 
     protected function bindRepositories()
@@ -92,5 +94,15 @@ class CatalogServiceProvider extends ServiceProvider {
 	{
 		return array();
 	}
+
+    protected function bindCommands()
+    {
+        $this->app['catalog.products.align'] = $this->app->share(function ($app)
+        {
+            return new AlignProductsLang;
+        });
+
+        $this->commands('catalog.products.align');
+    }
 
 }

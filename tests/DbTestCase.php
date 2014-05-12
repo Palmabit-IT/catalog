@@ -51,17 +51,6 @@ class DbTestCase extends TestCase
         // reset base path to point to our package's src directory
         $app['path.base'] = __DIR__ . '/../src';
 
-        $mysql_conn = array(
-            'driver'    => 'mysql',
-            'host'      => 'localhost',
-            'database'  => 'palmabit_base_test',
-            'username'  => 'root',
-            'password'  => 'root',
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-        );
-
         $sqlite_conn = array(
             'driver'    => 'sqlite',
             'database'  => ':memory:',
@@ -79,5 +68,14 @@ class DbTestCase extends TestCase
     {
         $artisan->call('migrate', [
                                   "--database" => "testbench", '--path' => '../src/migrations', '--seed' => '']);
+    }
+
+    protected function objectHasAllArrayAttributes(array $attributes, $object, array $except = [])
+    {
+        foreach($attributes as $key => $value)
+        {
+            if(! in_array($key, $except)) $this->assertEquals($value, $object->$key);
+        }
+
     }
 } 
