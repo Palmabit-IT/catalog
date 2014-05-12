@@ -44,7 +44,7 @@ class EloquentProductImageRepository extends EloquentBaseRepository{
      */
     protected function getBinaryData()
     {
-        return Image::make(ImageHelper::getPathFromInput('image'))->resize(600, null, true);
+        return Image::make(ImageHelper::getPathFromInput('image'))->resize(500, null, true);
     }
 
     /**
