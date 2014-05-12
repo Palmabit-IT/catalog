@@ -17,7 +17,9 @@
 
 		<hr>
 		{{Form::submit('Salva', array("class"=>"btn btn-large btn-primary tab-remember"))}}
-		{{Form::close()}}
+        {{Form::updateOldLanguageInput()}}
+
+        {{Form::close()}}
 
 	</div>
 </div>
