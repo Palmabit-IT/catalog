@@ -69,6 +69,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
         $results = $this->repo->getRootNodes();
         $this->assertEquals(2, count($results));
         $this->assertEquals("slug2", $results[0]->slug);
+        $this->assertEquals("slug1", $results[1]->slug);
     }
 
     /**

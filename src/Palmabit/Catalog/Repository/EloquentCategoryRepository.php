@@ -74,7 +74,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
                                       "slug" => $data["slug"],
                                       "slug_lang" => $data["slug_lang"] ? $data["slug_lang"] : $this->generateSlugLang($data),
                                       "lang" => $this->getLang(),
-                                      "order" => isset($data["order"]) ? $data["order"] : 0
+                                      "order" => isset($data["order"]) ? $data["order"] : 0,
                                  ));
     }
 
@@ -92,7 +92,11 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
 
     public function getRootNodes()
     {
-        return $this->model->roots()->whereLang($this->getLang())->orderBy('order','DESC')->get();
+        return $this->model
+                ->where($this->model->getDepthColumnName(),'=',null)
+                ->orWhere($this->model->getDepthColumnName(),'=',0)
+                ->whereLang($this->getLang())
+                ->orderBy('order','DESC')->get();
     }
     
     /**
