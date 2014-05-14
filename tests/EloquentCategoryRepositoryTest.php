@@ -63,11 +63,12 @@ class EloquentCategoryRepositoryTest extends DbTestCase {
      **/
     public function it_gets_only_root_categories()
     {
-        $this->repo->create(array("description"=> "", "slug" => "slug1", "slug_lang" => "slug") );
+        $this->repo->create(array("description"=> "", "slug" => "slug1", "slug_lang" => "slug", "order" => 0) );
 
-        $this->repo->create(array("description"=> "", "slug" => "slug2", "slug_lang" => "slug") );
+        $this->repo->create(array("description"=> "", "slug" => "slug2", "slug_lang" => "slug", "order" => 1) );
         $results = $this->repo->getRootNodes();
         $this->assertEquals(2, count($results));
+        $this->assertEquals("slug2", $results[0]->slug);
     }
 
     /**
