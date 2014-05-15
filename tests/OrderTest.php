@@ -16,6 +16,14 @@ use Palmabit\Catalog\Models\RowOrder;
  */
 class OrderTest extends DbTestCase
 {
+    protected $order;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->order = new Order;
+    }
+
     public function tearDown()
     {
         m::close();
@@ -58,6 +66,18 @@ class OrderTest extends DbTestCase
         $this->assertEquals(1, $order->getRowOrders()->count());
     }
 
+    /**
+     * @test
+     * @expectedException \Palmabit\Catalog\Exceptions\ProductEmptyException
+     **/
+    public function itDoesntAddRowOrderIfProductIsUnavailable()
+    {
+        $product = $this->createUnavailableProduct();
+        $this->order = new Order;
+
+        $this->order->addRow($product, 10);
+    }
+    
     /**
      * @test
      **/
@@ -420,6 +440,30 @@ class OrderTest extends DbTestCase
 
         $this->assertInstanceOf('Palmabit\Catalog\Presenters\OrderPresenter', $presenter);
         $this->assertEquals($order, $presenter->getResource());
+    }
+
+    protected function createUnavailableProduct()
+    {
+        return new Product([
+                               "description"               => "desc",
+                               "code"                      => "code",
+                               "name"                      => "name",
+                               "slug"                      => "slug",
+                               "slug_lang"                 => "",
+                               "description_long"          => "",
+                               "featured"                  => 1,
+                               "public"                    => 1,
+                               "offer"                     => 1,
+                               "stock"                     => 0,
+                               "with_vat"                  => 1,
+                               "video_link"                => "http://www.google.com/video/12312422313",
+                               "professional"              => 1,
+                               "price1"                    => "12.22",
+                               "price2"                    => "8.21",
+                               "price3"                    => "2.12",
+                               "quantity_pricing_quantity" => 10,
+                               "quantity_pricing_enabled"  => 1
+                               ]);
     }
 
 }

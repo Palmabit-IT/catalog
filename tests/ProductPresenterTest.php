@@ -11,7 +11,7 @@ use Palmabit\Catalog\Presenters\PresenterProducts;
 use Mockery as m;
 use Config;
 
-class ProductPresenterTest extends TestCase {
+class ProductPresenterTest extends DbTestCase {
 
     protected $group_professional;
     protected $group_logged;
@@ -226,17 +226,22 @@ class ProductPresenterTest extends TestCase {
     {
         $authenticator = m::mock('StdClass')
             ->shouldReceive("check")
-            ->once()
             ->andReturn(true)
             ->shouldReceive('hasGroup')
             ->andReturn(true)
             ->getMock();
         App::instance('authenticator', $authenticator);
 
-        $presenter = new PresenterProducts([]);
+        $product = $this->createAProduct();
+        $presenter = new PresenterProducts($product);
         $can_buy = $presenter->canBeBought();
 
         $this->assertTrue($can_buy);
+
+        $product->stock= 0;
+        $presenter = new PresenterProducts($product);
+        $can_buy = $presenter->canBeBought();
+        $this->assertFalse($can_buy);
     }
 
     /**

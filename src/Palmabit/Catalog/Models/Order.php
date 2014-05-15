@@ -11,6 +11,7 @@ use App, L;
 use Carbon\Carbon;
 use Illuminate\Support\MessageBag;
 use Palmabit\Authentication\Exceptions\LoginRequiredException;
+use Palmabit\Catalog\Exceptions\ProductEmptyException;
 use Palmabit\Catalog\Presenters\OrderPresenter;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Exceptions\ValidationException;
@@ -65,6 +66,8 @@ class Order extends Model
      */
     public function addRow(Product $product, $quantity, RowOrder $row_order = null)
     {
+        $this->checkForProductAvailability($product);
+
         $row = $row_order ? $row_order : new RowOrder();
 
         $quantity = $this->clearDuplicatesAndUpdateQuantity($product, $quantity);
@@ -211,5 +214,14 @@ class Order extends Model
     {
         return new OrderPresenter($this);
     }
-    
+
+    /**
+     * @param Product $product
+     * @throws \Palmabit\Catalog\Exceptions\ProductEmptyException
+     */
+    protected function checkForProductAvailability(Product $product)
+    {
+        if(!$product->isAvailabile()) throw new ProductEmptyException;
+    }
+
 }

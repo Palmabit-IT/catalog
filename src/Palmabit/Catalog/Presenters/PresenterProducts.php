@@ -189,6 +189,7 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     {
         // if not logged no price
         if ( ! $this->authenticator->check()) return false;
+        if ( ! $this->resource->isAvailabile()) return false;
 
         return $this->hasGroupToBuyProduct();
     }

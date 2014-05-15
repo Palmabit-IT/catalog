@@ -58,4 +58,10 @@ class Product extends Model
     {
         $this->attributes['price4'] = $value ? $value : null;
     }
+
+    public function isAvailabile()
+    {
+        return (boolean)$this->attributes['stock'] ? true : false;
+    }
+    
 }
