@@ -10,25 +10,68 @@
 <body>
 <h2>{{Config::get('authentication::app_name')}}: Ordine ricevuto</h2>
 <div>
-    Grazie, {{ $body['email'] }}
-    <strong>Ordine numero {{$body['order']->id}}</strong>
+    Grazie, {{ $body['email'] }}<br/>
+    <strong>Ordine numero: {{$body['order']->id}}</strong>
     <br/>
     <h3>Dettagli cliente: </h3>
-    @if($user_profile)
+    @if($profile_info)
+    <h5>Fatturazione:</h5>
     <ul>
         <li>
-            <strong>Codice cliente: </strong> {{isset($user_profile->code) ? $user_profile->code : 'non disponibile'}}
+            <strong>Codice cliente: </strong> {{isset($profile_info->code) ? $profile_info->code : 'non disponibile'}}
         </li>
         <li>
             <strong>Tipo utente: </strong> {{isset($user_profile->profile_type) ? $user_profile->profile_type : 'Non disponibile'}}
-       </li>
+        </li>
         <li>
-            <strong>Ragione sociale: </strong> {{isset($user_profile->company) ? $user_profile->company : 'Non disponibile'}}
+            <strong>Nome fatturazione: </strong> {{isset($profile_info->billing_first_name) ? $profile_info->billing_first_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Cognome fatturazione: </strong> {{isset($profile_info->billing_last_name) ? $profile_info->billing_last_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Ragione sociale fatturazione: </strong> {{isset($profile_info->billing_company) ? $profile_info->billing_company : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>CF fatturazione: </strong> {{isset($profile_info->cf) ? $profile_info->cf : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>PIVA fatturazione: </strong> {{isset($profile_info->vat) ? $profile_info->vat : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Indirizzo fatturazione: </strong> {{isset($profile_info->billing_address) ? $profile_info->billing_address : 'Non disponibile'}}
+            , {{isset($profile_info->billing_city) ? $profile_info->billing_city : 'Non disponibile'}}
+            , {{isset($profile_info->billing_address_zip) ? $profile_info->billing_address_zip : 'Non disponibile'}}
+            , {{isset($profile_info->billing_country) ? $profile_info->billing_country : 'Non disponibile'}}
+            , {{isset($profile_info->billing_state) ? $profile_info->billing_state : 'Non disponibile'}}
+        </li>
+    </ul>
+    <h5>Spedizione:</h5>
+    <ul>
+        <li>
+            <strong>Nome spedizione: </strong> {{isset($profile_info->shipping_first_name) ? $profile_info->shipping_first_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Cognome spedizione: </strong> {{isset($profile_info->shipping_last_name) ? $profile_info->shipping_last_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Ragione sociale spedizione: </strong> {{isset($profile_info->shipping_company) ? $profile_info->shipping_company : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>PIVA spedizione: </strong> {{isset($profile_info->vat) ? $profile_info->vat : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>Indirizzo spedizione: </strong> {{isset($profile_info->shipping_address) ? $profile_info->shipping_address : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_city) ? $profile_info->shipping_city : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_address_zip) ? $profile_info->shipping_address_zip : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_country) ? $profile_info->shipping_country : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_state) ? $profile_info->shipping_state : 'Non disponibile'}}
         </li>
     </ul>
     @else
       <h3>Dettagli non disponibili.</h3>
     @endif
+    <hr/>
     <h3>Dettagli ordine: </h3>
     @foreach($body['order']->getRowOrders() as $order)
         <ul>
@@ -54,18 +97,6 @@
         </ul>
 
     @endforeach
-    <hr>
-    <h3>{{L::t('Billing')}}</h3>
-    <ul>
-        <li>{{L::t('Billing address')}}: {{$profile_info->billing_address}}, {{$profile_info->billing_address_zip}} {{$profile_info->billing_city}} {{$profile_info->billing_state}} {{$profile_info->billing_country}}</li>
-        <li>{{L::t('VAT')}}: {{$profile_info->vat}}</li>
-    </ul>
-    <hr>
-    <h3>{{L::t('Shipping')}}</h3>
-    <ul>
-        <li>{{L::t('Shipping address')}}: {{$profile_info->shipping_address}}, {{$profile_info->shipping_address_zip}} {{$profile_info->shipping_city}} {{$profile_info->shipping_state}} {{$profile_info->shipping_country}}</li>
-    </ul>
-    <br>
 </div>
 </body>
 </html>

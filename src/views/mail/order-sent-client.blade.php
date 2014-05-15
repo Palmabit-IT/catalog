@@ -9,7 +9,7 @@
 <body>
 <h2>{{Config::get('authentication::app_name')}}: {{L::t('Order submitted successfully')}}</h2>
 <div>
-    {{L::t('Hello')}} {{ $body['email'] }}
+    {{L::t('Hello')}} {{ $body['email'] }},<br/>
     <strong>{{L::t('Order number')}}: {{$body['order']->id}} {{L::t('submitted successfully')}}.</strong>
     <br/>
     <strong>{{L::t('Order details')}}:</strong>
@@ -34,15 +34,49 @@
         </ul>
     @endforeach
     <hr>
-    <h3>{{L::t('Billing')}}</h3>
+    <h5>{{L::t('Billing')}}</h5>
     <ul>
-        <li>{{L::t('Billing address')}}: {{$profile_info->billing_address}}, {{$profile_info->billing_address_zip}} {{$profile_info->billing_city}} {{$profile_info->billing_state}} {{$profile_info->billing_country}}</li>
-        <li>{{L::t('VAT')}}: {{$profile_info->vat}}</li>
+        <li>
+            <strong>{{L::t('First name')}}: </strong> {{isset($profile_info->billing_first_name) ? $profile_info->billing_first_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Last name')}}: </strong> {{isset($profile_info->billing_last_name) ? $profile_info->billing_last_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Company')}}: </strong> {{isset($profile_info->billing_company) ? $profile_info->billing_company : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('VAT')}}: </strong> {{isset($profile_info->vat) ? $profile_info->vat : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Billing address')}}: </strong> {{isset($profile_info->billing_address) ? $profile_info->billing_address : 'Non disponibile'}}
+            , {{isset($profile_info->billing_city) ? $profile_info->billing_city : 'Non disponibile'}}
+            , {{isset($profile_info->billing_address_zip) ? $profile_info->billing_address_zip : 'Non disponibile'}}
+            , {{isset($profile_info->billing_country) ? $profile_info->billing_country : 'Non disponibile'}}
+            , {{isset($profile_info->billing_state) ? $profile_info->billing_state : 'Non disponibile'}}
+        </li>
     </ul>
-    <hr>
-    <h3>{{L::t('Shipping')}}</h3>
+    <h5>{{L::t('Shipping')}}</h5>
     <ul>
-        <li>{{L::t('Shipping address')}}: {{$profile_info->shipping_address}}, {{$profile_info->shipping_address_zip}} {{$profile_info->shipping_city}} {{$profile_info->shipping_state}} {{$profile_info->shipping_country}}</li>
+        <li>
+            <strong>{{L::t('First name')}}: </strong> {{isset($profile_info->shipping_first_name) ? $profile_info->shipping_first_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Last name')}}: </strong> {{isset($profile_info->shipping_last_name) ? $profile_info->shipping_last_name : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Company')}}: </strong> {{isset($profile_info->shipping_company) ? $profile_info->shipping_company : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('VAT')}}: </strong> {{isset($profile_info->vat) ? $profile_info->vat : 'Non disponibile'}}
+        </li>
+        <li>
+            <strong>{{L::t('Shipping address')}}: </strong> {{isset($profile_info->shipping_address) ? $profile_info->shipping_address : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_city) ? $profile_info->shipping_city : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_address_zip) ? $profile_info->shipping_address_zip : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_country) ? $profile_info->shipping_country : 'Non disponibile'}}
+            , {{isset($profile_info->shipping_state) ? $profile_info->shipping_state : 'Non disponibile'}}
+        </li>
     </ul>
     <br>
     <a href="{{URL::to('/')}}" target="_blank">Homepage {{Config::get('authentication::app_name')}}</a>
