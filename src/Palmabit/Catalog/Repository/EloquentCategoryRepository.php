@@ -236,6 +236,8 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $cat = $this->find($id);
 
+        if( is_null($cat->image) ) return;
+
         $img_data = $cat->getRawImage();
         $resized_image = \Image::raw($img_data)->resize($size, null, true);
 
