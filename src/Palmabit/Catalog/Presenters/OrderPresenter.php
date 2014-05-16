@@ -1,4 +1,5 @@
 <?php  namespace Palmabit\Catalog\Presenters;
+use Palmabit\Authentication\Models\User;
 use Palmabit\Library\Presenters\AbstractPresenter;
 use App;
 use Carbon\Carbon;
@@ -53,7 +54,9 @@ class OrderPresenter extends AbstractPresenter
     {
         $user = $this->authenticator->findById($this->resource->user_id);
 
-        return $user;
+        return $user ? $user : new User([
+                                        "email" => "utente cancellato"
+                                        ]);
     }
 
 }
