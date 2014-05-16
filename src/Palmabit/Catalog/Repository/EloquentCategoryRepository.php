@@ -231,4 +231,25 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
             ->where('id','=', $category_id)
             ->update(["depth"=> $value]);
     }
+
+    public function resizeImage($id, $size)
+    {
+        $cat = $this->find($id);
+
+        $img_data = $cat->getRawImage();
+        $resized_image = \Image::raw($img_data)->resize($size, null, true);
+
+        $cat->image = $resized_image;
+        $cat->save();
+    }
+
+    public function resizeAllImages($size = 200)
+    {
+        $cats = $this->all();
+        foreach($cats as $cat)
+        {
+            $this->resizeImage($cat->id, $size);
+        }
+
+    }
 }

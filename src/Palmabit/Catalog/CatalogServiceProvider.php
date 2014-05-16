@@ -1,6 +1,7 @@
 <?php namespace Palmabit\Catalog;
 
 use AlignProductsLang;
+use ResizeAllCatImages;
 use Illuminate\Support\ServiceProvider;
 use Palmabit\Catalog\Repository\EloquentOrderRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
@@ -103,6 +104,13 @@ class CatalogServiceProvider extends ServiceProvider {
         });
 
         $this->commands('catalog.products.align');
+
+        $this->app['catalog.category.resizeimages'] = $this->app->share(function ($app)
+        {
+            return new ResizeAllCatImages;
+        });
+
+        $this->commands('catalog.category.resizeimages');
     }
 
 }

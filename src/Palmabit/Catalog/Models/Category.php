@@ -27,6 +27,11 @@ class Category extends Model{
         return isset($this->attributes['image']) ? base64_encode($this->attributes['image']) : null;
     }
 
+    public function getRawImage()
+    {
+        return isset($this->attributes['image']) ? $this->attributes['image'] : null;
+    }
+    
     /**
      * @override
      */
