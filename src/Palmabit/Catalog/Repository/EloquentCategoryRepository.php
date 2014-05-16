@@ -86,7 +86,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $model = $this->find($id);
         $model->update([
-                        "image" => ImageHelper::getBinaryData('600', 'image')
+                        "image" => ImageHelper::getBinaryData('200', 'image')
                        ]);
     }
 
