@@ -5,3 +5,20 @@
 {
     margin-bottom: 20px;
 }
+/* //////////// flag prodotto /////////// */
+.product-flags {
+
+}
+div.product-flags .product-flag {
+    width: 20px;
+    height: auto;
+    margin-right: 5px;
+}
+div.top-product-flags {
+    margin: 0px 0px 10px 0px;
+}
+div.top-product-flags .product-flag {
+    width: 50px;
+    height: auto;
+    margin-right: 5px;
+}

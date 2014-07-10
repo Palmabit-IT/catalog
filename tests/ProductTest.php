@@ -1,6 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests;
 
 use Palmabit\Catalog\Models\Product;
+use Palmabit\Catalog\Presenters\PresenterProducts;
 
 /**
  * Test ProductTest
@@ -34,5 +35,17 @@ class ProductTest extends DbTestCase {
         $this->assertFalse($product->isAvailabile());
     }
 
+    /**
+     * @test
+     **/
+    public function canGetHisPresenter()
+    {
+        $product_code = "code1";
+        $product = new Product(["code" => $product_code]);
+
+        $expected_presenter = new PresenterProducts($product);
+
+        $this->assertEquals($expected_presenter, $product->presenter());
+    }
 }
  

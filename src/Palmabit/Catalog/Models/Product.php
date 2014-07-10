@@ -1,16 +1,42 @@
 <?php namespace Palmabit\Catalog\Models;
+
 /**
  * Class Product
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Jacopo\LaravelSingleTableInheritance\Models\Model;
+use Palmabit\Catalog\Presenters\PresenterProducts;
 
 class Product extends Model
 {
     protected $table = "product";
 
-    protected $fillable = array("id","code","name","slug","long_description","description","featured","lang", "slug_lang", "order", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", "price4", 'quantity_pricing_enabled', 'quantity_pricing_quantity','quantity_pricing_quantity_non_professional');
+    protected $fillable = [
+        "id",
+        "code",
+        "name",
+        "slug",
+        "long_description",
+        "description",
+        "featured",
+        "lang",
+        "slug_lang",
+        "order",
+        "public",
+        "offer",
+        "stock",
+        "with_vat",
+        "video_link",
+        "professional",
+        "price1",
+        "price2",
+        "price3",
+        "price4",
+        'quantity_pricing_enabled',
+        'quantity_pricing_quantity',
+        'quantity_pricing_quantity_non_professional'
+    ];
 
     protected $table_type = 'General';
     /**
@@ -22,11 +48,44 @@ class Product extends Model
      * The list of attributes that belongs to the class
      * @var array
      */
-    protected static $my_attributes = array("id","code","name","slug","long_description","image","description","featured","lang","pivot","slug_lang", "order", "category", "public", "offer", "stock", "with_vat", "video_link", "professional", "price1", "price2", "price3", "price4" , 'quantity_pricing_enabled', 'quantity_pricing_quantity', 'price_small', 'price_big','categories','quantity_pricing_quantity_non_professional','quantity_pricing_quantity_used');
+    protected static $my_attributes = [
+        "id",
+        "code",
+        "name",
+        "slug",
+        "long_description",
+        "image",
+        "description",
+        "featured",
+        "lang",
+        "pivot",
+        "slug_lang",
+        "order",
+        "category",
+        "public",
+        "offer",
+        "stock",
+        "with_vat",
+        "video_link",
+        "professional",
+        "price1",
+        "price2",
+        "price3",
+        "price4",
+        'quantity_pricing_enabled',
+        'quantity_pricing_quantity',
+        'price_small',
+        'price_big',
+        'categories',
+        'quantity_pricing_quantity_non_professional',
+        'quantity_pricing_quantity_used',
+        'flag',
+        'availableflags'
+    ];
 
     public function categories()
     {
-        return $this->belongsToMany('Palmabit\Catalog\Models\Category',"product_category", "product_id", "category_id");
+        return $this->belongsToMany('Palmabit\Catalog\Models\Category', "product_category", "product_id", "category_id");
     }
 
     public function product_images()
@@ -63,5 +122,9 @@ class Product extends Model
     {
         return (boolean)$this->attributes['stock'] ? true : false;
     }
-    
+
+    public function presenter()
+    {
+        return new PresenterProducts($this);
+    }
 }

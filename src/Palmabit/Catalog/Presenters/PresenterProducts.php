@@ -1,4 +1,5 @@
 <?php namespace Palmabit\Catalog\Presenters;
+
 /**
  * Class PresenterProducts
  *
@@ -11,7 +12,8 @@ use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Authentication\Exceptions\GroupNotFoundException;
 use Palmabit\Library\Presenters\AbstractPresenter;
 
-class PresenterProducts extends AbstractPresenter implements ProductCategoryPresenterInterface{
+class PresenterProducts extends AbstractPresenter implements ProductCategoryPresenterInterface
+{
     use ViewHelper;
 
     protected $group_professional;
@@ -22,15 +24,19 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
 
     protected $default_img_path;
 
+    protected $flags_path;
+
     public function __construct($resource)
     {
-        $this->default_img_path = public_path()."/packages/palmabit/catalog/img/no-photo.png";
+        $this->default_img_path = public_path() . "/packages/palmabit/catalog/img/no-photo.png";
         $this->group_professional = Config::get('catalog::groups.professional_group_name');
         $this->group_logged = Config::get('catalog::groups.logged_group_name');
         $this->authenticator = App::make('authenticator');
+        $this->flags_path = Config::get('catalog::flags.flags_path');
 
         return parent::__construct($resource);
     }
+
     /**
      * Obtains featured image
      * @return null
@@ -39,14 +45,14 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function features()
     {
         $featured = $this->resource->product_images()
-            ->where("featured","=",1)
+            ->where("featured", "=", 1)
             ->get();
 
-        if($featured->isEmpty())
-            return ["data" => "data:image;base64,".base64_encode(ProductImage::getImageFromUrl($this->default_img_path) ), "alt" => ""];
+        if ($featured->isEmpty())
+            return ["data" => "data:image;base64," . base64_encode(ProductImage::getImageFromUrl($this->default_img_path)), "alt" => ""];
         else $featured = $featured->first();
 
-        return array("data"=> $featured ? "data:image;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
+        return array("data" => $featured ? "data:image;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
     }
 
     public function images_all()
@@ -69,11 +75,11 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
         $all_img = array();
 
         $images = $this->resource->product_images();
-        if($exclude_featured)
-            $images = $images->where('in_evidenza','=',0);
+        if ($exclude_featured)
+            $images = $images->where('in_evidenza', '=', 0);
         $images = $images->get();
 
-        $images->each(function($image) use(&$all_img){
+        $images->each(function ($image) use (&$all_img) {
             $all_img[] = [
                 "data" => "data:image;base64,{$image->data}",
                 "alt" => $image->description,
@@ -88,7 +94,7 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function categories()
     {
         $cat = $this->resource->categories()->get();
-        return (! $cat->isEmpty()) ? $cat->all(): null;
+        return (!$cat->isEmpty()) ? $cat->all() : null;
     }
 
     /**
@@ -98,15 +104,15 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function categories_ids()
     {
         $cat = $this->resource->categories()->get();
-        if(! $cat->isEmpty()) $cat = $cat->first();
+        if (!$cat->isEmpty()) $cat = $cat->first();
 
-        return (isset($cat->id)) ? $cat->id: '';
+        return (isset($cat->id)) ? $cat->id : '';
     }
 
     public function accessories()
     {
         $prod = $this->resource->accessories()->get();
-        return (! $prod->isEmpty()) ? $prod->all(): null;
+        return (!$prod->isEmpty()) ? $prod->all() : null;
     }
 
     /**
@@ -121,15 +127,14 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
         $authenticator = App::make('authenticator');
 
         // if not logged no price
-        if ( ! $authenticator->check()) return '';
+        if (!$authenticator->check()) return '';
 
-        try
-        {
-            if ( $authenticator->hasGroup($group_professional)) return $this->resource->price3;
-            elseif ( $authenticator->hasGroup($group_logged)) return $this->resource->price1;
+        try {
+            if ($authenticator->hasGroup($group_professional)) return $this->resource->price3;
+            elseif ($authenticator->hasGroup($group_logged)) return $this->resource->price1;
+        } // if doesn't find any of the groups
+        catch (GroupNotFoundException $e) {
         }
-        // if doesn't find any of the groups
-        catch(GroupNotFoundException $e) {}
 
         return '';
     }
@@ -140,22 +145,18 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function price_big()
     {
         // if not logged no price
-        if ( ! $this->authenticator->check()) return '';
+        if (!$this->authenticator->check()) return '';
 
-        try
-        {
-            if ($this->resource->quantity_pricing_enabled)
-            {
-                if($this->authenticator->hasGroup($this->group_professional)) return $this->resource->price4;
-                elseif($this->authenticator->hasGroup($this->group_logged)) return $this->resource->price2;
-            }
-            else
-            {
+        try {
+            if ($this->resource->quantity_pricing_enabled) {
+                if ($this->authenticator->hasGroup($this->group_professional)) return $this->resource->price4;
+                elseif ($this->authenticator->hasGroup($this->group_logged)) return $this->resource->price2;
+            } else {
                 return $this->price_small();
             }
+        } // if doesn't find any of the groups
+        catch (GroupNotFoundException $e) {
         }
-        // if doesn't find any of the groups
-        catch(GroupNotFoundException $e) {}
 
         return '';
     }
@@ -167,7 +168,7 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
 
     public function description()
     {
-        return substr($this->resource->description,0,60);
+        return substr($this->resource->description, 0, 60);
     }
 
     public function name()
@@ -177,19 +178,19 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
 
     public function urlVideo()
     {
-        return preg_replace("/\s*[a-zA-Z\/\/:\.]*youtube.com\/watch\?v=([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i","<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$1\" frameborder=\"0\" allowfullscreen></iframe>",$this->resource->video_link);
+        return preg_replace("/\s*[a-zA-Z\/\/:\.]*youtube.com\/watch\?v=([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/i", "<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$1\" frameborder=\"0\" allowfullscreen></iframe>", $this->resource->video_link);
     }
 
     public function getLink()
     {
-        return URLT::action('ProductController@show', ['slug_lang' => $this->resource->slug_lang] );
+        return URLT::action('ProductController@show', ['slug_lang' => $this->resource->slug_lang]);
     }
 
     public function canBeBought()
     {
         // if not logged no price
-        if ( ! $this->authenticator->check()) return false;
-        if ( ! $this->resource->isAvailabile()) return false;
+        if (!$this->authenticator->check()) return false;
+        if (!$this->resource->isAvailabile()) return false;
 
         return $this->hasGroupToBuyProduct();
     }
@@ -205,5 +206,21 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     private function hasGroupToBuyProduct()
     {
         return $this->authenticator->hasGroup($this->group_logged) || $this->authenticator->hasGroup($this->group_professional);
+    }
+
+    public function flag()
+    {
+        return "<img class=\"product-flag\" src=\"{$this->flags_path}/{$this->resource->lang}.jpg\" alt=\"{$this->resource->lang}\" />";
+    }
+
+    public function availableflags()
+    {
+        $flags_images = "";
+        $products = App::make('product_repository')->getProductLangsAvailable($this->resource->slug_lang);
+        foreach ($products as $product) {
+            $flags_images .= $product->presenter()->flag;
+        }
+
+        return $flags_images;
     }
 }

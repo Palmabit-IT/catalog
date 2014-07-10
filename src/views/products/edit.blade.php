@@ -6,6 +6,9 @@
 
 @section('content')
 
+    <div class="top-product-flags pull-right">
+        {{$product->presenter()->availableflags}}
+    </div>
     {{-- bootstrap 3 tabs --}}
     @include('catalog::products.tabs')
     <div class="tab-content">

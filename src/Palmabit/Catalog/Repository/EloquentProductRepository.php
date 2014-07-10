@@ -226,6 +226,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $slug = isset($data["slug"]) ? $data["slug"] : '';
         $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $data['quantity_pricing_quantity_non_professional'] = (! empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0;
+
         $this->clearAllCache($slug);
 
         $product = $this->find($id);
@@ -492,6 +493,18 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         // set new name with copy
         $cloned_product->name.= self::$copy_name;
+    }
+
+    public function getProductLangsAvailable($slug_lang)
+    {
+        return $this->model->whereSlugLang($slug_lang)->get([
+            "id",
+            "code",
+            "name",
+            "slug",
+            "lang",
+            "slug_lang",
+        ]);
     }
 
 }

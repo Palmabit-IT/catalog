@@ -39,6 +39,9 @@
                         </td>
                         <td>
                             {{$product->name}}
+                            <div class="product-flags">
+                                <?= \App::make('product_repository')->find($product->id)->presenter()->availableflags; ?>
+                            </div>
                         </td>
                         <td>
                             {{Form::open(["action" => "Palmabit\Catalog\Controllers\ProductsController@postChangeOrder", "class" => "form-inline"])}}
