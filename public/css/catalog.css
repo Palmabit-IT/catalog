@@ -22,3 +22,6 @@ div.top-product-flags .product-flag {
     height: auto;
     margin-right: 5px;
 }
+.hidden {
+    display: none;
+}

@@ -13,7 +13,11 @@
     @include('catalog::products.tabs')
     <div class="tab-content">
     <div class="tab-pane fade in active" id="tab-generale">
-        @include('catalog::products.general')
+        @if(\L::get_admin() == L::getDefault())
+            @include('catalog::products.general-full')
+        @else
+            @include('catalog::products.general-simple')
+        @endif
     </div>
     <div class="tab-pane fade" id="tab-categoria">
         @include('catalog::products.category')
