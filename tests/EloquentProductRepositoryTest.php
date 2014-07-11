@@ -646,7 +646,7 @@ class EloquentProductRepositoryTest extends DbTestCase
     /**
      * @test
      **/
-    public function itUpdateAllProductsDataIfOnDefaultLanguageAndUpdateCachedData()
+    public function itUpdateAllProductsUniqueData_IfOnDefaultLanguage_AndUpdateCachedData()
     {
         list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
         $this->mockLanguageReturnDefaultLang();
@@ -658,11 +658,11 @@ class EloquentProductRepositoryTest extends DbTestCase
 
         $repo->findBySlug($product_it->slug);
         $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang"]);
+        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_it->getUniqueData()), $product_update_it, ["lang", "slug_lang", "id"]);
 
         $repo::$current_lang = 'en';
         $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_en, ["lang", "slug_lang"]);
+        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_en->getUniqueData()), $product_update_en, ["lang", "slug_lang", "id"]);
     }
 
     /**
@@ -679,12 +679,12 @@ class EloquentProductRepositoryTest extends DbTestCase
 
         $repo->findBySlug($product_it->slug);
         $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang"]);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "id"]);
 
         $repo::$current_lang = 'en';
         \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
         $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type']);
+        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type', "id"]);
     }
 
     /**
@@ -702,15 +702,15 @@ class EloquentProductRepositoryTest extends DbTestCase
 
         $repo->findBySlug($product_it->slug);
         $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer","public"]);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer", "public", "id"]);
 
         $repo::$current_lang = 'en';
         \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
         $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type']);
+        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type', "id"]);
     }
 
-    
+
 
     //@todo handle the creation case and creation of that and when you change language
 
@@ -750,6 +750,7 @@ class EloquentProductRepositoryTest extends DbTestCase
                 "slug_lang" => "sl"
         ])->first();
         $update_data = [
+                "id"               => 1,
                 "code"             => $this->faker->unique()->text(5),
                 "name"             => $this->faker->unique()->text(10),
                 "description"      => $this->faker->text(10),

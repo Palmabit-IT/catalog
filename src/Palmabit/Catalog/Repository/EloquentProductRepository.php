@@ -245,6 +245,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $this->clearEmptySlug($data);
         $data = $this->clearEmptyInput($data);
+        $data = $this->removeIdData($data);
 
         $product = $this->find($id);
         $this->resetProductCache($product);
@@ -607,8 +608,9 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $products = $this->model->whereSlugLang($product->slug_lang)->get();
         foreach($products as $product)
         {
+            $update_data = array_only($data, $product->getUniqueData());
             $this->updateSlugLang($data, $product);
-            $product->update($data);
+            $product->update($update_data);
 
             $this->resetProductCache($product);
         }
@@ -622,5 +624,15 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         Cache::forget('featured-' . $product->lang);
         Cache::forget("offer-{$product->slug}-" . $product->lang);
         Cache::forget("product-{$product->slug}-" . $product->lang);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function removeIdData(array $data)
+    {
+        if(isset($data["id"])) unset($data["id"]);return $data;
+        return $data;
     }
 }

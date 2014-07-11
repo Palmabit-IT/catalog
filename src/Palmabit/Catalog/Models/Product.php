@@ -194,4 +194,9 @@ class Product extends Model
     {
         return $this->general_form_filter_enabled;
     }
+
+    public function getUniqueData()
+    {
+        return array_diff($this->fillable, $this->general_form_attributes);
+    }
 }

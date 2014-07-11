@@ -102,6 +102,18 @@ class ProductTest extends DbTestCase {
     }
 
     /**
+     * @test
+     **/
+    public function canGetUniqueData()
+    {
+        $expected_data = ["name"];
+
+        $product = new ProductGeneralDataStub();
+
+        $this->assertEquals($expected_data, $product->getUniqueData());
+    }
+
+    /**
      * @param $product
      * @param $update_data
      * @return mixed
@@ -131,4 +143,15 @@ class ProductTest extends DbTestCase {
     }
 
 }
- 
+
+class ProductGeneralDataStub extends Product
+{
+    protected $fillable = [
+            "name",
+            "code"
+    ];
+
+    protected $general_form_attributes = [
+            "code",
+    ];
+}
