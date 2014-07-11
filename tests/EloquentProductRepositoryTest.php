@@ -13,12 +13,12 @@ class EloquentProductRepositoryTest extends DbTestCase
 
     protected $r;
     protected $faker;
-
+    protected $default_lang;
 
     public function setUp()
     {
         parent::setUp();
-
+        $this->default_lang = 'it';
         $this->r = new ProdRepoStubLang();
         $this->faker = \Faker\Factory::create();
     }
@@ -26,6 +26,7 @@ class EloquentProductRepositoryTest extends DbTestCase
     public function tearDown()
     {
         m::close();
+        ProdRepoStubLang::resetToDefaultLang();
     }
 
     public function testAllWorks()
@@ -83,10 +84,10 @@ class EloquentProductRepositoryTest extends DbTestCase
         $this->prepareFakeData();
 
         $obj = $this->r->update(2, [
-            "price1" => "",
-            "price2" => "",
-            "price3" => "",
-            "price4" => "",
+                "price1" => "",
+                "price2" => "",
+                "price3" => "",
+                "price4" => "",
         ]);
         $this->assertNull($obj->price1);
         $this->assertNull($obj->price2);
@@ -102,31 +103,31 @@ class EloquentProductRepositoryTest extends DbTestCase
         $faker = $this->faker;
         $first_product_slug_lang = 1;
         Product::create([
-            "code" => $faker->text(5),
-            "name" => $faker->text(10),
-            "slug" => "slug",
-            "slug_lang" => $first_product_slug_lang,
-            "lang" => 'it',
-            "description" => $faker->text(10),
-            "description_long" => $faker->text(100),
-            "featured" => 1,
-            "public" => 1,
-            "offer" => 0
-        ]);
+                                "code"             => $faker->text(5),
+                                "name"             => $faker->text(10),
+                                "slug"             => "slug",
+                                "slug_lang"        => $first_product_slug_lang,
+                                "lang"             => 'it',
+                                "description"      => $faker->text(10),
+                                "description_long" => $faker->text(100),
+                                "featured"         => 1,
+                                "public"           => 1,
+                                "offer"            => 0
+                        ]);
 
         $second_product_slug_lang = 25;
         Product::create([
-            "code" => $faker->text(5),
-            "name" => $faker->text(10),
-            "slug" => "",
-            "slug_lang" => $second_product_slug_lang,
-            "lang" => 'it',
-            "description" => $faker->text(10),
-            "description_long" => $faker->text(100),
-            "featured" => 1,
-            "public" => 1,
-            "offer" => 0
-        ]);
+                                "code"             => $faker->text(5),
+                                "name"             => $faker->text(10),
+                                "slug"             => "",
+                                "slug_lang"        => $second_product_slug_lang,
+                                "lang"             => 'it',
+                                "description"      => $faker->text(10),
+                                "description_long" => $faker->text(100),
+                                "featured"         => 1,
+                                "public"           => 1,
+                                "offer"            => 0
+                        ]);
 
         $second_product_id = 2;
         $second_product = $this->r->update($second_product_id, ["slug" => $first_product_slug_lang, "slug_lang" => ""]);
@@ -138,25 +139,25 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         $description = "desc";
         $data = [
-            "description" => $description,
-            "code" => "code",
-            "name" => "name",
-            "slug" => "slug",
-            "slug_lang" => "",
-            "long_description" => "",
-            "featured" => 1,
-            "public" => 1,
-            "offer" => 1,
-            "stock" => 1,
-            "with_vat" => 1,
-            "video_link" => "http://www.google.com/video/12312422313",
-            "professional" => 1,
-            "price1" => "12.22",
-            "price2" => "8.21",
-            "price3" => "5.12",
-            "price4" => "2.12",
-            "quantity_pricing_enabled" => 0,
-            "quantity_pricing_quantity" => 100,
+                "description"               => $description,
+                "code"                      => "code",
+                "name"                      => "name",
+                "slug"                      => "slug",
+                "slug_lang"                 => "",
+                "long_description"          => "",
+                "featured"                  => 1,
+                "public"                    => 1,
+                "offer"                     => 1,
+                "stock"                     => 1,
+                "with_vat"                  => 1,
+                "video_link"                => "http://www.google.com/video/12312422313",
+                "professional"              => 1,
+                "price1"                    => "12.22",
+                "price2"                    => "8.21",
+                "price3"                    => "5.12",
+                "price4"                    => "2.12",
+                "quantity_pricing_enabled"  => 0,
+                "quantity_pricing_quantity" => 100,
         ];
         $obj = $this->r->create($data);
         $this->assertTrue($obj instanceof Product);
@@ -209,13 +210,14 @@ class EloquentProductRepositoryTest extends DbTestCase
     public function it_associate_multiple_categories()
     {
         $this->prepareFakeData(1);
-        foreach (range(1, 5) as $key) {
+        foreach(range(1, 5) as $key)
+        {
             Category::create([
-                "description" => $this->faker->text(10),
-                "slug" => $this->faker->unique()->text(10),
-                "lang" => "it",
-                "slug_lang" => $this->faker->text(10),
-            ]);
+                                     "description" => $this->faker->text(10),
+                                     "slug"        => $this->faker->unique()->text(10),
+                                     "lang"        => "it",
+                                     "slug_lang"   => $this->faker->text(10),
+                             ]);
         }
 
         $product = $this->r->find(1);
@@ -231,13 +233,14 @@ class EloquentProductRepositoryTest extends DbTestCase
     public function it_deassociate_a_given_category()
     {
         $this->prepareFakeData(1);
-        foreach (range(1, 2) as $key) {
+        foreach(range(1, 2) as $key)
+        {
             Category::create([
-                "description" => $this->faker->text(10),
-                "slug" => $this->faker->unique()->text(10),
-                "lang" => "it",
-                "slug_lang" => $this->faker->text(10),
-            ]);
+                                     "description" => $this->faker->text(10),
+                                     "slug"        => $this->faker->unique()->text(10),
+                                     "lang"        => "it",
+                                     "slug_lang"   => $this->faker->text(10),
+                             ]);
         }
         $product = $this->r->find(1);
         $product->categories()->attach(1);
@@ -271,7 +274,9 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         $mock_get = m::mock('StdClass')->shouldReceive('get')->once()->andReturn(["first", "second"])->getMock();
         $mock_model = m::mock('StdClass')->shouldReceive('accessories')->once()->andReturn($mock_get)->getMock();
-        $mock_repo = m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->makePartial()->shouldReceive('find')->once()->andReturn($mock_model)->getMock();
+        $mock_repo =
+                m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->makePartial()->shouldReceive('find')->once()->andReturn($mock_model)
+                 ->getMock();
         $repo = $mock_repo;
 
         $acc = $repo->getAccessories(1);
@@ -302,19 +307,19 @@ class EloquentProductRepositoryTest extends DbTestCase
         $this->prepareFakeData(2);
         $this->r->attachProduct(1, 2);
         Category::create([
-            "description" => "descrizione",
-            "slug" => "slug",
-            "slug_lang" => "slug",
-            "lang" => "it"
-        ]);
+                                 "description" => "descrizione",
+                                 "slug"        => "slug",
+                                 "slug_lang"   => "slug",
+                                 "lang"        => "it"
+                         ]);
         $this->r->associateCategory(1, 1);
 
         $mock_img_repo = new ImgRepoStub;
         $img_data = [
-            "description" => "desc",
-            "product_id" => 1,
-            "featured" => 0,
-            "data" => 111
+                "description" => "desc",
+                "product_id"  => 1,
+                "featured"    => 0,
+                "data"        => 111
         ];
         $mock_img_repo->create($img_data);
 
@@ -341,7 +346,6 @@ class EloquentProductRepositoryTest extends DbTestCase
         $image_associated = App::make('product_image_repository')->getByProductId($prod3->id);
         $this->assertEquals(count($image_original), count($image_associated));
         $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
-
     }
 
     /**
@@ -416,7 +420,6 @@ class EloquentProductRepositoryTest extends DbTestCase
         // check that ordering by cat is the most important
         $this->assertEquals("slug1", $product->first()->slug);
         $this->assertEquals(2, $product->first()->order);
-
     }
 
     /**
@@ -426,17 +429,17 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         $slug_lang = "slug lang";
         $product_expected = Product::create([
-            "code" => "1234",
-            "name" => "product name",
-            "slug" => "slug",
-            "slug_lang" => $slug_lang,
-            "lang" => 'it',
-            "description" => "product description",
-            "long_description" => "product long description",
-            "featured" => 1,
-            "public" => 0,
-            "offer" => 0
-        ]);
+                                                    "code"             => "1234",
+                                                    "name"             => "product name",
+                                                    "slug"             => "slug",
+                                                    "slug_lang"        => $slug_lang,
+                                                    "lang"             => 'it',
+                                                    "description"      => "product description",
+                                                    "long_description" => "product long description",
+                                                    "featured"         => 1,
+                                                    "public"           => 0,
+                                                    "offer"            => 0
+                                            ]);
         $product = $this->r->findBySlugLang($slug_lang);
 
         $this->assertContains($product_expected->code, $product->code);
@@ -450,16 +453,16 @@ class EloquentProductRepositoryTest extends DbTestCase
         $lang = "it";
         $code = "1";
         $attributes = [
-            "code" => $code,
-            "name" => "name",
-            "slug" => "",
-            "slug_lang" => "",
-            "lang" => $lang,
-            "description" => "",
-            "long_description" => "",
-            "featured" => 0,
-            "public" => 1,
-            "offer" => 0
+                "code"             => $code,
+                "name"             => "name",
+                "slug"             => "",
+                "slug_lang"        => "",
+                "lang"             => $lang,
+                "description"      => "",
+                "long_description" => "",
+                "featured"         => 0,
+                "public"           => 1,
+                "offer"            => 0
         ];
         Product::create($attributes);
 
@@ -483,14 +486,14 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         $this->resetTimes();
         $product_it = $this->make('Palmabit\Catalog\Models\Product', [
-            "lang" => 'it',
-            "slug" => 'slug',
-            "slug_lang" => 'slug'
+                "lang"      => 'it',
+                "slug"      => 'slug',
+                "slug_lang" => 'slug'
         ]);
         $product_en = $this->make('Palmabit\Catalog\Models\Product', [
-            "lang" => 'en',
-            "slug" => 'slug',
-            "slug_lang" => 'slug'
+                "lang"      => 'en',
+                "slug"      => 'slug',
+                "slug_lang" => 'slug'
         ]);
 
         $expected_products = new Collection([$product_en[0], $product_it[0]]);
@@ -502,40 +505,42 @@ class EloquentProductRepositoryTest extends DbTestCase
     protected function getModelStub()
     {
         return [
-            "code" => $this->faker->unique()->text(5),
-            "name" => $this->faker->unique()->text(10),
-            "slug" => $this->faker->unique()->text(5),
-            "slug_lang" => $this->faker->unique()->text(10),
-            "lang" => 'it',
-            "description" => $this->faker->text(10),
-            "long_description" => $this->faker->text(100),
-            "featured" => $this->faker->boolean(50),
-            "public" => 1,
-            "offer" => 0
+                "code"             => $this->faker->unique()->text(5),
+                "name"             => $this->faker->unique()->text(10),
+                "slug"             => $this->faker->unique()->text(5),
+                "slug_lang"        => $this->faker->unique()->text(10),
+                "lang"             => 'it',
+                "description"      => $this->faker->unique()->text(10),
+                "long_description" => $this->faker->unique()->text(100),
+                "featured"         => (integer)$this->faker->boolean(50),
+                "public"           => 1,
+                "offer"            => 0
         ];
     }
 
     /**
      * Creates n random products
+     *
      * @param $number
      */
     protected function prepareFakeData($number = 5)
     {
         $faker = $this->faker;
 
-        foreach (range(1, $number) as $key) {
+        foreach(range(1, $number) as $key)
+        {
             Product::create([
-                "code" => $faker->text(5),
-                "name" => $faker->text(10),
-                "slug" => $key,
-                "slug_lang" => $key,
-                "lang" => 'it',
-                "description" => $faker->text(10),
-                "long_description" => $faker->text(100),
-                "featured" => $key == 5 ? true : false,
-                "public" => 1,
-                "offer" => 0
-            ]);
+                                    "code"             => $faker->text(5),
+                                    "name"             => $faker->text(10),
+                                    "slug"             => $key,
+                                    "slug_lang"        => $key,
+                                    "lang"             => 'it',
+                                    "description"      => $faker->text(10),
+                                    "long_description" => $faker->text(100),
+                                    "featured"         => $key == 5 ? true : false,
+                                    "public"           => 1,
+                                    "offer"            => 0
+                            ]);
         }
     }
 
@@ -549,29 +554,37 @@ class EloquentProductRepositoryTest extends DbTestCase
     protected function createProductsForSearch()
     {
         Product::create([
-            "code" => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it', "description" => "description", "long_description" => "long_description", "featured" => true, "public" => true, "offer" => true, "professional" => true, 'order' => 2]);
+                                "code"        => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it',
+                                "description" => "description", "long_description" => "long_description", "featured" => true, "public" => true,
+                                "offer"       => true, "professional" => true, 'order' => 2]);
         Product::create([
-            "code" => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it', "description" => "description", "long_description" => "long_description", "featured" => false, "public" => false, "offer" => false, "professional" => false, "order" => 1]);
+                                "code"        => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it',
+                                "description" => "description", "long_description" => "long_description", "featured" => false, "public" => false,
+                                "offer"       => false, "professional" => false, "order" => 1]);
     }
 
     protected function associateCategoryForSearch()
     {
         App::make('category_repository')->create([
-            "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1", "lang" => "it",]);
+                                                         "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1",
+                                                         "lang"        => "it",]);
         App::make('product_repository')->associateCategory(1, 1);
 
         App::make('category_repository')->create([
-            "description" => "desc_cat_2", "slug" => "slug_desc_2", "slug_lang" => "slug_2", "lang" => "it",]);
+                                                         "description" => "desc_cat_2", "slug" => "slug_desc_2", "slug_lang" => "slug_2",
+                                                         "lang"        => "it",]);
         App::make('product_repository')->associateCategory(2, 2);
     }
 
     protected function associateMultipleCategoryToProduct($id)
     {
         App::make('category_repository')->create([
-            "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1", "lang" => "it",]);
+                                                         "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1",
+                                                         "lang"        => "it",]);
         App::make('product_repository')->associateCategory($id, 1);
         App::make('category_repository')->create([
-            "description" => "desc_cat_1", "slug" => "slug_desc_2", "slug_lang" => "slug_1", "lang" => "it",]);
+                                                         "description" => "desc_cat_1", "slug" => "slug_desc_2", "slug_lang" => "slug_1",
+                                                         "lang"        => "it",]);
         App::make('product_repository')->associateCategory($id, 2);
     }
 
@@ -586,6 +599,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         $repo_obtained = $product_repo->enableGeneralFormFilter();
 
         $this->assertSame($repo_obtained, $product_repo);
+        $this->assertTrue($repo_obtained->general_form_filter);
     }
 
     /**
@@ -599,6 +613,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         $repo_obtained = $product_repo->disableGeneralFormFilter();
 
         $this->assertSame($repo_obtained, $product_repo);
+        $this->assertFalse($repo_obtained->general_form_filter);
     }
 
     /**
@@ -618,7 +633,7 @@ class EloquentProductRepositoryTest extends DbTestCase
                 "public"           => ($product->public) ? false : true,
                 "offer"            => ($product->offer) ? false : true
         ];
-        L::shouldReceive('getDefault')->once()->andReturn('en');
+        L::shouldReceive('getDefault')->twice()->andReturn('en');
 
         $repo = new ProdRepoStubLang();
         $repo->enableGeneralFormFilter();
@@ -631,10 +646,73 @@ class EloquentProductRepositoryTest extends DbTestCase
     /**
      * @test
      **/
-    public function itUpdateAllProductsDataIfOnDefaultLanguage()
+    public function itUpdateAllProductsDataIfOnDefaultLanguageAndUpdateCachedData()
     {
-        //@todo
+        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
+        $this->mockLanguageReturnDefaultLang();
+
+        $repo = new ProdRepoStubLang();
+        $repo->enableGeneralFormFilter();
+
+        $repo->update($product_it->id, $update_data);
+
+        $repo->findBySlug($product_it->slug);
+        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang"]);
+
+        $repo::$current_lang = 'en';
+        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_en, ["lang", "slug_lang"]);
     }
+
+    /**
+     * @test
+     **/
+    public function itUpdatesASingleProduct_GivenDisabledFormFilter()
+    {
+        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
+        $this->mockLanguageReturnLang('en');
+
+        $repo = new ProdRepoStubLang();
+
+        $repo->update($product_it->id, $update_data);
+
+        $repo->findBySlug($product_it->slug);
+        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang"]);
+
+        $repo::$current_lang = 'en';
+        \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
+        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
+        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type']);
+    }
+
+    /**
+     * @test
+     **/
+    public function itUpdatesASingleProduct_GivenNoDefaultLang()
+    {
+        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
+        $this->mockLanguageReturnLang('en');
+
+        $repo = new ProdRepoStubLang();
+        $repo->enableGeneralFormFilter();
+
+        $repo->update($product_it->id, $update_data);
+
+        $repo->findBySlug($product_it->slug);
+        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer","public"]);
+
+        $repo::$current_lang = 'en';
+        \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
+        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
+        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type']);
+    }
+
+    
+
+    //@todo handle the creation case and creation of that and when you change language
 
     /**
      * @return m\MockInterface|\Yay_MockObject
@@ -647,15 +725,72 @@ class EloquentProductRepositoryTest extends DbTestCase
                             ->with($param);
         return $mock_product_filter;
     }
+
+    /**
+     * @return mixed
+     */
+    protected function mockLanguageReturnDefaultLang()
+    {
+        return $this->mockLanguageReturnLang($this->default_lang);
+    }
+
+    /**
+     * @return array
+     */
+    protected function prepareProductsForBulkUpdate()
+    {
+        $product_it = $this->make('Palmabit\Catalog\Models\Product', [
+                "lang"      => "it",
+                "slug"      => "sl_it",
+                "slug_lang" => "sl"
+        ])->first();
+        $product_en = $this->make('Palmabit\Catalog\Models\Product', [
+                "lang"      => "en",
+                "slug"      => "sl_en",
+                "slug_lang" => "sl"
+        ])->first();
+        $update_data = [
+                "code"             => $this->faker->unique()->text(5),
+                "name"             => $this->faker->unique()->text(10),
+                "description"      => $this->faker->text(10),
+                "long_description" => $this->faker->text(100),
+                "lang"             => "it",
+                "featured"         => ($product_it->featured) ? 0 : 1,
+                "public"           => 1,
+                "offer"            => ($product_it->offer) ? 0 : 1
+        ];
+        return array($product_it, $product_en, $update_data);
+    }
+
+    protected function mockLanguageReturnLang($lang)
+    {
+        L::shouldReceive('getDefault')->andReturn($lang);
+    }
+
+    /**
+     * @param $repo
+     * @param $product
+     * @return mixed
+     */
+    protected function getProductFromDbPassingThruCache($repo, $product)
+    {
+        return $repo->findBySlug($product->slug);
+    }
 }
 
 class ProdRepoStubLang extends EloquentProductRepository
 {
+    public static $current_lang = 'it';
+
     public function getLang()
     {
-        return 'it';
+        return static::$current_lang;
     }
 
+    public static function resetToDefaultLang()
+    {
+        static::$current_lang = 'it';
+    }
 }
 
 class ImgRepoStub extends EloquentProductImageRepository

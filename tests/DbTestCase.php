@@ -100,7 +100,7 @@ class DbTestCase extends TestCase
     protected function objectHasAllArrayAttributes(array $attributes, $object, array $except = [])
     {
         foreach ($attributes as $key => $value) {
-            if (!in_array($key, $except)) $this->assertEquals($value, $object->$key);
+            if (!in_array($key, $except)) $this->assertEquals($value, $object->$key, "L'oggetto ".get_class($object)." ha {$key} diverse: {$value}//{$object->$key}");
         }
     }
 
