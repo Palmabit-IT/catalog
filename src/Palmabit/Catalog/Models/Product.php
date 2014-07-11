@@ -7,6 +7,7 @@
  */
 use Jacopo\LaravelSingleTableInheritance\Models\Model;
 use Palmabit\Catalog\Presenters\PresenterProducts;
+use L;
 
 class Product extends Model
 {
@@ -83,6 +84,17 @@ class Product extends Model
         'availableflags'
     ];
 
+    protected $general_form_filter_enabled = false;
+
+    protected $general_form_attributes = [
+            "code",
+            "name",
+            "slug",
+            "long_description",
+            "description",
+            "slug_lang",
+    ];
+
     public function categories()
     {
         return $this->belongsToMany('Palmabit\Catalog\Models\Category', "product_category", "product_id", "category_id");
@@ -126,5 +138,60 @@ class Product extends Model
     public function presenter()
     {
         return new PresenterProducts($this);
+    }
+
+    /**
+     * @return array
+     */
+    public function getGeneralFormAttributes()
+    {
+        return $this->general_form_attributes;
+    }
+
+    public function fill(array $attributes)
+    {
+        $attributes = $this->filterAttributesSettable($attributes);
+        return parent::fill($attributes);
+    }
+
+    /**
+     * @param array $attributes
+     * @return array
+     */
+    protected function filterAttributesSettable(array $attributes)
+    {
+        $attributes = $this->filterAttributesByDefaultLanguage($attributes);
+        return $attributes;
+    }
+
+    /**
+     * @param array $attributes
+     * @return array
+     */
+    protected function filterAttributesByDefaultLanguage(array $attributes)
+    {
+        if(! $this->general_form_filter_enabled) return $attributes;
+        if(L::getDefault() == $this->getAttribute('lang')) return $attributes;
+
+        $valid_keys = array_intersect(array_keys($attributes), $this->general_form_attributes);
+        $attributes = array_only($attributes, $valid_keys);
+        return $attributes;
+    }
+
+    /**
+     * @param boolean $general_form_filter_enabled
+     */
+    public function setGeneralFormFilterEnabled($general_form_filter_enabled)
+    {
+        $this->general_form_filter_enabled = $general_form_filter_enabled;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getGeneralFormFilterEnabled()
+    {
+        return $this->general_form_filter_enabled;
     }
 }

@@ -6,7 +6,7 @@ use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Models\Category;
 use Mockery as m;
-use App;
+use App, L;
 
 class EloquentProductRepositoryTest extends DbTestCase
 {
@@ -575,6 +575,78 @@ class EloquentProductRepositoryTest extends DbTestCase
         App::make('product_repository')->associateCategory($id, 2);
     }
 
+    /**
+     * @test
+     **/
+    public function canActivateSetGeneralFormFilter()
+    {
+        $mock_product_filter = $this->mockSetGeneralFormFilter(true);
+
+        $product_repo = new ProdRepoStubLang(false, $mock_product_filter);
+        $repo_obtained = $product_repo->enableGeneralFormFilter();
+
+        $this->assertSame($repo_obtained, $product_repo);
+    }
+
+    /**
+     * @test
+     **/
+    public function canDeactivateGeneralFormFilterEnabled()
+    {
+        $mock_product_filter = $this->mockSetGeneralFormFilter(false);
+
+        $product_repo = new ProdRepoStubLang(false, $mock_product_filter);
+        $repo_obtained = $product_repo->disableGeneralFormFilter();
+
+        $this->assertSame($repo_obtained, $product_repo);
+    }
+
+    /**
+     * @test
+     **/
+    public function canUpdateOnlyGeneralInOtherLanguagesDataIfEnabled()
+    {
+        $product = $this->make('Palmabit\Catalog\Models\Product', $this->getModelStub())->first();
+        $update_data = [
+                "code"             => $this->faker->unique()->text(5),
+                "name"             => $this->faker->unique()->text(10),
+                "slug"             => $this->faker->unique()->text(5),
+                "slug_lang"        => $this->faker->unique()->text(10),
+                "description"      => $this->faker->text(10),
+                "long_description" => $this->faker->text(100),
+                "featured"         => ($product->featured) ? false : true,
+                "public"           => ($product->public) ? false : true,
+                "offer"            => ($product->offer) ? false : true
+        ];
+        L::shouldReceive('getDefault')->once()->andReturn('en');
+
+        $repo = new ProdRepoStubLang();
+        $repo->enableGeneralFormFilter();
+        $updated_product = $repo->update($product->id, $update_data);
+
+        $this->assertEquals($updated_product->code, $update_data["code"]);
+        $this->assertNotEquals($product->offer, $update_data["offer"]);
+    }
+
+    /**
+     * @test
+     **/
+    public function itUpdateAllProductsDataIfOnDefaultLanguage()
+    {
+        //@todo
+    }
+
+    /**
+     * @return m\MockInterface|\Yay_MockObject
+     */
+    protected function mockSetGeneralFormFilter($param)
+    {
+        $mock_product_filter = m::mock('Palmabit\Catalog\Models\Product');
+        $mock_product_filter->shouldReceive('setGeneralFormFilterEnabled')
+                            ->once()
+                            ->with($param);
+        return $mock_product_filter;
+    }
 }
 
 class ProdRepoStubLang extends EloquentProductRepository

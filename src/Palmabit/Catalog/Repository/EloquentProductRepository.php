@@ -223,13 +223,14 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function update($id , array $data)
     {
-        $slug = isset($data["slug"]) ? $data["slug"] : '';
-        $data['quantity_pricing_quantity'] = (! empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
-        $data['quantity_pricing_quantity_non_professional'] = (! empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0;
+        $slug = $this->clearEmptySlug($data);
+        $data = $this->clearEmptyInput($data);
 
         $this->clearAllCache($slug);
 
         $product = $this->find($id);
+
+        if($this->model->getGeneralFormFilterEnabled()) $product->setGeneralFormFilterEnabled(true);
 
         $this->updateSlugLang($data, $product);
 
@@ -507,4 +508,44 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         ]);
     }
 
+    public function enableGeneralFormFilter()
+    {
+        return $this->setGeneralFormFilter(true);
+    }
+
+    public function disableGeneralFormFilter()
+    {
+        return $this->setGeneralFormFilter(false);
+    }
+
+    /**
+     * @return $this
+     */
+    protected function setGeneralFormFilter($value)
+    {
+        $this->model->setGeneralFormFilterEnabled($value);
+
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     */
+    protected function clearEmptySlug(array $data)
+    {
+        return isset($data["slug"]) ? $data["slug"] : '';
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function clearEmptyInput(array $data)
+    {
+        $data['quantity_pricing_quantity'] = (!empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
+        $data['quantity_pricing_quantity_non_professional'] =
+                (!empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0;
+        return $data;
+    }
 }

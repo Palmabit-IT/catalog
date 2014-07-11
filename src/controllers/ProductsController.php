@@ -91,6 +91,7 @@ class ProductsController extends Controller {
 	{
         $input = Input::all();
 
+        $this->f->getR()->enableGeneralFormFilter();
         try
         {
              $obj = $this->f->process($input);
