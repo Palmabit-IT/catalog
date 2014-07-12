@@ -16,13 +16,13 @@
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
         {{Form::hidden("slug_lang", $slug_lang)}}
-        {{FormField::code(["label" => "Codice"])}}
+        {{FormField::code(["label" => "Codice*: "])}}
         <span class="text-danger">{{$errors->first('code')}}</span>
-        {{FormField::name(["id" => "slugme", "label" => "Nome"])}}
+        {{FormField::name(["id" => "slugme", "label" => "Nome* :"])}}
         <span class="text-danger">{{$errors->first('name')}}</span>
-        {{FormField::slug(["label"=>"Slug", "id" => "slug"])}}
+        {{FormField::slug(["label"=>"Slug*: ", "id" => "slug"])}}
         <span class="text-danger">{{$errors->first('slug')}}</span>
-        {{FormField::description(["type" => "textarea", "label" => "Descrizione breve", "rows"=>5])}}
+        {{FormField::description(["type" => "textarea", "label" => "Descrizione breve*: ", "rows"=>5])}}
         <span class="text-danger">{{$errors->first('description')}}</span>
         {{FormField::long_description(["label" => "Descrizione lunga", "type" => "textarea"])}}
         <span class="text-danger">{{$errors->first('long_description')}}</span>
@@ -31,7 +31,7 @@
         {{FormField::video_link(["type" => "text", "label" => "URL video (youtube):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
-            <label for=​"price1" class=​"control-label">​Prezzo1: ​</label>​
+            <label for=​"price1" class=​"control-label">​Prezzo1*:​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -40,7 +40,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price1')}}</span>
         <div class="form-group">
-            <label for=​"price2" class=​"control-label">​Prezzo2: ​</label>​
+            <label for=​"price2" class=​"control-label">​Prezzo2*:</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -49,7 +49,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price2')}}</span>
         <div class="form-group">
-            <label for=​"price3" class=​"control-label">​Prezzo3: ​</label>​
+            <label for=​"price3" class=​"control-label">​Prezzo3*:*</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -58,7 +58,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price3')}}</span>
         <div class="form-group">
-            <label for=​"price4" class=​"control-label">​Prezzo4: ​</label>​
+            <label for=​"price4" class=​"control-label">​Prezzo4*:</label>​
             <div class="input-group">
                 <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -107,7 +107,7 @@
     <div class="col-md-12">
         {{Form::submit('Salva', array("class"=>"btn btn-primary tab-remember margin-bottom-30"))}}
         @if($product->exists)
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id))}}" class="btn btn-danger" style="margin-bottom:30px">Cancella</a>
+            <a href="{{URL::route('products.delete.bysluglang',array('slug_lang' => $product->slug_lang))}}" class="btn btn-danger cancella-prodotto" style="margin-bottom:30px">Cancella</a>
         @endif
         {{Form::updateOldLanguageInput()}}
         {{Form::close()}}
@@ -120,6 +120,9 @@
 <script>
     $(function(){
         $('#slugme').slugIt();
+    });
+    $(".cancella-prodotto").click(function(){
+        return confirm("Sei sicuro di volere eliminare il prodotto corrente in tutte le lingue?");
     });
 </script>
 @stop

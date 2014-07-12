@@ -50,7 +50,7 @@
                             {{Form::close()}}
                         </td>
                         <td>
-                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-plus"></i> duplica</a>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-link"></i> duplica</a>
                         </td>
                         <td>
                             <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
@@ -79,7 +79,7 @@
 @parent
 <script>
         $(".cancella").click(function(){
-            return confirm("Sei sicuro di volere eliminare il prodotto selezionato?");
+            return confirm("Sei sicuro di volere eliminare il prodotto selezionato in tutte le lingue?");
         });
         $("#form-select-lang").hide();
 </script>

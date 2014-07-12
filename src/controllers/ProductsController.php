@@ -2,8 +2,7 @@
 
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Validator;
-use Palmabit\Catalog\Repository\EloquentProductRepository;
-use View, Input, Redirect, App, Controller;
+use View, Input, Redirect, App, Controller, L, Config;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use Palmabit\Catalog\Validators\ProductCategoryValidator;
@@ -121,7 +120,7 @@ class ProductsController extends Controller
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")
-                       ->with(array("message" => "Prodotto eliminato con successo."));
+                       ->with(array("message" => "Prodotto <img class=\"current-lang-flag\" src=\"".Config::get('catalog::flags.flags_path').'/'.L::get_admin().".jpg\" /> eliminato con successo."));
     }
 
 
@@ -314,7 +313,7 @@ class ProductsController extends Controller
         if($validator->passes())
         {
             $this->r->deleteFromSlugLang($slug_lang);
-            return Redirect::route('products.lists')->withMessage('Prodotto eliminato con successo.');
+            return Redirect::route('products.lists')->withMessage('Prodotto eliminato con successo in tutte le lingue.');
         }
 
         return Redirect::route('products.lists')->withErrors(['cancellazione' => 'Non sono riuscito a cancellare il prodotto.']);

@@ -87,7 +87,6 @@ class Product extends Model
     protected $general_form_filter_enabled = false;
 
     protected $general_form_attributes = [
-            "code",
             "name",
             "slug",
             "long_description",
