@@ -9,6 +9,7 @@ namespace Palmabit\Catalog\Repository;
 use Baum\MoveNotPossibleException;
 use Palmabit\Catalog\Interfaces\TreeInterface;
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\CategoryDescription;
 use Palmabit\Library\Exceptions\InvalidException;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Repository\EloquentBaseRepository;
@@ -28,9 +29,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     protected $is_admin;
 
+    protected $model_description;
+
     public function __construct($is_admin = false)
     {
         $this->is_admin = $is_admin;
+        $this->model_description = new CategoryDescription();
         return parent::__construct(new Category);
     }
 
@@ -42,7 +46,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function search($description)
     {
-        $cats = $this->model->whereDescription($description)->get();
+        $cats = $this->model_description->whereDescription($description)->get();
         return $cats->isEmpty() ? null : $cats->all();
     }
 
@@ -54,8 +58,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function searchBySlug($slug)
     {
-        $model = $this->model_name;
-        $cats = $model::whereSlug($slug)->get();
+        $cats = $this->model_description->whereSlug($slug)->get();
         return $cats->isEmpty() ? null : $cats->first();
     }
 
@@ -70,10 +73,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function create(array $data)
     {
         return $this->model->create(array(
-                                      "description" =>$data["description"],
-                                      "slug" => $data["slug"],
-                                      "slug_lang" => $data["slug_lang"] ? $data["slug_lang"] : $this->generateSlugLang($data),
-                                      "lang" => $this->getLang(),
+                                      "name" =>$data["name"],
                                       "order" => isset($data["order"]) ? $data["order"] : 0,
                                  ));
     }
@@ -105,10 +105,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function all()
     {
-        $cat = $this->model->whereLang($this->getLang())
-            ->orderBy('order', 'DESC')
+        $cat = $this->model->orderBy('order', 'DESC')
             ->orderBy('depth', 'ASC')
-            ->orderBy("description", 'ASC')
+            ->orderBy("name", 'ASC')
             ->get();
 
         return $cat->isEmpty() ? null : $cat->all();
@@ -122,13 +121,22 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function findBySlugLang($slug_lang)
     {
-        $cat= $this->model->whereSlugLang($slug_lang)
+        $cat= $this->model_description->whereSlugLang($slug_lang)
             ->whereLang($this->getLang())
             ->get();
 
         if($cat->isEmpty()) throw new NotFoundException;
 
         return $cat->first();
+    }
+
+    public function getArrSelectCat()
+    {
+        $all_cats = $this->model->orderBy('name','ASC')
+                                ->lists('name','id') ;
+        $all_cats[""] = "Qualsiasi";
+
+        return $all_cats;
     }
 
     /**
@@ -209,16 +217,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $cat = $this->find($id);
         return (boolean)$cat->children()->count();
-    }
-
-    public function getArrSelectCat()
-    {
-        $all_cats = $this->model->whereLang($this->getLang())
-                ->orderBy('description')
-                ->lists('description','id') ;
-        $all_cats[""] = "Qualsiasi";
-
-        return $all_cats;
     }
 
     /**

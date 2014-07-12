@@ -10,7 +10,7 @@ class Category extends Model{
 
     protected $table = "category";
 
-    protected $fillable = array("description","slug","image", "slug_lang", "lang", "name", "parent_id","order");
+    protected $fillable = array("image","name", "parent_id","order","depth", "parent_id");
 
     public function products()
     {
@@ -37,6 +37,11 @@ class Category extends Model{
      */
     public function children() {
         return $this->hasMany(get_class($this), $this->getParentColumnName());
+    }
+
+    public function description()
+    {
+        return $this->hasMany('Palmabit\Catalog\Models\CategoryDescription');
     }
 
 }

@@ -4,9 +4,11 @@ Route::group(['before' => ['logged']], function ()
     /////////////////////////////////////// CATEGORY /////////////////////////////////////
     Route::get('/admin/category/lists', [
             'as'   => 'category.lists',
+            'before' => 'force_default_admin_language',
             'uses' => 'Palmabit\Catalog\Controllers\CategoryController@lists'
     ]);
     Route::get('/admin/category/edit', [
+            "before" => "force_default_admin_language",
             'as'   => 'category.modifica',
             'uses' => 'Palmabit\Catalog\Controllers\CategoryController@getEdit'
     ]);

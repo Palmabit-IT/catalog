@@ -65,5 +65,6 @@
     $(".delete").click(function(){
         return confirm("Sei sicuro di volere eliminare la categoria selezionata?");
     });
+    $("#form-select-lang").hide();
 </script>
 @stop

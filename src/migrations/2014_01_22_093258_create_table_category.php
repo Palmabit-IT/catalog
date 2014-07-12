@@ -15,8 +15,7 @@ class CreateTableCategory extends Migration {
         if(! Schema::hasTable('category'))
             Schema::create('category', function(Blueprint $table) {
                 $table->increments('id');
-                $table->string('description');
-                $table->string('slug')->unique();
+                $table->string('name');
                 // for hierarchy with nested sets
                 $table->integer('parent_id')->nullable();
                 $table->integer("order")->unsigned()->default(0);
@@ -24,9 +23,6 @@ class CreateTableCategory extends Migration {
                 $table->integer('rgt')->nullable();
                 $table->integer('depth')->nullable();
                 $table->boolean("blocked")->default(0);
-                // for multilang
-                $table->string('slug_lang');
-                $table->string('lang',2)->default('it');
                 $table->timestamps();
             });
         DB::statement('ALTER TABLE  `category` ADD  `image` LONGBLOB');
