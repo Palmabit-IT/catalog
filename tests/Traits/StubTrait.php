@@ -23,4 +23,18 @@ Trait StubTrait
                 "offer"            => $this->faker->boolean(50)
         ];
     }
+
+    /**
+     * @param $slug_lang
+     */
+    protected function createNProductsWithSameSlugLang($times, $slug_lang)
+    {
+        $this->times($times)->make('Palmabit\Catalog\Models\Product', function () use ($slug_lang)
+        {
+            return array_merge($this->getProductModelStub(), [
+                    "slug_lang" => $slug_lang,
+                    "lang"      => $this->faker->unique()->lexify('??')
+            ]);
+        });
+    }
 } 

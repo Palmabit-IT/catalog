@@ -777,6 +777,24 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         return $repo->findBySlug($product->slug);
     }
+    
+    /**
+     * @test
+     **/
+    public function canDeleteAllProducts_FromSlugLang()
+    {
+        $slug_lang = "sl";
+        $this->times(5)->make('Palmabit\Catalog\Models\Product', function() use($slug_lang){
+            return [
+                 "slug_lang" => $slug_lang,
+                 "lang"      => $this->faker->unique()->lexify('??')
+         ];
+        });
+
+        $this->r->deleteFromSlugLang($slug_lang);
+
+        $this->assertEquals(0, Product::count());
+    }
 }
 
 class ProdRepoStubLang extends EloquentProductRepository

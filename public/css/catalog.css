@@ -25,3 +25,8 @@ div.top-product-flags .product-flag {
 .hidden {
     display: none;
 }
+.current-lang-flag {
+  width: 40px;
+  height: auto;
+  margin: 0 0 0 5px;
+}

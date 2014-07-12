@@ -315,8 +315,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function delete($id)
     {
         $prod = $this->find($id);
-        $this->clearThisLanguageProductCache($prod["slug"]);
-
+        $this->resetProductCache($prod);
         return $prod->delete();
     }
 
@@ -534,6 +533,11 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     public function disableGeneralFormFilter()
     {
         return $this->setGeneralFormFilter(false);
+    }
+
+    public function deleteFromSlugLang($slug_lang)
+    {
+        return $this->model->whereSlugLang($slug_lang)->delete();
     }
 
     /**

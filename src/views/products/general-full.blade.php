@@ -106,6 +106,9 @@
 <div class="row">
     <div class="col-md-12">
         {{Form::submit('Salva', array("class"=>"btn btn-primary tab-remember margin-bottom-30"))}}
+        @if($product->exists)
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id))}}" class="btn btn-danger" style="margin-bottom:30px">Cancella</a>
+        @endif
         {{Form::updateOldLanguageInput()}}
         {{Form::close()}}
     </div>

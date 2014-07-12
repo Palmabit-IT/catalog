@@ -54,7 +54,7 @@
                         </td>
                         <td>
                             <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
-                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@delete',array('id' => $product->id) )}}" class="cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i></a>
+                            <a href="{{URL::route('products.delete.bysluglang',array('slug_lang' => $product->slug_lang) )}}" class="cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i></a>
                         </td>
                     </tr>
                 @endforeach
@@ -81,5 +81,6 @@
         $(".cancella").click(function(){
             return confirm("Sei sicuro di volere eliminare il prodotto selezionato?");
         });
+        $("#form-select-lang").hide();
 </script>
 @stop
