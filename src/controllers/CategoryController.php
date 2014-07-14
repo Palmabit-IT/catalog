@@ -36,6 +36,8 @@ class CategoryController extends Controller
      */
     protected $p;
 
+    protected $validator_description;
+
     public function __construct(CategoryValidator $v, CategoryImageValidator $vi)
     {
         $is_admin = true;
@@ -43,22 +45,20 @@ class CategoryController extends Controller
         $this->v = $v;
         $this->v_i = $vi;
         $this->f = new FormModel($this->v, $this->repo);
+        $this->validator_description = App::make('category_description_validator');
     }
 
     public function lists()
     {
         $cats = $this->repo->all();
-
-        return View::make('catalog::category.show')->with( array("categories" => $cats) );
+            return View::make('catalog::category.show')->with( array("categories" => $cats) );
     }
 
     public function getEdit()
     {
-        $slug_lang = Input::get('slug_lang');
-
         try
         {
-            $categories = $this->repo->findBySlugLang($slug_lang);
+            $categories = $this->repo->find(Input::get('id'));
 
         }
         catch(NotFoundException $e)
@@ -67,7 +67,7 @@ class CategoryController extends Controller
         }
         $this->p = new PresenterCategory($categories);
 
-        return View::make('catalog::category.edit')->with( ["categories" => $categories, "slug_lang" => $slug_lang, "presenter" => $this->p] );
+        return View::make('catalog::category.edit')->with( ["categories" => $categories, "presenter" => $this->p] );
     }
 
     public function postEdit()
@@ -84,7 +84,7 @@ class CategoryController extends Controller
            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit")->withInput()->withErrors($errors);
        }
 
-       return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["slug_lang" => $obj->slug_lang])->with(["message"=>"Categoria modificata con successo."]);
+       return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["id" => $obj->id])->with(["message"=>"Categoria modificata con successo."]);
     }
 
     public function delete()
@@ -104,14 +104,10 @@ class CategoryController extends Controller
         return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@lists")->with(array("message"=>"Categoria eliminata con successo."));
     }
 
-    /**
-     * @todo refactor
-     */
     public function postSetParent()
     {
         $id = Input::get('id');
         $parent_id = Input::get('parent_id');
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -119,15 +115,12 @@ class CategoryController extends Controller
         }
         catch(PalmabitExceptionsInterface $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['slug_lang' => $slug_lang])->withInput()->withErrors(new MessageBag(["model"=> "Non è possibile associare la categoria."]));
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['id' => $id])->withInput()->withErrors(new MessageBag(["model"=> "Non è possibile associare la categoria."]));
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["slug_lang" => $slug_lang])->with([ "message_tree" => "Padre modificato con successo." ]);
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["id" => $id])->with([ "message_tree" => "Padre modificato con successo." ]);
     }
 
-    /**
-     * @todo refactor
-     */
     public function postSetParentList()
     {
         $id = Input::get('id');
@@ -168,7 +161,6 @@ class CategoryController extends Controller
     {
         $id = Input::get('id');
         $input = Input::all();
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -177,13 +169,27 @@ class CategoryController extends Controller
         }
         catch(InvalidException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['slug_lang' => $slug_lang])->withInput()->withErrors(new MessageBag(["model"=> "Errore nell'associazione dell'immagine."]));
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['id' => $id])->withInput()->withErrors(new MessageBag(["model"=> "Errore nell'associazione dell'immagine."]));
         }
         catch(ValidationException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['slug_lang' => $slug_lang])->withInput()->withErrors($this->v_i->getErrors());
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit", ['id' => $id])->withInput()->withErrors($this->v_i->getErrors());
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["slug_lang" => $slug_lang])->with([ "message_img" => "Immagine modificata con successo." ]);
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\CategoryController@getEdit",["id" => $id])->with([ "message_img" => "Immagine modificata con successo." ]);
+    }
+
+    public function postEditDescription()
+    {
+        $category_id = Input::get('category_id');
+
+        if(! $this->validator_description->validate(Input::all()))
+        {
+            return Redirect::route('category.modifica', ["id" => $category_id])->withErrors($this->validator_description->getErrors());
+        }
+
+        $this->repo->updateDescription(Input::all());
+
+        return Redirect::route('category.modifica', ["id" => $category_id])->withMessage('Categoria modificata con successo');
     }
 }

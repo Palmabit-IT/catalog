@@ -6,11 +6,13 @@
  * @author jacopo beschi jacopo@jacopobeschi.com
  */
 use Mockery as m;
+use Palmabit\Catalog\Tests\Traits\StubTrait;
 use URLT;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
-class PresenterCategoryTest extends TestCase {
+class PresenterCategoryTest extends DbTestCase {
+    use StubTrait;
 
     public function tearDown()
     {
@@ -24,22 +26,6 @@ class PresenterCategoryTest extends TestCase {
     {
         $presenter = m::mock('Palmabit\Catalog\Presenters\PresenterCategory')->makePartial()->shouldReceive('image')->once()->andReturn(22)->getMock();
         $this->assertEquals(22, $presenter->featured_image);
-    }
-
-    /**
-     * @test
-     **/
-    public function it_returns_the_description_and_name()
-    {
-        $category = new Category([
-                               "description" => "desc",
-                               "name" => "name",
-                               "slug" => "slug",
-                               "slug_lang" => "",
-                               ]);
-        $presenter = new PresenterCategory($category);
-        $this->assertEquals("name", $presenter->name);
-        $this->assertEquals("desc", $presenter->description);
     }
 
     /**
@@ -69,6 +55,28 @@ class PresenterCategoryTest extends TestCase {
                                  ]);
         $presenter = new PresenterCategory($category);
         $presenter->getLink();
+    }
+
+    /**
+     * @test
+     **/
+    public function getCurrentLanguageDescription()
+    {
+        list($category, $category_description) = $this->createCategoryWithDescription();
+        $presenter = new PresenterCategory($category);
+
+        $this->assertEquals($presenter->description, $category_description->description,'The presenter description does not match:');
+    }
+
+    /**
+     * @test
+     */
+    public function getCategoryDescriptionInGivenLanguage()
+    {
+        list($category, $category_description) = $this->createCategoryWithDescription();
+        $presenter = new PresenterCategory($category);
+
+        $this->assertEquals($presenter->getDescriptionObjectOfLang('it'), $category_description);
     }
 }
  

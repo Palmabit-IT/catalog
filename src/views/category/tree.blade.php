@@ -20,7 +20,6 @@
 	            {{Form::select("parent_id", get_cat_select_arr(true), $categories->parent_id, ["class" => "form-control"]) }}
 	        </div>
 	        {{Form::hidden("id", $categories->id)}}
-	        {{Form::hidden("slug_lang", $slug_lang)}}
 
 			<hr>
 			{{Form::submit('Salva', ['class' => 'btn btn-primary tab-remember'])}}

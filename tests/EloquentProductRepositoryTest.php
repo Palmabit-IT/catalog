@@ -213,10 +213,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         foreach(range(1, 5) as $key)
         {
             Category::create([
-                                     "description" => $this->faker->text(10),
-                                     "slug"        => $this->faker->unique()->text(10),
-                                     "lang"        => "it",
-                                     "slug_lang"   => $this->faker->text(10),
+                                     "name" => $this->faker->text(10),
                              ]);
         }
 
@@ -236,10 +233,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         foreach(range(1, 2) as $key)
         {
             Category::create([
-                                     "description" => $this->faker->text(10),
-                                     "slug"        => $this->faker->unique()->text(10),
-                                     "lang"        => "it",
-                                     "slug_lang"   => $this->faker->text(10),
+                                     "name" => $this->faker->text(10),
                              ]);
         }
         $product = $this->r->find(1);
@@ -307,10 +301,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         $this->prepareFakeData(2);
         $this->r->attachProduct(1, 2);
         Category::create([
-                                 "description" => "descrizione",
-                                 "slug"        => "slug",
-                                 "slug_lang"   => "slug",
-                                 "lang"        => "it"
+                                 "name" => "name",
                          ]);
         $this->r->associateCategory(1, 1);
 
@@ -554,37 +545,69 @@ class EloquentProductRepositoryTest extends DbTestCase
     protected function createProductsForSearch()
     {
         Product::create([
-                                "code"        => "1234", "name" => "name1", "slug" => "slug1", "slug_lang" => "slug_lang1", "lang" => 'it',
-                                "description" => "description", "long_description" => "long_description", "featured" => true, "public" => true,
-                                "offer"       => true, "professional" => true, 'order' => 2]);
+                                "code"             => "1234",
+                                "name"             => "name1",
+                                "slug"             => "slug1",
+                                "slug_lang"        => "slug_lang1",
+                                "lang"             => 'it',
+                                "description"      => "description",
+                                "long_description" => "long_description",
+                                "featured"         => true,
+                                "public"           => true,
+                                "offer"            => true,
+                                "professional"     => true,
+                                'order'            => 2
+                        ]);
         Product::create([
-                                "code"        => "1235", "name" => "name1", "slug" => "slug2", "slug_lang" => "slug_lang2", "lang" => 'it',
-                                "description" => "description", "long_description" => "long_description", "featured" => false, "public" => false,
-                                "offer"       => false, "professional" => false, "order" => 1]);
+                                "code"             => "1235",
+                                "name"             => "name1",
+                                "slug"             => "slug2",
+                                "slug_lang"        => "slug_lang2",
+                                "lang"             => 'it',
+                                "description"      => "description",
+                                "long_description" => "long_description",
+                                "featured"         => false,
+                                "public"           => false,
+                                "offer"            => false,
+                                "professional"     => false,
+                                "order"            => 1
+                        ]);
     }
 
     protected function associateCategoryForSearch()
     {
         App::make('category_repository')->create([
-                                                         "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1",
-                                                         "lang"        => "it",]);
+                                                         "name"      => "desc_cat_1",
+                                                         "slug"      => "slug_desc_1",
+                                                         "slug_lang" => "slug_1",
+                                                         "lang"      => "it"
+                                                 ]);
         App::make('product_repository')->associateCategory(1, 1);
 
         App::make('category_repository')->create([
-                                                         "description" => "desc_cat_2", "slug" => "slug_desc_2", "slug_lang" => "slug_2",
-                                                         "lang"        => "it",]);
+                                                         "name"      => "desc_cat_2",
+                                                         "slug"      => "slug_desc_2",
+                                                         "slug_lang" => "slug_2",
+                                                         "lang"      => "it"
+                                                 ]);
         App::make('product_repository')->associateCategory(2, 2);
     }
 
     protected function associateMultipleCategoryToProduct($id)
     {
         App::make('category_repository')->create([
-                                                         "description" => "desc_cat_1", "slug" => "slug_desc_1", "slug_lang" => "slug_1",
-                                                         "lang"        => "it",]);
+                                                         "name"      => "desc_cat_1",
+                                                         "slug"      => "slug_desc_1",
+                                                         "slug_lang" => "slug_1",
+                                                         "lang"      => "it"
+                                                 ]);
         App::make('product_repository')->associateCategory($id, 1);
         App::make('category_repository')->create([
-                                                         "description" => "desc_cat_1", "slug" => "slug_desc_2", "slug_lang" => "slug_1",
-                                                         "lang"        => "it",]);
+                                                         "name"      => "desc_cat_1",
+                                                         "slug"      => "slug_desc_2",
+                                                         "slug_lang" => "slug_1",
+                                                         "lang"      => "it"
+                                                 ]);
         App::make('product_repository')->associateCategory($id, 2);
     }
 
@@ -639,7 +662,6 @@ class EloquentProductRepositoryTest extends DbTestCase
         $repo->enableGeneralFormFilter();
         $updated_product = $repo->update($product->id, $update_data);
 
-        $this->assertEquals($updated_product->code, $update_data["code"]);
         $this->assertNotEquals($product->offer, $update_data["offer"]);
     }
 
@@ -658,11 +680,13 @@ class EloquentProductRepositoryTest extends DbTestCase
 
         $repo->findBySlug($product_it->slug);
         $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_it->getUniqueData()), $product_update_it, ["lang", "slug_lang", "id"]);
+        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_it->getUniqueData()), $product_update_it, ["lang", "slug_lang",
+                                                                                                                                "id"]);
 
         $repo::$current_lang = 'en';
         $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_en->getUniqueData()), $product_update_en, ["lang", "slug_lang", "id"]);
+        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_en->getUniqueData()), $product_update_en, ["lang", "slug_lang",
+                                                                                                                                "id"]);
     }
 
     /**
@@ -702,17 +726,13 @@ class EloquentProductRepositoryTest extends DbTestCase
 
         $repo->findBySlug($product_it->slug);
         $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer", "public", "id"]);
+        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer", "public", "id", "code"]);
 
         $repo::$current_lang = 'en';
         \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
         $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
         $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type', "id"]);
     }
-
-
-
-    //@todo handle the creation case and creation of that and when you change language
 
     /**
      * @return m\MockInterface|\Yay_MockObject
@@ -777,18 +797,19 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         return $repo->findBySlug($product->slug);
     }
-    
+
     /**
      * @test
      **/
     public function canDeleteAllProducts_FromSlugLang()
     {
         $slug_lang = "sl";
-        $this->times(5)->make('Palmabit\Catalog\Models\Product', function() use($slug_lang){
+        $this->times(5)->make('Palmabit\Catalog\Models\Product', function () use ($slug_lang)
+        {
             return [
-                 "slug_lang" => $slug_lang,
-                 "lang"      => $this->faker->unique()->lexify('??')
-         ];
+                    "slug_lang" => $slug_lang,
+                    "lang"      => $this->faker->unique()->lexify('??')
+            ];
         });
 
         $this->r->deleteFromSlugLang($slug_lang);

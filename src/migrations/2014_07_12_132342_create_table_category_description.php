@@ -18,16 +18,14 @@ class CreateTableCategoryDescription extends Migration {
                 $table->string('description');
                 $table->string('slug')->nullable();
                 $table->timestamps();
-                // for language handling
-                $table->string('slug_lang');
                 $table->string('lang',2)->default('it');
-                $table->unique(array('slug_lang', 'lang'));
                 // relations
                 $table->integer('category_id')->unsigned();
                 $table->foreign('category_id')
                       ->references('id')->on('category')
                       ->onUpdate('cascade')
                       ->onDelete('cascade');
+                $table->unique(array('category_id', 'lang'));
             });
 	}
 

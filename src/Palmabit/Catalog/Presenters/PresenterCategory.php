@@ -38,11 +38,6 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
         return $this->image();
     }
 
-    public function description()
-    {
-        return $this->resource->description;
-    }
-
     public function name()
     {
         return $this->resource->name;
@@ -56,5 +51,15 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
     public function getLink()
     {
         return URLT::action('CategoryController@show', ['slug_lang' => $this->resource->slug_lang] );
+    }
+
+    public function description()
+    {
+        return $this->resource->description()->whereLang(\L::get())->pluck('description');
+    }
+
+    public function getDescriptionObjectOfLang($lang)
+    {
+        return $this->resource->description()->whereLang($lang)->first();
     }
 }

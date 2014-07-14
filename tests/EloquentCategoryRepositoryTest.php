@@ -7,13 +7,6 @@ use Event;
 
 class EloquentCategoryRepositoryTest extends DbTestCase
 {
-    /**
-     * Usa 2 model uno con i dati img e gerarchia che si associa al prototto
-     * e che va a sostituire la tua categoria
-     * quando dalla categoria prelevi la descrizione passa alla relazione
-     * con l'altro model e ritorna i dati in dipendenza dalla lingua e dalla lingua corrente poi se vuoi
-     */
-
     protected $faker;
     protected $repo;
     protected $category_name;
@@ -24,7 +17,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase
         parent::setUp();
 
         $this->faker = \Faker\Factory::create();
-        $this->repo = new RepoStubLang();
+        $this->repo = new CatRepoStubLang();
         $this->category_name = 'Palmabit\Catalog\Models\Category';
         $this->category_description_name = 'Palmabit\Catalog\Models\CategoryDescription';
     }
@@ -79,23 +72,6 @@ class EloquentCategoryRepositoryTest extends DbTestCase
         list($created_category, $created_category_description) = $this->createCategoryWithDescription();
 
         $category_description_found = $this->repo->searchBySlug($created_category_description->slug);
-
-        $this->assertObjectHasAllAttributes($created_category_description->toArray(), $category_description_found);
-    }
-
-    /**
-     * @test
-     */
-    public function findCategoryDescriptionBySlugLang()
-    {
-        $created_category = $this->make($this->category_name)->first();
-        $created_category_description =
-                $this->make($this->category_description_name, array_merge($this->getCategoryDescriptionModelStub($created_category), ["lang" => "it"]))
-                     ->first();
-
-        $repo = new RepoStubLang();
-        $repo::resetToDefaultLang();
-        $category_description_found = $repo->findBySlugLang($created_category_description->slug_lang);
 
         $this->assertObjectHasAllAttributes($created_category_description->toArray(), $category_description_found);
     }
@@ -210,8 +186,8 @@ class EloquentCategoryRepositoryTest extends DbTestCase
         return [
                 "description" => $this->faker->text(20),
                 "slug"        => $this->faker->text(10),
-                "slug_lang"   => $this->faker->text(10),
-                "category_id" => $created_category->id
+                "category_id" => $created_category->id,
+                "lang"        => CatRepoStubLang::$current_lang,
         ];
     }
 
@@ -222,8 +198,7 @@ class EloquentCategoryRepositoryTest extends DbTestCase
     {
         $created_category = $this->make($this->category_name)->first();
 
-        $created_category_description =
-                $this->make($this->category_description_name, $this->getCategoryDescriptionModelStub($created_category))->first();
+        $created_category_description = $this->make($this->category_description_name, $this->getCategoryDescriptionModelStub($created_category))->first();
         return [$created_category, $created_category_description];
     }
 
@@ -237,9 +212,64 @@ class EloquentCategoryRepositoryTest extends DbTestCase
         $this->assertTrue($all_categories[1]->$field >= $all_categories[2]->$field);
         $this->assertTrue($all_categories[3]->$field >= $all_categories[4]->$field);
     }
+
+    /**
+     * @test
+     **/
+    public function canUpdateCategoryDescription()
+    {
+        list($created_category, $created_category_description) = $this->createCategoryWithDescription();
+
+        $update_data = [
+                "category_id" => $created_category->id,
+                "lang" => CatRepoStubLang::$current_lang,
+                "slug" => $this->faker->unique()->text(20),
+                "description" => "fake desc"
+        ];
+
+        $this->repo->updateDescription($update_data);
+
+        $created_category_description = CategoryDescription::first();
+        $this->assertObjectHasAllAttributes($update_data, $created_category_description);
+    }
+    
+    /**
+     * @test
+     **/
+    public function canCreateCategoryDescription()
+    {
+        $created_category = $this->make($this->category_name)->first();
+        $update_data = [
+                "category_id" => $created_category->id,
+                "lang" => CatRepoStubLang::$current_lang,
+                "slug" => "slug",
+                "description" => "fake desc"
+        ];
+
+        $this->repo->updateDescription($update_data);
+
+        $created_category_description = CategoryDescription::first();
+        $this->assertObjectHasAllAttributes($update_data, $created_category_description);
+    }
+    
+    /**
+     * @test
+     * @expectedException \Palmabit\Library\Exceptions\NotFoundException
+     **/
+    public function handleCreationOfCategoryDescriptionWithNoCategoryGiven()
+    {
+        $update_data = [
+                "category_id" => 12345, // fake id
+                "lang" => CatRepoStubLang::$current_lang,
+                "slug" => "slug",
+                "description" => "fake desc"
+        ];
+
+        $this->repo->updateDescription($update_data);
+    }
 }
 
-class RepoStubLang extends EloquentCategoryRepository
+class CatRepoStubLang extends EloquentCategoryRepository
 {
     public static $current_lang = 'it';
 

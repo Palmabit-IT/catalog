@@ -28,7 +28,7 @@
         @if(! empty($categories))
         @foreach($categories as $category)
             <tr>
-                <td>{{$category->description}}</td>
+                <td>{{$category->name}}</td>
                 <td>
                     {{Form::open(["action" => "Palmabit\Catalog\Controllers\CategoryController@postChangeOrder", "class" => "form-inline"])}}
                     {{Form::select('order', get_select_order_arr(), $category->order, ["class" => "form-control swap-ordine", "style" => "height:20px", "onchange" => "this.form.submit()" ] ) }}
@@ -44,7 +44,7 @@
                     {{Form::close()}}
                 </td>
                 <td>
-                    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('slug_lang'=> $category->slug_lang) )}}"><i class="glyphicon glyphicon-edit"></i></a>
+                    <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@getEdit',array('id'=> $category->id) )}}"><i class="glyphicon glyphicon-edit"></i></a>
                     <a href="{{URL::action('Palmabit\Catalog\Controllers\CategoryController@delete',array('id' => $category->id) )}}" class="delete"><i class="glyphicon glyphicon-trash"></i></a>
                 </td>
             </tr>

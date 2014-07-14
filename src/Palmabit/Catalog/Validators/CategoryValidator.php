@@ -6,19 +6,6 @@ use Palmabit\Library\Validators\OverrideConnectionValidator;
 class CategoryValidator extends OverrideConnectionValidator
 {
     protected static $rules = array(
-        "description" => "required|max:255",
-        "slug" => ["required","AlphaDash"],
-        "lang" => "max:2",
+        "name" => "required|max:255",
     );
-
-    public function __construct()
-    {
-        Event::listen('validating', function($input)
-        {
-            if(isset($input["id"]))
-            {
-                static::$rules["slug"][] = "unique:category,slug,{$input['id']}";
-            }
-        });
-    }
 }

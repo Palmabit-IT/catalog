@@ -25,7 +25,6 @@
             <div class="alert alert-danger">{{$errors->first('model')}}</div>
         @endif
         {{Form::open(['action' => 'Palmabit\Catalog\Controllers\CategoryController@postUpdateImage', 'files' => true])}}
-        {{Form::hidden("slug_lang", $slug_lang)}}
         {{Form::hidden("id", $categories->id)}}
         <div class="form-group">
             {{Form::label('image','Seleziona l\'immagine da caricare')}}

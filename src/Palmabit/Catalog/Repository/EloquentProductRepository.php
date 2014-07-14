@@ -8,6 +8,7 @@
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Event;
 use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\CategoryDescription;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
@@ -57,7 +58,6 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                 // language check
                ->where($products_table . '.lang', '=', $this->getLang())
                 // ordering
-               ->orderBy($category_table . '.description', 'ASC')
                ->orderBy($products_table . ".order", "DESC")
                ->orderBy($products_table . ".name", "ASC")
                 // get only a line per product
@@ -123,7 +123,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     protected function createAllSelect($q, $products_table, $category_table)
     {
-        $q = $q->select($products_table . '.*', $category_table . '.description');
+        $q = $q->select([$products_table . '.*', $category_table . 'name' => 'description']);
 
         return $q;
     }
@@ -232,7 +232,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
      */
     public function searchByCatSlug($slug)
     {
-        $cat = Category::whereSlug($slug)->with('product')
+        $cat = CategoryDescription::whereSlug($slug)->with('product')
                        ->orderBy('order', 'name')
                        ->get();
         return $cat->isEmpty() ? null : $cat->first();

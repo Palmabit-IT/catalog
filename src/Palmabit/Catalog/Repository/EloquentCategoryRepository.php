@@ -19,12 +19,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Helpers\Helper as ImageHelper;
 use DB;
 
-class EloquentCategoryRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface, TreeInterface
+class EloquentCategoryRepository extends EloquentBaseRepository implements TreeInterface
 {
     use LanguageHelper;
 
     /**
      * If the repo is used as admin or not
+     *
      * @var Boolean
      */
     protected $is_admin;
@@ -73,9 +74,9 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function create(array $data)
     {
         return $this->model->create(array(
-                                      "name" =>$data["name"],
-                                      "order" => isset($data["order"]) ? $data["order"] : 0,
-                                 ));
+                                            "name"  => $data["name"],
+                                            "order" => isset($data["order"]) ? $data["order"] : 0,
+                                    ));
     }
 
     /**
@@ -86,19 +87,19 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     {
         $model = $this->find($id);
         $model->update([
-                        "image" => ImageHelper::getBinaryData('200', 'image')
+                               "image" => ImageHelper::getBinaryData('200', 'image')
                        ]);
     }
 
     public function getRootNodes()
     {
         return $this->model
-                ->where($this->model->getDepthColumnName(),'=',null)
-                ->orWhere($this->model->getDepthColumnName(),'=',0)
+                ->where($this->model->getDepthColumnName(), '=', null)
+                ->orWhere($this->model->getDepthColumnName(), '=', 0)
                 ->whereLang($this->getLang())
-                ->orderBy('order','DESC')->get();
+                ->orderBy('order', 'DESC')->get();
     }
-    
+
     /**
      * {@inheritdoc}
      * @override
@@ -106,34 +107,17 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function all()
     {
         $cat = $this->model->orderBy('order', 'DESC')
-            ->orderBy('depth', 'ASC')
-            ->orderBy("name", 'ASC')
-            ->get();
+                           ->orderBy('depth', 'ASC')
+                           ->orderBy("name", 'ASC')
+                           ->get();
 
         return $cat->isEmpty() ? null : $cat->all();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @param $slug_lang
-     * @return mixed
-     */
-    public function findBySlugLang($slug_lang)
-    {
-        $cat= $this->model_description->whereSlugLang($slug_lang)
-            ->whereLang($this->getLang())
-            ->get();
-
-        if($cat->isEmpty()) throw new NotFoundException;
-
-        return $cat->first();
-    }
-
     public function getArrSelectCat()
     {
-        $all_cats = $this->model->orderBy('name','ASC')
-                                ->lists('name','id') ;
+        $all_cats = $this->model->orderBy('name', 'ASC')
+                                ->lists('name', 'id');
         $all_cats[""] = "Qualsiasi";
 
         return $all_cats;
@@ -165,12 +149,12 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      */
     public function setParent($id, $parent_id)
     {
-        if(! ($parent_id)) return $this->setRoot($id);
+        if(!($parent_id)) return $this->setRoot($id);
 
         try
         {
             $this->find($id)->makeChildOf($parent_id);
-        }catch(MoveNotPossibleException $e)
+        } catch(MoveNotPossibleException $e)
         {
             throw new InvalidException;
         }
@@ -202,14 +186,13 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
      * @todo test
      * @throws \Palmabit\Library\Exceptions\NotFoundException
      */
-    public function getSiblingsAndSelf($id, Array $columns = ['*'] )
+    public function getSiblingsAndSelf($id, Array $columns = ['*'])
     {
         $cat = $this->find($id);
         return $cat->siblingsAndSelf()->whereLang($this->getLang())->get($columns);
     }
 
     /**
-     *
      * @todo test
      * @throws \Palmabit\Library\Exceptions\NotFoundException
      */
@@ -226,15 +209,15 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
     public function setDepth($category_id, $value)
     {
         DB::table('category')
-            ->where('id','=', $category_id)
-            ->update(["depth"=> $value]);
+          ->where('id', '=', $category_id)
+          ->update(["depth" => $value]);
     }
 
     public function resizeImage($id, $size)
     {
         $cat = $this->find($id);
 
-        if( is_null($cat->image) ) return;
+        if(is_null($cat->image)) return;
 
         $img_data = $cat->getRawImage();
         $resized_image = \Image::raw($img_data)->resize($size, null, true);
@@ -250,6 +233,22 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements Multi
         {
             $this->resizeImage($cat->id, $size);
         }
+    }
 
+    public function updateDescription(array $update_data)
+    {
+        $this->find($update_data["category_id"]);
+
+        try
+        {
+            $description = $this->model_description->whereCategoryId($update_data["category_id"])
+                                           ->whereLang($update_data["lang"])
+                                           ->firstOrFail();
+        } catch(ModelNotFoundException $e)
+        {
+            $description = clone $this->model_description;
+        }
+
+        $description->fill($update_data)->save();
     }
 }

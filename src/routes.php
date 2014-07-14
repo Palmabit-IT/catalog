@@ -17,6 +17,11 @@ Route::group(['before' => ['logged']], function ()
             "before" => "csrf",
             'uses'   => 'Palmabit\Catalog\Controllers\CategoryController@postEdit'
     ]);
+    Route::post('/admin/category/edit_description', [
+            'as'     => 'category.modifica.descrizione',
+            "before" => "csrf",
+            'uses'   => 'Palmabit\Catalog\Controllers\CategoryController@postEditDescription'
+    ]);
 
     //@todo add csrf filter ui!!! SECURITY BUG
     Route::any('/admin/category/delete', [

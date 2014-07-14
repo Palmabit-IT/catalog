@@ -1,6 +1,7 @@
 <?php namespace Palmabit\Catalog;
 
 use AlignProductsLang;
+use Palmabit\Catalog\Validators\CategoryDescriptionValidator;
 use ResizeAllCatImages;
 use Illuminate\Support\ServiceProvider;
 use Palmabit\Catalog\Repository\EloquentOrderRepository;
@@ -42,7 +43,8 @@ class CatalogServiceProvider extends ServiceProvider {
 
         $this->bindRepositories();
         $this->bindCommands();
-	}
+        $this->bindValidators();
+    }
 
     protected function bindRepositories()
     {
@@ -113,4 +115,11 @@ class CatalogServiceProvider extends ServiceProvider {
         $this->commands('catalog.category.resizeimages');
     }
 
+    protected function bindValidators()
+    {
+        $this->app->bind('category_description_validator', function ($app, $is_admin)
+        {
+            return new CategoryDescriptionValidator();
+        });
+    }
 }
