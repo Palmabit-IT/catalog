@@ -20,7 +20,7 @@
         @if($presenter->categories())
         @foreach($presenter->categories() as $category)
         <li class="list-group-item">
-            {{$category->description}}
+            {{$category->name}}
             <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postDetachCategory', ['_token' => csrf_token(), 'product_id' => $product->id, 'slug_lang' => $slug_lang, 'category_id' => $category->id])}}" class="pull-right tab-remember cancella"><i class="glyphicon glyphicon-trash"></i> Rimuovi</a>
         </li>
         @endforeach

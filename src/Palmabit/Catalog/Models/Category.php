@@ -39,9 +39,18 @@ class Category extends Model{
         return $this->hasMany(get_class($this), $this->getParentColumnName());
     }
 
-    public function description()
+    public function category_description()
     {
         return $this->hasMany('Palmabit\Catalog\Models\CategoryDescription');
     }
 
+    public function getDescriptionAttribute()
+    {
+        return $this->category_description()->whereLang(\L::get())->pluck('description');
+    }
+
+    public function getSlugLangAttribute()
+    {
+        return $this->category_description()->whereLang(\L::get())->pluck('slug');
+    }
 }

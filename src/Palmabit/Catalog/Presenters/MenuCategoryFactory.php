@@ -33,8 +33,8 @@ class MenuCategoryFactory
         if($categories) foreach ($categories as $category)
         {
             // get the childrens
-            $childrens = ( $category->children()->whereLang(L::get())->count() ) ? $category->children()->whereDepth($category->depth + 1)->whereLang(L::get())->get(["id", "description", "slug_lang"]) : null;
-
+            $childrens = ( $category->children()->count() ) ? $category->children()->whereDepth($category->depth + 1)->with('category_description')->get(["id", "description", "slug_lang"]) : null;
+            if( $childrens) var_dump($childrens->description);
             // create the menuitems
             //@todo handle multiple recursive subitems with a better algorithm
             $is_active     = $this->getActive($category->slug_lang);
@@ -46,9 +46,9 @@ class MenuCategoryFactory
                 if($is_active) $this->setOpenState($cat_menu_item, $is_active);
                 $children_item = new MenuItem($children->description, $children->slug_lang, $this->cat_type, null, $is_active);
                 // if has sub-subcategories
-                if($children->children()->whereDepth($children->depth + 1)->whereLang(L::get())->count())
+                if($children->children()->whereDepth($children->depth + 1)->count())
                 {
-                    $childrens_children = $children->children()->whereLang(L::get())->get(["id", "description", "slug_lang"]);
+                    $childrens_children = $children->children()->with('category_description')->get(["id", "description", "slug_lang"]);
                     foreach ($childrens_children as $children_children)
                     {
                         $children_item->add(new MenuItem($children_children->description, $children_children->slug_lang, $this->cat_type, null, $this->getActive($children_children->slug_lang)) );

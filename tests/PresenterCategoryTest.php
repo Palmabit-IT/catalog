@@ -59,17 +59,6 @@ class PresenterCategoryTest extends DbTestCase {
 
     /**
      * @test
-     **/
-    public function getCurrentLanguageDescription()
-    {
-        list($category, $category_description) = $this->createCategoryWithDescription();
-        $presenter = new PresenterCategory($category);
-
-        $this->assertEquals($presenter->description, $category_description->description,'The presenter description does not match:');
-    }
-
-    /**
-     * @test
      */
     public function getCategoryDescriptionInGivenLanguage()
     {

@@ -96,7 +96,6 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements TreeI
         return $this->model
                 ->where($this->model->getDepthColumnName(), '=', null)
                 ->orWhere($this->model->getDepthColumnName(), '=', 0)
-                ->whereLang($this->getLang())
                 ->orderBy('order', 'DESC')->get();
     }
 
@@ -178,7 +177,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements TreeI
     public function getSiblians($id)
     {
         $cat = $this->find($id);
-        return $cat->getSiblings()->whereLang($this->getLang())->get();
+        return $cat->getSiblings()->get();
     }
 
     /**
@@ -189,7 +188,7 @@ class EloquentCategoryRepository extends EloquentBaseRepository implements TreeI
     public function getSiblingsAndSelf($id, Array $columns = ['*'])
     {
         $cat = $this->find($id);
-        return $cat->siblingsAndSelf()->whereLang($this->getLang())->get($columns);
+        return $cat->siblingsAndSelf()->get($columns);
     }
 
     /**
