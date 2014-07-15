@@ -4,7 +4,9 @@
     <h3><i class="glyphicon glyphicon-globe" style="margin-right: 5px;"></i>{{$long_name}}</h3>
     {{Form::open(['route' => 'category.modifica.descrizione', 'method' => 'post'])}}
     {{Form::hidden('category_id', $categories->id)}}
+    {{Form::hidden('id', $presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->id: null)}}
     {{Form::hidden('lang', $lang)}}
+    {{Form::hidden('form_name', 'category_description')}}
     <div class="control-group">
     {{Form::label('slug','Url univoco')}}
     {{Form::text('slug',$presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->slug: null,['class' => 'form-control'])}}

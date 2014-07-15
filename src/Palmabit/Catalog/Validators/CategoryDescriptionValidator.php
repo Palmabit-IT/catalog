@@ -14,7 +14,7 @@ class CategoryDescriptionValidator extends AbstractValidator
     {
         Event::listen('validating', function ($input)
         {
-            if(isset($input["id"]))
+            if(isset($input["form_name"]) && $input["form_name"] == 'category_description')
             {
                 static::$rules["slug"][] = "unique:category_description,slug,{$input['id']}";
             }
