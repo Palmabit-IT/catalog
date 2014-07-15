@@ -39,6 +39,7 @@ class PresenterCategoryProductFactory
         {
             $products = ($category->products) ? $category->products()
                 ->wherePublic(1)
+                ->whereLang(\L::get())
                 ->orderBy('order','DESC')
                 ->orderBy('name','ASC')
                 ->paginate($per_page) : array();
