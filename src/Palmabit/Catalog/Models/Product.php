@@ -6,23 +6,23 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Jacopo\LaravelSingleTableInheritance\Models\Model;
+use Palmabit\Catalog\ModelMultilanguage\Interfaces\EditableLanguageDescriptionInterface;
+use Palmabit\Catalog\ModelMultilanguage\Traits\LanguageDescriptionsEditable;
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use L;
 
-class Product extends Model
+class Product extends Model implements EditableLanguageDescriptionInterface
 {
+    use LanguageDescriptionsEditable;
+
+    protected $language_descriptions;
+
     protected $table = "product";
 
     protected $fillable = [
         "id",
         "code",
-        "name",
-        "slug",
-        "long_description",
-        "description",
         "featured",
-        "lang",
-        "slug_lang",
         "order",
         "public",
         "offer",
@@ -55,12 +55,12 @@ class Product extends Model
         "name",
         "slug",
         "long_description",
+        "language_descriptions",
         "image",
         "description",
         "featured",
         "lang",
         "pivot",
-        "slug_lang",
         "order",
         "category",
         "public",
@@ -109,6 +109,11 @@ class Product extends Model
         return $this->belongsToMany('Palmabit\Catalog\Models\Product', "products_products", "first_product_id", "second_product_id");
     }
 
+    public function descriptions()
+    {
+        return $this->hasMany('Palmabit\Catalog\Models\ProductDescription','product_id');
+    }
+    
     public function setPrice1Attribute($value)
     {
         $this->attributes['price1'] = $value ? $value : null;
