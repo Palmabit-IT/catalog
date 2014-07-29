@@ -15,12 +15,6 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     protected $null_resource;
     protected $current_lang;
     protected $default_lang;
-    /**
-     * The description object used with lazy loading
-     *
-     * @var
-     */
-    protected $description_object;
 
     public function __construct(EditableLanguageDescriptionInterface $resource)
     {
@@ -37,7 +31,7 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
         $this->getAppLanguages();
         $this->resource = $resource;
         $this->initializeLanguageDescriptions();
-        $this->null_resource = new $this->null_resource_name($this, $this->default_lang);
+        $this->null_resource = new $this->null_resource_name($this, $this->current_lang);
     }
 
     private function initializeLanguageDescriptions()
@@ -64,14 +58,14 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     /**
      * @return mixed
      */
-    public function getDescriptionFieldName()
+    public function getDescriptionRelationName()
     {
         return $this->descriptions_relation_name;
     }
 
     public function __get($key)
     {
-        if($this->hasFillable($key))
+        if(!$this->isDescriptionField($key))
         {
             return $this->resource->$key;
         }
@@ -83,12 +77,7 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
 
     public function __set($key, $value)
     {
-        if(property_exists($this, $key))
-        {
-            return $this->$key = $value;
-        }
-
-        if(property_exists($this->resource, $key))
+        if(!$this->isDescriptionField($key))
         {
             return $this->resource->$key = $value;
         }
@@ -103,10 +92,10 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     public function findCurrentDescription()
     {
         $current_description = $this->findDescriptionForLang($this->current_lang);
-        if(! $current_description) $current_description = $this->findDescriptionForLang($this->default_lang);
-        $this->description_object = $current_description ?: $this->null_resource;
+        if(!$current_description) $current_description = $this->findDescriptionForLang($this->default_lang);
+        $description_object = $current_description ? : $this->null_resource;
 
-        return $this->description_object;
+        return $description_object;
     }
 
     /**
@@ -115,7 +104,8 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
      */
     protected function findDescriptionForLang($lang)
     {
-        return $this->resource->language_descriptions->filter(function ($language_description) use($lang) {
+        return $this->resource->language_descriptions->filter(function ($language_description) use ($lang)
+        {
             return ($language_description->lang == $lang) ? true : false;
         })->first();
     }
@@ -127,9 +117,10 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
      */
     protected function setDescriptionValue($key, $value)
     {
-        $description = $this->findCurrentDescription($this->default_lang);
-        $description->$key = $value;
-        return $description;
+        $current_description = $this->findDescriptionForLang($this->current_lang);
+        $description_object = $current_description ? : $this->null_resource;
+
+        return $description_object->$key = $value;
     }
 
     /**
@@ -150,22 +141,30 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
      * @param $key
      * @return bool
      */
-    private function hasFillable($key)
+    private function isDescriptionField($key)
     {
-        return in_array($key, $this->resource->getFillable());
+        return in_array($key, $this->resource->getDescriptionAttributes());
     }
 
     /**
      * @return mixed
      */
-    public function getDescriptionObject()
+    public function getDescriptionObjects()
     {
-        return $this->description_object;
+        return $this->resource->getLanguageDescriptionsAttribute();
     }
 
     private function getAppLanguages()
     {
         $this->current_lang = L::get();
         $this->default_lang = L::getDefault();
+    }
+
+    public function removeLanguageDescription($lang)
+    {
+        foreach($this->resource->language_descriptions as $key => $language_description)
+        {
+            if($language_description->lang == $lang) unset($this->resource->language_descriptions[$key]);
+        }
     }
 }

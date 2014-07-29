@@ -1,6 +1,6 @@
 <?php  namespace Palmabit\Catalog\Tests;
 
-use Palmabit\Catalog\Decorators\AbstractNullDescription;
+use Palmabit\Catalog\ModelMultilanguage\Decorators\AbstractNullDescription;
 
 class AbstractNullDescriptionTest extends \PHPUnit_Framework_TestCase  {
 

@@ -15,7 +15,16 @@ class Product extends Model implements EditableLanguageDescriptionInterface
 {
     use LanguageDescriptionsEditable;
 
-    protected $language_descriptions;
+    protected $language_descriptions = [];
+
+    protected $description_attributes = [
+            "name",
+            "description",
+            "long_description",
+            "lang",
+            "slug",
+            "product_id"
+    ];
 
     protected $table = "product";
 
