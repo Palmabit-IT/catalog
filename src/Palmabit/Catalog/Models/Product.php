@@ -6,6 +6,7 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Jacopo\LaravelSingleTableInheritance\Models\Model;
+use Palmabit\Catalog\ModelMultilanguage\Decorators\ProductLanguageDecorator;
 use Palmabit\Catalog\ModelMultilanguage\Interfaces\EditableLanguageDescriptionInterface;
 use Palmabit\Catalog\ModelMultilanguage\Traits\LanguageDescriptionsEditable;
 use Palmabit\Catalog\Presenters\PresenterProducts;
@@ -211,5 +212,10 @@ class Product extends Model implements EditableLanguageDescriptionInterface
     public function getUniqueData()
     {
         return array_diff($this->fillable, $this->general_form_attributes);
+    }
+
+    public function decorateLanguage()
+    {
+        return new ProductLanguageDecorator($this);
     }
 }
