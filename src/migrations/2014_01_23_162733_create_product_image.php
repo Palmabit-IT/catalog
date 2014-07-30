@@ -12,8 +12,6 @@ class CreateProductImage extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('product_image'))
-        {
             Schema::create('product_image', function(Blueprint $table) {
 			$table->increments('id');
 			$table->string('description')->nullable();
@@ -26,7 +24,6 @@ class CreateProductImage extends Migration {
                 ->onDelete('cascade');
 		    });
             DB::statement('ALTER TABLE  `product_image` ADD  `data` LONGBLOB');
-        }
 
     }
 

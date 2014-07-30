@@ -91,7 +91,10 @@ class Product extends Model implements EditableLanguageDescriptionInterface
         'quantity_pricing_quantity_non_professional',
         'quantity_pricing_quantity_used',
         'flag',
-        'availableflags'
+        'availableflags',
+        'updated_at',
+        'created_at',
+        'deleted_at',
     ];
 
     protected $general_form_filter_enabled = false;
@@ -214,8 +217,19 @@ class Product extends Model implements EditableLanguageDescriptionInterface
         return array_diff($this->fillable, $this->general_form_attributes);
     }
 
-    public function decorateLanguage()
+    public function decorateLanguage($current_lang = null)
     {
-        return new ProductLanguageDecorator($this);
+        return new ProductLanguageDecorator($this, $current_lang);
     }
+
+    public function delete()
+    {
+        foreach($this->descriptions()->get() as $description)
+        {
+            $description->delete();
+        }
+
+        return parent::delete();
+    }
+
 }

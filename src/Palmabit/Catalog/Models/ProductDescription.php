@@ -15,4 +15,9 @@ class ProductDescription extends Model{
         "product_id"
     ];
 
+    public function product()
+    {
+        return $this->belongsTo('Palmabit\Catalog\Models\Product');
+    }
+
 } 

@@ -16,7 +16,7 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     protected $current_lang;
     protected $default_lang;
 
-    public function __construct(EditableLanguageDescriptionInterface $resource)
+    public function __construct(EditableLanguageDescriptionInterface $resource, $current_lang = null)
     {
         if(empty($this->descriptions_relation_name))
         {
@@ -29,6 +29,7 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
         }
 
         $this->getAppLanguages();
+        $this->current_lang = $current_lang ? : $this->current_lang;
         $this->resource = $resource;
         $this->initializeLanguageDescriptions();
         $this->null_resource = new $this->null_resource_name($this, $this->current_lang);
@@ -63,7 +64,36 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
         return $this->descriptions_relation_name;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    protected function setAttribute($key, $value)
+    {
+        if(!$this->isDescriptionField($key))
+        {
+            return $this->resource->$key = $value;
+        }
+
+        $this->setDescriptionValue($key, $value);
+    }
+
     public function __get($key)
+    {
+        return $this->getAttribute($key);
+    }
+
+    public function __set($key, $value)
+    {
+        return $this->setAttribute($key, $value);
+    }
+
+    /**
+     * @param $key
+     * @return mixed
+     */
+    protected function getAttribute($key)
     {
         if(!$this->isDescriptionField($key))
         {
@@ -73,16 +103,6 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
         $current_description = $this->findCurrentDescription();
 
         return $current_description->$key;
-    }
-
-    public function __set($key, $value)
-    {
-        if(!$this->isDescriptionField($key))
-        {
-            return $this->resource->$key = $value;
-        }
-
-        $this->setDescriptionValue($key, $value);
     }
 
     /**
@@ -166,5 +186,39 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
         {
             if($language_description->lang == $lang) unset($this->resource->language_descriptions[$key]);
         }
+    }
+
+    public function fill(array $attributes)
+    {
+        foreach($attributes as $key => $value)
+        {
+            $this->setAttribute($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrentLang()
+    {
+        return $this->current_lang;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultLang()
+    {
+        return $this->default_lang;
+    }
+
+    /**
+     * @param mixed $current_lang
+     */
+    public function setCurrentLang($current_lang)
+    {
+        $this->current_lang = $current_lang;
     }
 }

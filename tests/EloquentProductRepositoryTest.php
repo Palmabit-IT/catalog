@@ -1,79 +1,95 @@
 <?php namespace Palmabit\Catalog\Tests;
 
 use Illuminate\Database\Eloquent\Collection;
+use Palmabit\Catalog\Models\Category;
+use Palmabit\Catalog\Models\ProductDescription;
 use Palmabit\Catalog\Repository\EloquentProductImageRepository;
 use Palmabit\Catalog\Repository\EloquentProductRepository;
 use Palmabit\Catalog\Models\Product;
-use Palmabit\Catalog\Models\Category;
 use Mockery as m;
 use App, L;
+use Palmabit\Catalog\Tests\Traits\ProductStubTrait;
 
 class EloquentProductRepositoryTest extends DbTestCase
 {
+    use ProductStubTrait;
 
-    protected $r;
+    protected $repository_stub;
     protected $faker;
     protected $default_lang;
+    protected $current_lang;
 
     public function setUp()
     {
         parent::setUp();
-        $this->default_lang = 'it';
-        $this->r = new ProdRepoStubLang();
-        $this->faker = \Faker\Factory::create();
+        $this->current_lang = 'it';
+        $this->default_lang = 'en';
+        $this->repository_stub = new ProdRepoStubLang();
+        $this->repository_stub->setLang($this->current_lang);
     }
 
     public function tearDown()
     {
         m::close();
-        ProdRepoStubLang::resetToDefaultLang();
-    }
-
-    public function testAllWorks()
-    {
-        $this->prepareFakeData();
-
-        $app = m::mock('AppMock');
-        $app->shouldReceive('instance')->once()->andReturn($app);
-
-        \Illuminate\Support\Facades\Facade::setFacadeApplication($app);
-        \Illuminate\Support\Facades\Config::swap($config = m::mock('ConfigMock'));
-
-        $config->shouldReceive('get')->once()->andReturn(5);
-
-        $objs = $this->r->all();
-        $this->assertEquals(5, count($objs));
-    }
-
-    public function testFindBySlugWorks()
-    {
-        $this->prepareFakeData();
-        $obj = $this->r->findBySlug(2);
-        $this->assertTrue($obj->exists);
     }
 
     /**
+     * @test
+     */
+    public function canFindProductsFromSlug()
+    {
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $product_description = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product))->first();
+
+        $product_found = $this->repository_stub->findBySlug($product_description->slug);
+        $this->assertTrue($product_found->exists);
+        $this->assertObjectHasAllAttributes($product->toArray(), $product_found, ['updated_at', 'created_at', 'deleted_at', 'type']);
+    }
+
+    /**
+     * @test
      * @expectedException \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function testFindBySlugThrowsModelNotFoundException()
+    public function findBySlugThrowsModelNotFoundException()
     {
-        $this->r->findBySlug(1);
+        $this->repository_stub->findBySlug($this->faker->unique()->text(20));
     }
 
-    public function testFeaturedWorks()
+    /**
+     * @test
+     */
+    public function canGetFeaturedProducts()
     {
-        $this->prepareFakeData();
-        $objs = $this->r->featuredProducts();
-        $this->assertEquals(1, count($objs));
+        $this->times(10)->make('Palmabit\Catalog\Models\Product', ["featured" => 1, "public" => 1]);
+        $featured = $this->repository_stub->featuredProducts();
+        $this->assertEquals(4, count($featured));
     }
 
-    public function testUpdateWorks()
+    /**
+     * @test
+     */
+    public function canGetOfferProducts()
     {
-        $this->prepareFakeData();
+        $this->times(10)->make('Palmabit\Catalog\Models\Product', ["offer" => 1, "public" => 1]);
+        $offers = $this->repository_stub->offerProducts();
+        $this->assertEquals(4, count($offers));
+    }
 
-        $obj = $this->r->update(2, ["lang" => "en"]);
-        $this->assertEquals("en", $obj->lang);
-        $this->assertEquals(2, $obj->slug_lang);
+    /**
+     * @test
+     */
+    public function canUpdateProductAndDescription()
+    {
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product))->first();
+
+        $update_data = [
+                "description" => $this->faker->unique()->text(50),
+                "code"        => $this->faker->unique()->lexify('??????')
+        ];
+        $product_updated = $this->repository_stub->update($product->id, $update_data);
+
+        $this->assertObjectHasAllAttributes($update_data, $product_updated->decorateLanguage());
     }
 
     /**
@@ -81,97 +97,43 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function itCanUpdateEmptyPrice()
     {
-        $this->prepareFakeData();
+        $this->make('Palmabit\Catalog\Models\Product')->first();
 
-        $obj = $this->r->update(2, [
+        $product_updated = $this->repository_stub->update(1, [
                 "price1" => "",
                 "price2" => "",
                 "price3" => "",
                 "price4" => "",
         ]);
-        $this->assertNull($obj->price1);
-        $this->assertNull($obj->price2);
-        $this->assertNull($obj->price3);
-        $this->assertNull($obj->price4);
+        $this->assertNull($product_updated->price1);
+        $this->assertNull($product_updated->price2);
+        $this->assertNull($product_updated->price3);
+        $this->assertNull($product_updated->price4);
     }
 
     /**
      * @test
      **/
-    public function it_doestNotUpdateSlugLang_IfAlreadyExistsOneWithTheSameLanguage()
+    public function canDeleteProductWithDescriptions()
     {
-        $faker = $this->faker;
-        $first_product_slug_lang = 1;
-        Product::create([
-                                "code"             => $faker->text(5),
-                                "name"             => $faker->text(10),
-                                "slug"             => "slug",
-                                "slug_lang"        => $first_product_slug_lang,
-                                "lang"             => 'it',
-                                "description"      => $faker->text(10),
-                                "description_long" => $faker->text(100),
-                                "featured"         => 1,
-                                "public"           => 1,
-                                "offer"            => 0
-                        ]);
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product))->first();
 
-        $second_product_slug_lang = 25;
-        Product::create([
-                                "code"             => $faker->text(5),
-                                "name"             => $faker->text(10),
-                                "slug"             => "",
-                                "slug_lang"        => $second_product_slug_lang,
-                                "lang"             => 'it',
-                                "description"      => $faker->text(10),
-                                "description_long" => $faker->text(100),
-                                "featured"         => 1,
-                                "public"           => 1,
-                                "offer"            => 0
-                        ]);
+        $this->repository_stub->delete(1);
 
-        $second_product_id = 2;
-        $second_product = $this->r->update($second_product_id, ["slug" => $first_product_slug_lang, "slug_lang" => ""]);
-
-        $this->assertEquals($second_product_slug_lang, $second_product->slug_lang);
+        $this->assertEquals(0, Product::count());
+        $this->assertEquals(0, ProductDescription::count(), 'The product still has description left');
     }
 
     public function testCreateWorks()
     {
-        $description = "desc";
-        $data = [
-                "description"               => $description,
-                "code"                      => "code",
-                "name"                      => "name",
-                "slug"                      => "slug",
-                "slug_lang"                 => "",
-                "long_description"          => "",
-                "featured"                  => 1,
-                "public"                    => 1,
-                "offer"                     => 1,
-                "stock"                     => 1,
-                "with_vat"                  => 1,
-                "video_link"                => "http://www.google.com/video/12312422313",
-                "professional"              => 1,
-                "price1"                    => "12.22",
-                "price2"                    => "8.21",
-                "price3"                    => "5.12",
-                "price4"                    => "2.12",
-                "quantity_pricing_enabled"  => 0,
-                "quantity_pricing_quantity" => 100,
-        ];
-        $obj = $this->r->create($data);
-        $this->assertTrue($obj instanceof Product);
-        $this->assertEquals($description, $obj->description);
-        $this->assertEquals(1, $obj->public);
-        $this->assertEquals(1, $obj->offer);
-        $this->assertEquals(true, $obj->stock);
-        $this->assertEquals(1, $obj->with_vat);
-        $this->assertEquals("http://www.google.com/video/12312422313", $obj->video_link);
-        $this->assertEquals(1, $obj->professional);
-        $this->assertEquals("12.22", $obj->price1);
-        $this->assertEquals("8.21", $obj->price2);
-        $this->assertEquals("5.12", $obj->price3);
-        $this->assertEquals("2.12", $obj->price4);
+        $product_data = $this->getModelStub();
+        $product_description_data = $this->getProductDescriptionStub();
+        unset($product_description_data["product_id"]);
+        $data = array_merge($product_data, $product_description_data);
+
+        $created_product = $this->repository_stub->create($data);
+        $this->assertObjectHasAllAttributes($data, $created_product->decorateLanguage(), ['order']);
     }
 
     /**
@@ -179,13 +141,16 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_attach_another_product_as_accessory()
     {
-        $this->prepareFakeData(2);
+        $second_product_id = 2;
+        $first_product_id = 1;
+        $this->times(2)->make('Palmabit\Catalog\Models\Product')->first();
 
-        $this->r->attachProduct(1, 2);
-        $product1 = $this->r->find(1);
+        $this->repository_stub->attachProduct($first_product_id, $second_product_id);
+
+        $product1 = $this->repository_stub->find($first_product_id);
         $number_of_accessories = $product1->accessories()->count();
 
-        $this->assertEquals(1, $number_of_accessories);
+        $this->assertEquals($first_product_id, $number_of_accessories);
     }
 
     /**
@@ -193,12 +158,14 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_detach_another_product_as_accessory()
     {
-        $this->prepareFakeData(2);
+        $this->times(2)->make('Palmabit\Catalog\Models\Product')->first();
 
-        $this->r->attachProduct(1, 2);
-        $product1 = $this->r->find(1);
+        $first_product_id = 1;
+        $second_product_id = 2;
+        $this->repository_stub->attachProduct($first_product_id, $second_product_id);
+        $product1 = $this->repository_stub->find($first_product_id);
 
-        $this->r->detachProduct(1, 2);
+        $this->repository_stub->detachProduct($first_product_id, $second_product_id);
         $number_of_accessories = $product1->accessories()->count();
 
         $this->assertEquals(0, $number_of_accessories);
@@ -209,7 +176,8 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_associate_multiple_categories()
     {
-        $this->prepareFakeData(1);
+        $this->make('Palmabit\Catalog\Models\Product')->first();
+
         foreach(range(1, 5) as $key)
         {
             Category::create([
@@ -217,9 +185,9 @@ class EloquentProductRepositoryTest extends DbTestCase
                              ]);
         }
 
-        $product = $this->r->find(1);
-        $this->r->associateCategory($product->id, 1);
-        $this->r->associateCategory($product->id, 2);
+        $product = $this->repository_stub->find(1);
+        $this->repository_stub->associateCategory($product->id, 1);
+        $this->repository_stub->associateCategory($product->id, 2);
         $cats_number = $product->categories()->count();
         $this->assertEquals($cats_number, 2);
     }
@@ -229,16 +197,17 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_deassociate_a_given_category()
     {
-        $this->prepareFakeData(1);
+        $this->make('Palmabit\Catalog\Models\Product')->first();
         foreach(range(1, 2) as $key)
         {
             Category::create([
                                      "name" => $this->faker->text(10),
                              ]);
         }
-        $product = $this->r->find(1);
+        $product = $this->repository_stub->find(1);
+
         $product->categories()->attach(1);
-        $this->r->deassociateCategory(1, 1);
+        $this->repository_stub->deassociateCategory(1, 1);
         $this->assertEquals(0, $product->categories()->count());
     }
 
@@ -248,8 +217,9 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_throw_exception_if_try_to_deassociate_a_product_not_found()
     {
-        $this->prepareFakeData(1);
-        $this->r->deassociateCategory(2, 1);
+        $this->make('Palmabit\Catalog\Models\Product')->first();
+
+        $this->repository_stub->deassociateCategory(2, 1);
     }
 
     /**
@@ -257,24 +227,24 @@ class EloquentProductRepositoryTest extends DbTestCase
      */
     public function testAssociateCategoryThrowsModelNotFoundException()
     {
-        $this->r->associateCategory(1, 2);
+        $this->repository_stub->associateCategory(1, 2);
     }
 
     /**
      * @test
-     * @group p
      **/
     public function it_returns_associated_products()
     {
         $mock_get = m::mock('StdClass')->shouldReceive('get')->once()->andReturn(["first", "second"])->getMock();
         $mock_model = m::mock('StdClass')->shouldReceive('accessories')->once()->andReturn($mock_get)->getMock();
-        $mock_repo =
-                m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->makePartial()->shouldReceive('find')->once()->andReturn($mock_model)
-                 ->getMock();
-        $repo = $mock_repo;
+        $repo = $mock_repo = m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->makePartial()
+                              ->shouldReceive('find')
+                              ->once()
+                              ->andReturn($mock_model)
+                              ->getMock();
 
-        $acc = $repo->getAccessories(1);
-        $this->assertEquals(2, count($acc));
+        $accessories = $repo->getAccessories(1);
+        $this->assertEquals(2, count($accessories));
     }
 
     /**
@@ -282,13 +252,12 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_gets_n_products_prediliging_offers()
     {
-        $this->prepareFakeData();
-        $this->r->update(1, ["offer" => 1]);
+        $this->times(1)->make('Palmabit\Catalog\Models\Product', ["offer" => 0, "public" => 1])->first();
+        $this->times(4)->make('Palmabit\Catalog\Models\Product', ["offer" => 1, "public" => 1])->first();
 
-        $products = $this->r->getFirstOffersMax(4);
+        $products = $this->repository_stub->getOnlyFirstOffersMax(4);
 
         $this->assertEquals(4, count($products));
-        $this->assertEquals(1, $products[0]->offer);
     }
 
     /**
@@ -298,45 +267,62 @@ class EloquentProductRepositoryTest extends DbTestCase
     public function it_duplicates_products_cats_imgs_accessories_and_create_unique_slug_lang()
     {
         // prepare product with related classes
-        $this->prepareFakeData(2);
-        $this->r->attachProduct(1, 2);
-        Category::create([
-                                 "name" => "name",
-                         ]);
-        $this->r->associateCategory(1, 1);
+        /*   $this->prepareFakeData(2);
+           $this->r->attachProduct(1, 2);
+           Category::create([
+                                    "name" => "name",
+                            ]);
+           $this->r->associateCategory(1, 1);
 
-        $mock_img_repo = new ImgRepoStub;
-        $img_data = [
-                "description" => "desc",
-                "product_id"  => 1,
-                "featured"    => 0,
-                "data"        => 111
-        ];
-        $mock_img_repo->create($img_data);
+           $mock_img_repo = new ImgRepoStub;
+           $img_data = [
+                   "description" => "desc",
+                   "product_id"  => 1,
+                   "featured"    => 0,
+                   "data"        => 111
+           ];
+           $mock_img_repo->create($img_data);
 
-        $prod = $this->r->duplicate(1);
+           $prod = $this->r->duplicate(1);
 
-        // product duplicated
-        $prod3 = $this->r->find(3);
-        $prod1 = $this->r->find(1);
-        // check that name contains copy
-        $expected_name = $prod1->name . "_copia";
-        $this->assertEquals($prod3->name, $expected_name);
-        // check that i return a cloned product with no slug lang
-        $this->assertEquals($prod->id, $prod->slug_lang);
-        // categories
-        $cat_original = $prod3->categories()->get()->lists('id');
-        $cat_associated = $prod3->categories()->get()->lists('id');
-        $this->assertEquals($cat_original, $cat_associated);
-        // accessories
-        $acc_original = $prod3->accessories()->get()->lists('id');
-        $acc_associated = $prod3->accessories()->get()->lists('id');
-        $this->assertEquals($acc_original, $acc_associated);
-        // images
-        $image_original = App::make('product_image_repository')->getByProductId($prod1->id);
-        $image_associated = App::make('product_image_repository')->getByProductId($prod3->id);
-        $this->assertEquals(count($image_original), count($image_associated));
-        $this->assertEquals($image_original->first()->data, $image_associated->first()->data);
+           // product duplicated
+           $prod3 = $this->r->find(3);
+           $prod1 = $this->r->find(1);
+           // check that name contains copy
+           $expected_name = $prod1->name . "_copia";
+           $this->assertEquals($prod3->name, $expected_name);
+           // check that i return a cloned product with no slug lang
+           $this->assertEquals($prod->id, $prod->slug_lang);
+           // categories
+           $cat_original = $prod3->categories()->get()->lists('id');
+           $cat_associated = $prod3->categories()->get()->lists('id');
+           $this->assertEquals($cat_original, $cat_associated);
+           // accessories
+           $acc_original = $prod3->accessories()->get()->lists('id');
+           $acc_associated = $prod3->accessories()->get()->lists('id');
+           $this->assertEquals($acc_original, $acc_associated);
+           // images
+           $image_original = App::make('product_image_repository')->getByProductId($prod1->id);
+           $image_associated = App::make('product_image_repository')->getByProductId($prod3->id);
+           $this->assertEquals(count($image_original), count($image_associated));
+           $this->assertEquals($image_original->first()->data, $image_associated->first()->data);  */
+    }
+
+    /**
+     * @test
+     */
+    public function canGetAllProducts()
+    {
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_1));
+        $product_2 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_2));
+
+        $results_per_page = 5;
+        \Config::set('catalog::admin_per_page', $results_per_page);
+
+        $products = $this->repository_stub->all();
+        $this->assertEquals(2, count($products));
     }
 
     /**
@@ -344,30 +330,42 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function it_gets_all_products_filtered_by_code_name_featured_public_offer_professional()
     {
-        $this->prepareFakeSearchData();
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product', [
+                "order"        => 1,
+                "offer"        => 0,
+                "public"       => 1,
+                "professional" => 0,
+                "featured"     => 1
+        ])->first();
+        $product_1_desc = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_1))->first();
+        $product_2 = $this->make('Palmabit\Catalog\Models\Product', [
+                "offer"        => 1,
+                "public"       => 1,
+                "professional" => 1,
+                "featured"     => 1
+        ])->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_2));
 
-        $product = $this->r->all(["code" => "1234"]);
+        $product = $this->repository_stub->all(["code" => $product_1->code]);
         $this->assertEquals(1, $product->count());
-        $this->assertEquals("name1", $product->first()->name);
         $this->assertEquals("1", $product->first()->id);
 
-        $product = $this->r->all(["name" => "name1"]);
-        $this->assertEquals(2, $product->count());
-        $this->assertEquals("name1", $product->first()->name);
+        $product = $this->repository_stub->all(["name" => $product_1_desc->name]);
+        $this->assertEquals($product_1_desc->name, $product->first()->name);
 
-        $product = $this->r->all(["featured" => "1"]);
-        $this->assertEquals(1, $product->count());
+        $product = $this->repository_stub->all(["featured" => "1"]);
+        $this->assertEquals(2, $product->count());
         $this->assertEquals(1, $product->first()->featured);
 
-        $product = $this->r->all(["public" => "1"]);
-        $this->assertEquals(1, $product->count());
+        $product = $this->repository_stub->all(["public" => "1"]);
+        $this->assertEquals(2, $product->count());
         $this->assertEquals(1, $product->first()->public);
 
-        $product = $this->r->all(["offer" => "1"]);
+        $product = $this->repository_stub->all(["offer" => "1"]);
         $this->assertEquals(1, $product->count());
         $this->assertEquals(1, $product->first()->offer);
 
-        $product = $this->r->all(["professional" => "1"]);
+        $product = $this->repository_stub->all(["professional" => "1"]);
         $this->assertEquals(1, $product->count());
         $this->assertEquals(1, $product->first()->professional);
     }
@@ -375,65 +373,21 @@ class EloquentProductRepositoryTest extends DbTestCase
     /**
      * @test
      **/
-    public function it_gets_all_products_ordered_by_category_getting_only_one_row_per_product()
-    {
-        $this->createProductsForSearch();
-        $id = 1;
-        $this->associateMultipleCategoryToProduct($id);
-
-        $product = $this->r->all([]);
-        $this->assertEquals(2, $product->count());
-    }
-
-    /**
-     * @test
-     **/
     public function it_gets_all_products_filtered_for_category()
     {
-        $this->createProductsForSearch();
-        $id = 1;
-        $this->associateMultipleCategoryToProduct($id);
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product', [
+                "order"        => 1,
+                "offer"        => 0,
+                "public"       => 1,
+                "professional" => 0,
+                "featured"     => 1
+        ])->first();
+        $product_1_desc = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_1))->first();
 
-        $product = $this->r->all(["category_id" => 1]);
-        $this->assertEquals("1234", $product->first()->code);
-    }
+        $this->associateMultipleCategoryToProduct($product_1->id);
 
-    /**
-     * @test
-     **/
-    public function it_filter_producs_with_all_ignoring_empty_query_strings_and_order_by_categorydescription_order_and_name()
-    {
-        $this->prepareFakeSearchData();
-
-        //@todo check that data is ordered by cat and show it in the view
-        $product = $this->r->all(["code" => ""]);
-        $this->assertEquals(2, $product->count());
-        // check that ordering by cat is the most important
-        $this->assertEquals("slug1", $product->first()->slug);
-        $this->assertEquals(2, $product->first()->order);
-    }
-
-    /**
-     * @test
-     **/
-    public function it_findProductBySlugLang()
-    {
-        $slug_lang = "slug lang";
-        $product_expected = Product::create([
-                                                    "code"             => "1234",
-                                                    "name"             => "product name",
-                                                    "slug"             => "slug",
-                                                    "slug_lang"        => $slug_lang,
-                                                    "lang"             => 'it',
-                                                    "description"      => "product description",
-                                                    "long_description" => "product long description",
-                                                    "featured"         => 1,
-                                                    "public"           => 0,
-                                                    "offer"            => 0
-                                            ]);
-        $product = $this->r->findBySlugLang($slug_lang);
-
-        $this->assertContains($product_expected->code, $product->code);
+        $product = $this->repository_stub->all(["category_id" => 1]);
+        $this->assertEquals($product_1->code, $product->first()->code);
     }
 
     /**
@@ -441,33 +395,20 @@ class EloquentProductRepositoryTest extends DbTestCase
      */
     public function itFindProductsByCodeAndLang()
     {
-        $lang = "it";
-        $code = "1";
-        $attributes = [
-                "code"             => $code,
-                "name"             => "name",
-                "slug"             => "",
-                "slug_lang"        => "",
-                "lang"             => $lang,
-                "description"      => "",
-                "long_description" => "",
-                "featured"         => 0,
-                "public"           => 1,
-                "offer"            => 0
-        ];
-        Product::create($attributes);
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
 
-        $product = $this->r->findByCodeAndLang($code, $lang);
-        $this->objectHasAllArrayAttributes($attributes, $product);
+        $product = $this->repository_stub->findByCodeAndLang($product->code);
+        $this->assertNotNull($product);
     }
 
     /**
-     * @test
+     * @ test
+     *
      * @expectedException Illuminate\Database\Eloquent\ModelNotFoundException
      **/
     public function itThrowExceptionIfCannotFindModel()
     {
-        $product = $this->r->findByCodeAndLang("1", "id");
+        $this->repository_stub->findByCodeAndLang($this->faker->unique()->randomNumber(2));
     }
 
     /**
@@ -475,64 +416,12 @@ class EloquentProductRepositoryTest extends DbTestCase
      **/
     public function findAllLanguagesAvailableToAProduct_AsProductsCollection()
     {
-        $this->resetTimes();
-        $product_it = $this->make('Palmabit\Catalog\Models\Product', [
-                "lang"      => 'it',
-                "slug"      => 'slug',
-                "slug_lang" => 'slug'
-        ]);
-        $product_en = $this->make('Palmabit\Catalog\Models\Product', [
-                "lang"      => 'en',
-                "slug"      => 'slug',
-                "slug_lang" => 'slug'
-        ]);
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product), ["lang" => "it"]))->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product), ["lang" => "it"]))->first();
 
-        $expected_products = new Collection([$product_en[0], $product_it[0]]);
-
-        $products_found = $this->r->getProductLangsAvailable('slug');
-        $this->assertEquals($products_found->lists('id'), $expected_products->lists('id'));
-    }
-
-    protected function getModelStub()
-    {
-        return [
-                "code"             => $this->faker->unique()->text(5),
-                "name"             => $this->faker->unique()->text(10),
-                "slug"             => $this->faker->unique()->text(5),
-                "slug_lang"        => $this->faker->unique()->text(10),
-                "lang"             => 'it',
-                "description"      => $this->faker->unique()->text(10),
-                "long_description" => $this->faker->unique()->text(100),
-                "featured"         => (integer)$this->faker->boolean(50),
-                "public"           => 1,
-                "offer"            => 0
-        ];
-    }
-
-    /**
-     * Creates n random products
-     *
-     * @param $number
-     */
-    protected function prepareFakeData($number = 5)
-    {
-        $faker = $this->faker;
-
-        foreach(range(1, $number) as $key)
-        {
-            Product::create([
-                                    "code"             => $faker->text(5),
-                                    "name"             => $faker->text(10),
-                                    "slug"             => $key,
-                                    "slug_lang"        => $key,
-                                    "lang"             => 'it',
-                                    "description"      => $faker->text(10),
-                                    "long_description" => $faker->text(100),
-                                    "featured"         => $key == 5 ? true : false,
-                                    "public"           => 1,
-                                    "offer"            => 0
-                            ]);
-        }
+        $products_found = $this->repository_stub->getProductLangsAvailable($product->id);
+        $this->assertCount(2, $products_found);
     }
 
     protected function prepareFakeSearchData()
@@ -612,209 +501,11 @@ class EloquentProductRepositoryTest extends DbTestCase
     }
 
     /**
-     * @test
-     **/
-    public function canActivateSetGeneralFormFilter()
-    {
-        $mock_product_filter = $this->mockSetGeneralFormFilter(true);
-
-        $product_repo = new ProdRepoStubLang(false, $mock_product_filter);
-        $repo_obtained = $product_repo->enableGeneralFormFilter();
-
-        $this->assertSame($repo_obtained, $product_repo);
-        $this->assertTrue($repo_obtained->general_form_filter);
-    }
-
-    /**
-     * @test
-     **/
-    public function canDeactivateGeneralFormFilterEnabled()
-    {
-        $mock_product_filter = $this->mockSetGeneralFormFilter(false);
-
-        $product_repo = new ProdRepoStubLang(false, $mock_product_filter);
-        $repo_obtained = $product_repo->disableGeneralFormFilter();
-
-        $this->assertSame($repo_obtained, $product_repo);
-        $this->assertFalse($repo_obtained->general_form_filter);
-    }
-
-    /**
-     * @test
-     **/
-    public function canUpdateOnlyGeneralInOtherLanguagesDataIfEnabled()
-    {
-        $product = $this->make('Palmabit\Catalog\Models\Product', $this->getModelStub())->first();
-        $update_data = [
-                "code"             => $this->faker->unique()->text(5),
-                "name"             => $this->faker->unique()->text(10),
-                "slug"             => $this->faker->unique()->text(5),
-                "slug_lang"        => $this->faker->unique()->text(10),
-                "description"      => $this->faker->text(10),
-                "long_description" => $this->faker->text(100),
-                "featured"         => ($product->featured) ? false : true,
-                "public"           => ($product->public) ? false : true,
-                "offer"            => ($product->offer) ? false : true
-        ];
-        L::shouldReceive('getDefault')->twice()->andReturn('en');
-
-        $repo = new ProdRepoStubLang();
-        $repo->enableGeneralFormFilter();
-        $updated_product = $repo->update($product->id, $update_data);
-
-        $this->assertNotEquals($product->offer, $update_data["offer"]);
-    }
-
-    /**
-     * @test
-     **/
-    public function itUpdateAllProductsUniqueData_IfOnDefaultLanguage_AndUpdateCachedData()
-    {
-        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
-        $this->mockLanguageReturnDefaultLang();
-
-        $repo = new ProdRepoStubLang();
-        $repo->enableGeneralFormFilter();
-
-        $repo->update($product_it->id, $update_data);
-
-        $repo->findBySlug($product_it->slug);
-        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_it->getUniqueData()), $product_update_it, ["lang", "slug_lang",
-                                                                                                                                "id"]);
-
-        $repo::$current_lang = 'en';
-        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes(array_only($update_data, $product_update_en->getUniqueData()), $product_update_en, ["lang", "slug_lang",
-                                                                                                                                "id"]);
-    }
-
-    /**
-     * @test
-     **/
-    public function itUpdatesASingleProduct_GivenDisabledFormFilter()
-    {
-        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
-        $this->mockLanguageReturnLang('en');
-
-        $repo = new ProdRepoStubLang();
-
-        $repo->update($product_it->id, $update_data);
-
-        $repo->findBySlug($product_it->slug);
-        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "id"]);
-
-        $repo::$current_lang = 'en';
-        \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
-        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type', "id"]);
-    }
-
-    /**
-     * @test
-     **/
-    public function itUpdatesASingleProduct_GivenNoDefaultLang()
-    {
-        list($product_it, $product_en, $update_data) = $this->prepareProductsForBulkUpdate();
-        $this->mockLanguageReturnLang('en');
-
-        $repo = new ProdRepoStubLang();
-        $repo->enableGeneralFormFilter();
-
-        $repo->update($product_it->id, $update_data);
-
-        $repo->findBySlug($product_it->slug);
-        $product_update_it = $this->getProductFromDbPassingThruCache($repo, $product_it);
-        $this->assertObjectHasAllAttributes($update_data, $product_update_it, ["lang", "slug_lang", "featured", "offer", "public", "id", "code"]);
-
-        $repo::$current_lang = 'en';
-        \Cache::forget("product-{$product_en->slug}-" . $product_en->lang);
-        $product_update_en = $this->getProductFromDbPassingThruCache($repo, $product_en);
-        $this->assertObjectHasAllAttributes($product_en->toArray(), $product_update_en, ['type', "id"]);
-    }
-
-    /**
-     * @return m\MockInterface|\Yay_MockObject
-     */
-    protected function mockSetGeneralFormFilter($param)
-    {
-        $mock_product_filter = m::mock('Palmabit\Catalog\Models\Product');
-        $mock_product_filter->shouldReceive('setGeneralFormFilterEnabled')
-                            ->once()
-                            ->with($param);
-        return $mock_product_filter;
-    }
-
-    /**
      * @return mixed
      */
     protected function mockLanguageReturnDefaultLang()
     {
         return $this->mockLanguageReturnLang($this->default_lang);
-    }
-
-    /**
-     * @return array
-     */
-    protected function prepareProductsForBulkUpdate()
-    {
-        $product_it = $this->make('Palmabit\Catalog\Models\Product', [
-                "lang"      => "it",
-                "slug"      => "sl_it",
-                "slug_lang" => "sl"
-        ])->first();
-        $product_en = $this->make('Palmabit\Catalog\Models\Product', [
-                "lang"      => "en",
-                "slug"      => "sl_en",
-                "slug_lang" => "sl"
-        ])->first();
-        $update_data = [
-                "id"               => 1,
-                "code"             => $this->faker->unique()->text(5),
-                "name"             => $this->faker->unique()->text(10),
-                "description"      => $this->faker->text(10),
-                "long_description" => $this->faker->text(100),
-                "lang"             => "it",
-                "featured"         => ($product_it->featured) ? 0 : 1,
-                "public"           => 1,
-                "offer"            => ($product_it->offer) ? 0 : 1
-        ];
-        return array($product_it, $product_en, $update_data);
-    }
-
-    protected function mockLanguageReturnLang($lang)
-    {
-        L::shouldReceive('getDefault')->andReturn($lang);
-    }
-
-    /**
-     * @param $repo
-     * @param $product
-     * @return mixed
-     */
-    protected function getProductFromDbPassingThruCache($repo, $product)
-    {
-        return $repo->findBySlug($product->slug);
-    }
-
-    /**
-     * @test
-     **/
-    public function canDeleteAllProducts_FromSlugLang()
-    {
-        $slug_lang = "sl";
-        $this->times(5)->make('Palmabit\Catalog\Models\Product', function () use ($slug_lang)
-        {
-            return [
-                    "slug_lang" => $slug_lang,
-                    "lang"      => $this->faker->unique()->lexify('??')
-            ];
-        });
-
-        $this->r->deleteFromSlugLang($slug_lang);
-
-        $this->assertEquals(0, Product::count());
     }
 }
 
@@ -830,6 +521,11 @@ class ProdRepoStubLang extends EloquentProductRepository
     public static function resetToDefaultLang()
     {
         static::$current_lang = 'it';
+    }
+
+    public static function setLang($lang)
+    {
+        static::$current_lang = $lang;
     }
 }
 

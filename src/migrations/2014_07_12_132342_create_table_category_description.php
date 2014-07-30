@@ -12,7 +12,6 @@ class CreateTableCategoryDescription extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('category_description'))
             Schema::create('category_description', function(Blueprint $table) {
                 $table->increments('id');
                 $table->string('description');

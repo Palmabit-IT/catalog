@@ -223,6 +223,37 @@ class ProductLanguageDecoratorTest extends DbTestCase
         $this->assertProductHasDescriptionsCount(2, $this->product);
     }
 
+    /**
+     * @test
+     **/
+    public function canFillAllData()
+    {
+        $this->mockLanguageConstructor();
+        $decorator = new ProductLanguageDecorator($this->product);
+        $data = [
+            "name" => $this->faker->unique()->text(20),
+            "code" => $this->faker->unique()->lexify('????????'),
+        ];
+
+        $decorator->fill($data)->save();
+
+        $this->assertEquals($this->product->code, $data["code"]);
+        $description_updated = $this->product_description->whereLang($this->current_lang)->firstOrFail();
+        $this->assertEquals($description_updated->name, $data["name"]);
+    }
+    
+    /**
+     * @test
+     **/
+    public function canBeCreatedWithCustomCurrentLanguage()
+    {
+        $this->mockLanguageConstructor();
+        $current_language = "us";
+        $decorator = new ProductLanguageDecorator($this->product, $current_language);
+
+        $this->assertEquals($decorator->getCurrentLang(), $current_language);
+    }
+    
     protected function getModelStub()
     {
         return [

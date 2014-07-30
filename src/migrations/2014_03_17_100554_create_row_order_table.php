@@ -12,7 +12,6 @@ class CreateRowOrderTable extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('row_order'))
         Schema::create('row_order', function(Blueprint $table)
         {
             $table->increments('id');

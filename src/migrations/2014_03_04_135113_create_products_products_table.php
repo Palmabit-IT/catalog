@@ -12,8 +12,6 @@ class CreateProductsProductsTable extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('products_products'))
-        {
             Schema::create('products_products', function(Blueprint $table)
             {
                 $table->increments('id');
@@ -29,7 +27,6 @@ class CreateProductsProductsTable extends Migration {
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             });
-        }
 	}
 
 	/**

@@ -75,10 +75,10 @@ class ProductsController extends Controller
 
     public function getEdit()
     {
-        $slug_lang = Input::get('slug_lang');
+        $slug_lang = Input::get('id');
         try
         {
-            $product = $this->r->findBySlugLang($slug_lang);
+            $product = $this->r->find($slug_lang);
         } catch(NotFoundException $e)
         {
             $product = new Product();

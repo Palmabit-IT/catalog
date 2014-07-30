@@ -12,7 +12,6 @@ class CreateTableProduct extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('product'))
             Schema::create('product', function(Blueprint $table) {
 			$table->increments('id');
             $table->string('code')->nullable();

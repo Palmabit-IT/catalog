@@ -12,7 +12,6 @@ class CreateTableCategory extends Migration {
 	 */
 	public function up()
 	{
-        if(! Schema::hasTable('category'))
             Schema::create('category', function(Blueprint $table) {
                 $table->increments('id');
                 $table->string('name');
