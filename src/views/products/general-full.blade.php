@@ -15,7 +15,7 @@
 
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
-        {{Form::hidden("slug_lang", $slug_lang)}}
+<!--        {{Form::hidden("slug_lang", $slug_lang)}}-->
         {{FormField::code(["label" => "Codice*: "])}}
         <span class="text-danger">{{$errors->first('code')}}</span>
         {{FormField::name(["id" => "slugme", "label" => "Nome* :"])}}
@@ -107,7 +107,7 @@
     <div class="col-md-12">
         {{Form::submit('Salva', array("class"=>"btn btn-primary tab-remember margin-bottom-30"))}}
         @if($product->exists)
-            <a href="{{URL::route('products.delete.bysluglang',array('slug_lang' => $product->slug_lang))}}" class="btn btn-danger cancella-prodotto" style="margin-bottom:30px">Cancella</a>
+            <a href="{{URL::route('products.delete',array('id' => $product->id))}}" class="btn btn-danger cancella-prodotto" style="margin-bottom:30px">Cancella</a>
         @endif
         {{Form::updateOldLanguageInput()}}
         {{Form::close()}}

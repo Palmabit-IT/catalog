@@ -17,7 +17,7 @@
         {{Form::model($product, array('url' =>
         array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' =>
         'post') )}}
-        {{Form::hidden("slug_lang", $slug_lang)}}
+<!--        {{Form::hidden("slug_lang", $slug_lang)}}-->
         {{FormField::code(["label" => "Codice*: ", 'readonly' => 'readonly'])}}
         <span class="text-danger">{{$errors->first('code')}}</span>
         {{FormField::name(["id" => "slugme", "label" => "Nome*: "])}}

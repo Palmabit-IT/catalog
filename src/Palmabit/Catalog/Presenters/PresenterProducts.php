@@ -216,7 +216,7 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function availableflags()
     {
         $flags_images = "";
-        $products = App::make('product_repository')->getProductLangsAvailable($this->resource->slug_lang);
+        $products = App::make('product_repository')->getProductLangsAvailable($this->resource->id);
         foreach ($products as $product) {
             $flags_images .= $product->presenter()->flag;
         }

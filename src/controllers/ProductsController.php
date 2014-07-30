@@ -34,7 +34,7 @@ class ProductsController extends Controller
     protected $f;
     /**
      */
-    protected $p;
+    protected $presenter;
     /**
      * FormModel Image
      */
@@ -75,17 +75,17 @@ class ProductsController extends Controller
 
     public function getEdit()
     {
-        $slug_lang = Input::get('id');
+        $id = Input::get('id');
         try
         {
-            $product = $this->r->find($slug_lang);
+            $product = $this->r->find($id);
         } catch(NotFoundException $e)
         {
             $product = new Product();
         }
-        $this->p = new PresenterProducts($product);
+        $this->presenter = new PresenterProducts($product->decorateLanguage(L::get_admin()));
 
-        return View::make('catalog::products.edit')->with(["product" => $product, "slug_lang" => $slug_lang, "presenter" => $this->p]);
+        return View::make('catalog::products.edit')->with(["product" => $product, "slug_lang" => $id, "presenter" => $this->presenter]);
     }
 
     public function postEdit()
