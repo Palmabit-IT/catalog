@@ -50,7 +50,7 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
 
     public function getLink()
     {
-        return URLT::action('CategoryController@show', ['slug_lang' => $this->resource->slug_lang] );
+        return URLT::action('CategoryController@show', ['slug' => $this->getDescriptionObjectOfLang(L::get())->slug] );
     }
 
     public function getDescriptionObjectOfLang($lang)

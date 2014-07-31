@@ -98,7 +98,7 @@ class ProductsController extends Controller
         } catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit")->withInput()->withErrors($errors);
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => Input::get('id')])->withInput()->withErrors($errors);
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $obj->id])
@@ -167,7 +167,6 @@ class ProductsController extends Controller
     public function postImage()
     {
         $input = Input::all();
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -175,17 +174,16 @@ class ProductsController extends Controller
         } catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f_img->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])->withInput()
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $input["product_id"]])->withInput()
                            ->withErrors($errors);
         }
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $input["product_id"]])
                        ->with(["message_img" => "Immagine caricata con successo."]);
     }
 
     public function deleteImage()
     {
         $input = Input::all();
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -193,26 +191,25 @@ class ProductsController extends Controller
         } catch(PalmabitExceptionsInterface $e)
         {
             $errors = $this->f_img->getErrors();
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])->withInput()
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $input["product_id"]])->withInput()
                            ->withErrors($errors);
         }
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $input["product_id"]])
                        ->with(array("message_img" => "Immagine eliminata con successo."));
     }
 
     public function postFeatured($id, $product_id)
     {
-        $slug_lang = Input::get('slug_lang');
         try
         {
             $this->r_img->changeFeatured($id, $product_id);
         } catch(PalmabitExceptionsInterface $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                            ->withErrors(new MessageBag(["model" => $e->getMessage()]));
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                        ->with(array("message_img" => "Immagine in evidenza impostata con successo."));
     }
 
@@ -239,7 +236,6 @@ class ProductsController extends Controller
     {
         $first_product_id = Input::get('first_product_id');
         $second_product_id = Input::get('second_product_id');
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -247,15 +243,15 @@ class ProductsController extends Controller
             $this->r->detachProduct($first_product_id, $second_product_id);
         } catch(NotFoundException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                            ->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
         } catch(ValidationException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                            ->withErrors($this->v_pp->getErrors());
         }
 
-        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                        ->with(array("message_accessories" => "Prodotto rimosso con successo."));
     }
 
@@ -263,7 +259,6 @@ class ProductsController extends Controller
     {
         $first_product_id = Input::get('first_product_id');
         $second_product_id = Input::get('second_product_id');
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
@@ -271,32 +266,31 @@ class ProductsController extends Controller
             $this->r->attachProduct($first_product_id, $second_product_id);
         } catch(NotFoundException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                            ->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
         } catch(ValidationException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                            ->withErrors($this->v_pp->getErrors());
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $first_product_id])
                        ->with(array("message_accessories" => "Prodotto associato con successo."));
     }
 
     public function duplicate()
     {
         $id = Input::get('id');
-        $slug_lang = Input::get('slug_lang');
 
         try
         {
             $obj = $this->r->duplicate($id);
         } catch(PalmabitExceptionsInterface $e)
         {
-            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $slug_lang])
+            return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ["id" => $id])
                            ->withErrors(new MessageBag(["duplication" => "Problema nella duplicazione del prodotto."]));
         }
-        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $obj->slug_lang])
+        return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ["id" => $id])
                        ->withMessage("prodotto clonato con successo.");
     }
 }

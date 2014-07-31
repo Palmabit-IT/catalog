@@ -4,9 +4,12 @@ use Palmabit\Catalog\Models\CategoryDescription;
 use Palmabit\Catalog\Repository\EloquentCategoryRepository;
 use Palmabit\Catalog\Models\Category;
 use Event;
+use Palmabit\Catalog\Tests\Traits\CategoryStubTrait;
 
 class EloquentCategoryRepositoryTest extends DbTestCase
 {
+    use CategoryStubTrait;
+
     protected $faker;
     protected $repo;
     protected $category_name;
@@ -164,31 +167,6 @@ class EloquentCategoryRepositoryTest extends DbTestCase
 
         $cat_saved = $this->repo->find(1);
         $this->assertEquals(1, $cat_saved->depth);
-    }
-
-    public function getModelStub()
-    {
-        return [
-                "name"  => $this->faker->unique()->name,
-                "order" => $this->faker->randomNumber(2),
-                "image" => $this->faker->randomNumber(9),
-                'depth' => $this->faker->unique()->randomNumber(3)
-
-        ];
-    }
-
-    /**
-     * @param $created_category
-     * @return array
-     */
-    protected function getCategoryDescriptionModelStub($created_category)
-    {
-        return [
-                "description" => $this->faker->text(20),
-                "slug"        => $this->faker->text(10),
-                "category_id" => $created_category->id,
-                "lang"        => CatRepoStubLang::$current_lang,
-        ];
     }
 
     /**

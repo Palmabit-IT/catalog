@@ -39,9 +39,7 @@ class PresenterCategoryProductFactory
         {
             $products = ($category->products) ? $category->products()
                 ->wherePublic(1)
-                ->whereLang(\L::get())
                 ->orderBy('order','DESC')
-                ->orderBy('name','ASC')
                 ->paginate($per_page) : array();
             return ( ! empty($products) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterProducts', $products ) : new Collection();
         }

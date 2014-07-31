@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\MessageBag;
 use L;
+use Palmabit\Catalog\Models\ProductDescription;
 use Palmabit\Library\Exceptions\ValidationException;
 use Palmabit\Library\Validators\OverrideConnectionValidator;
 
@@ -35,7 +36,10 @@ class ProductValidator  extends OverrideConnectionValidator{
 
             if(App::environment() != 'testing' && isset($input["id"]))
             {
-//                static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
+                $except_id = ProductDescription::where('product_id','=', $input['id'])
+                        ->whereLang(L::get_admin())
+                        ->pluck('id');
+                static::$rules["slug"][] = "unique:product_description,slug,{$except_id}";
             }
 
             $found = false;

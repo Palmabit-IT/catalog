@@ -1,4 +1,4 @@
-<?php  namespace Palmabit\Catalog\Tests; 
+<?php  namespace Palmabit\Catalog\Tests;
 
 /**
  * Test PresenterCategoryTest
@@ -11,20 +11,22 @@ use URLT;
 use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Presenters\PresenterCategory;
 
-class PresenterCategoryTest extends DbTestCase {
+class PresenterCategoryTest extends DbTestCase
+{
     use StubTrait;
 
     public function tearDown()
     {
         m::close();
     }
-    
+
     /**
      * @test
      **/
     public function it_gets_featured_image()
     {
-        $presenter = m::mock('Palmabit\Catalog\Presenters\PresenterCategory')->makePartial()->shouldReceive('image')->once()->andReturn(22)->getMock();
+        $presenter =
+                m::mock('Palmabit\Catalog\Presenters\PresenterCategory')->makePartial()->shouldReceive('image')->once()->andReturn(22)->getMock();
         $this->assertEquals(22, $presenter->featured_image);
     }
 
@@ -47,12 +49,8 @@ class PresenterCategoryTest extends DbTestCase {
     public function it_get_translated_link()
     {
         URLT::shouldReceive('action')->once();
-        $category = new Category([
-                                 "description" => "desc",
-                                 "name" => "name",
-                                 "slug" => "slug",
-                                 "slug_lang" => "",
-                                 ]);
+        $category = $this->make('Palmabit\Catalog\Models\Category', $this->getCategoryModelStub())->first();
+        $this->make('Palmabit\Catalog\Models\CategoryDescription', $this->getCategoryDescriptionModelStub($category))->first();
         $presenter = new PresenterCategory($category);
         $presenter->getLink();
     }

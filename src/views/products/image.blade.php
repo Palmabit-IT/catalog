@@ -20,10 +20,10 @@
                     Immagine in evidenza: {{$image['featured'] ? 'sì' : 'no'}}
                 </span>
                 {{-- cancellazione --}}
-                <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@deleteImage',['slug_lang' => $slug_lang, 'id' => $image['id'] ])}}" class="tab-remember"><span class="glyphicon glyphicon-trash pull-right cancella-img"> Cancella</span></a>
+                <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@deleteImage',['product_id' => $product->id, 'id' => $image['id'] ])}}" class="tab-remember"><span class="glyphicon glyphicon-trash pull-right cancella-img"> Cancella</span></a>
                 {{-- set in evidenza --}}
                 <br/>
-                <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postFeatured',['id'=>$image['id'], 'product_id' => $product->id, 'slug_lang' => $slug_lang])}}" class="tab-remember"><span class="glyphicon glyphicon-ok-sign pull-right"> Evidenza</span></a>
+                <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postFeatured',['id' => $image['id'], 'product_id' => $product->id])}}" class="tab-remember"><span class="glyphicon glyphicon-ok-sign pull-right"> Evidenza</span></a>
                 <span class="clearfix"></span>
             </li>
             @endforeach
@@ -37,7 +37,6 @@
             <div class="alert alert-danger">{{$errors->first('model')}}</div>
         @endif
         {{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@postImage', 'files' => true])}}
-        {{Form::hidden("slug_lang", $slug_lang)}}
         {{Form::hidden("product_id", $product->id)}}
         <div class="form-group">
             {{Form::label('image','Seleziona l\'immagine da caricare e aggiungi una descrizione')}}
