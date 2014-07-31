@@ -21,7 +21,7 @@
         @foreach($presenter->categories() as $category)
         <li class="list-group-item">
             {{$category->name}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postDetachCategory', ['_token' => csrf_token(), 'product_id' => $product->id, 'slug_lang' => $slug_lang, 'category_id' => $category->id])}}" class="pull-right tab-remember cancella"><i class="glyphicon glyphicon-trash"></i> Rimuovi</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postDetachCategory', ['_token' => csrf_token(), 'product_id' => $product->id, 'category_id' => $category->id])}}" class="pull-right tab-remember cancella"><i class="glyphicon glyphicon-trash"></i> Rimuovi</a>
         </li>
         @endforeach
         @else
@@ -34,7 +34,6 @@
     <div class="form-group">
         {{Form::label("categoria","Associa al prodotto una nuovo categoria")}}
         {{Form::select("category_id", get_cat_select_arr(), '', ["class" => "form-control"]) }}
-        {{Form::hidden("slug_lang", $slug_lang)}}
         {{Form::hidden("product_id", $product->id)}}
     </div>
     <hr>

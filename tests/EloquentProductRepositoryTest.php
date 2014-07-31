@@ -322,6 +322,7 @@ class EloquentProductRepositoryTest extends DbTestCase
         \Config::set('catalog::admin_per_page', $results_per_page);
 
         $products = $this->repository_stub->all();
+        $this->assertEquals($products->first()->id, $product_1->id);
         $this->assertEquals(2, count($products));
     }
 

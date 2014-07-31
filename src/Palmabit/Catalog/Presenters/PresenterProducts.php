@@ -26,15 +26,16 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
 
     protected $flags_path;
 
-    public function __construct($resource)
+    public function __construct($resource, $current_lang = null)
     {
+        parent::__construct($resource);
+        $this->resource = $this->resource->decorateLanguage($current_lang);
+
         $this->default_img_path = public_path() . "/packages/palmabit/catalog/img/no-photo.png";
         $this->group_professional = Config::get('catalog::groups.professional_group_name');
         $this->group_logged = Config::get('catalog::groups.logged_group_name');
         $this->authenticator = App::make('authenticator');
         $this->flags_path = Config::get('catalog::flags.flags_path');
-
-        return parent::__construct($resource);
     }
 
     /**
@@ -216,9 +217,9 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
     public function availableflags()
     {
         $flags_images = "";
-        $products = App::make('product_repository')->getProductLangsAvailable($this->resource->id);
-        foreach ($products as $product) {
-            $flags_images .= $product->presenter()->flag;
+        $product_descriptions = App::make('product_repository')->getProductLangsAvailable($this->resource->id);
+        foreach ($product_descriptions as $description) {
+            $flags_images .= $description->product->presenter($description->lang)->flag;
         }
 
         return $flags_images;

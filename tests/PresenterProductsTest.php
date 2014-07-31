@@ -2,18 +2,22 @@
 
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use Illuminate\Support\Facades\App;
-use Palmabit\Catalog\Models\Category;
 use Palmabit\Catalog\Models\Product;
 use Mockery as m;
 use Config;
+use Palmabit\Catalog\Tests\Traits\ProductStubTrait;
 
 class PresenterProductsTest extends DbTestCase  {
+
+    use ProductStubTrait;
 
     protected $flags_path;
     protected $group_professional;
     protected $group_logged;
     protected $quantity_professional;
     protected $quantity_non_professional;
+    protected $current_lang;
+    protected $product_repository;
 
 
     public function setUp()
@@ -24,6 +28,8 @@ class PresenterProductsTest extends DbTestCase  {
         $this->group_logged = Config::get('catalog::groups.logged_group_name');
         $this->quantity_professional = 10;
         $this->quantity_non_professional = 5;
+        $this->current_lang = 'it';
+        $this->product_repository = App::make('product_repository');
     }
 
     public function tearDown()
@@ -36,12 +42,10 @@ class PresenterProductsTest extends DbTestCase  {
      **/
     public function canGetHisFlag()
     {
-        $product_it = $this->make('Palmabit\Catalog\Models\Product', [
-            "lang" => 'it',
-            "slug" => 'slug',
-            "slug_lang" => 'slug'
-        ]);
-        $presenter = new PresenterProducts($product_it[0]->decorateLanguage('it'));
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product), ["lang" => "it"])->first();
+
+        $presenter = new PresenterProducts($product->decorateLanguage('it'));
 
         $flag = $presenter->flag;
 
@@ -54,41 +58,17 @@ class PresenterProductsTest extends DbTestCase  {
      **/
     public function canGetAvailableProductFlags()
     {
-        $product_it = $this->make('Palmabit\Catalog\Models\Product', [
-            "lang" => 'it',
-            "slug" => 'slug',
-            "slug_lang" => 'slug'
-        ]);
-        $this->make('Palmabit\Catalog\Models\Product', [
-            "lang" => 'en',
-            "slug" => 'slug',
-            "slug_lang" => 'slug'
-        ]);
-        $presenter = new PresenterProducts($product_it[0]);
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product), ["lang" => "it"]))->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product), ["lang" => "en"]))->first();
+
+        $presenter = new PresenterProducts($product);
 
         $flags = $presenter->availableflags;
 
-        $expected_flags = "<img class=\"product-flag\" src=\"{$this->flags_path}/it.jpg\" alt=\"it\" />        <img class=\"product-flag\" src=\"{$this->flags_path}/en.jpg\" alt=\"en\" />";
-
-//        $this->assertEquals($expected_flags, $flags);
+        $expected_flags = "<img class=\"product-flag\" src=\"{$this->flags_path}/it.jpg\" alt=\"it\" /><img class=\"product-flag\" src=\"{$this->flags_path}/en.jpg\" alt=\"en\" />";
+        $this->assertEquals($expected_flags, $flags);
     }
-
-    protected function getModelStub()
-    {
-        return [
-            "code" => $this->faker->unique()->text(5),
-            "name" => $this->faker->unique()->text(10),
-            "slug" => $this->faker->unique()->text(5),
-            "slug_lang" => $this->faker->unique()->text(10),
-            "lang" => 'it',
-            "description" => $this->faker->text(10),
-            "long_description" => $this->faker->text(100),
-            "featured" => $this->faker->boolean(50),
-            "public" => 1,
-            "offer" => 0
-        ];
-    }
-
 
     /**
      * @test
@@ -113,27 +93,14 @@ class PresenterProductsTest extends DbTestCase  {
      **/
     public function it_gets_all_categories_of_a_product()
     {
-        $arr_cats = [new Category, new Category];
-        $mock_empty = m::mock('StdClass')
-                       ->shouldReceive('isEmpty')
-                       ->once()
-                       ->andReturn(false)
-                       ->shouldReceive('all')
-                       ->once()
-                       ->andReturn($arr_cats)
-                       ->getMock();
-        $mock_get = m::mock('StdClass')
-                     ->shouldReceive('get')
-                     ->once()
-                     ->andReturn($mock_empty)
-                     ->getMock();
-        $mock_product = m::mock('StdClass')
-                         ->shouldReceive('categories')->andReturn($mock_get)
-                         ->getMock();
-        $presenter = new PresenterProducts($mock_product );
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $category = $this->make('Palmabit\Catalog\Models\Category', $this->getCategoryStub())->first();
+        $this->product_repository->associateCategory($product->id, $category->id);
+
+        $presenter = new PresenterProducts($product);
         $cats = $presenter->categories();
 
-        $this->assertEquals(2, count($cats));
+        $this->assertEquals(1, count($cats));
     }
 
     /**
@@ -141,27 +108,14 @@ class PresenterProductsTest extends DbTestCase  {
      **/
     public function it_gets_products_products()
     {
-        $arr_cats = [new Product, new Product];
-        $mock_empty = m::mock('StdClass')
-                       ->shouldReceive('isEmpty')
-                       ->once()
-                       ->andReturn(false)
-                       ->shouldReceive('all')
-                       ->once()
-                       ->andReturn($arr_cats)
-                       ->getMock();
-        $mock_get = m::mock('StdClass')
-                     ->shouldReceive('get')
-                     ->once()
-                     ->andReturn($mock_empty)
-                     ->getMock();
-        $mock_product = m::mock('StdClass')
-                         ->shouldReceive('accessories')->andReturn($mock_get)
-                         ->getMock();
-        $presenter = new PresenterProducts($mock_product );
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $product_2 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->product_repository->attachProduct($product_1->id, $product_2->id);
+
+        $presenter = new PresenterProducts($product_1);
         $cats = $presenter->accessories();
 
-        $this->assertEquals(2, count($cats));
+        $this->assertEquals(1, count($cats));
     }
 
     /**
@@ -270,10 +224,12 @@ class PresenterProductsTest extends DbTestCase  {
      **/
     public function it_returns_the_description_and_name()
     {
-        $product = $this->createAProduct();
-        $presenter = new PresenterProducts($product->decorateLanguage('it'));
-        $this->assertEquals("name", $presenter->name);
-        $this->assertEquals("desc", $presenter->description);
+        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product))->first();
+
+        $presenter = new PresenterProducts($product);
+        $this->assertEquals($product->decorateLanguage()->name, $presenter->name);
+        $this->assertExcerptEquals($product, $presenter);
     }
 
     /**
@@ -348,6 +304,15 @@ class PresenterProductsTest extends DbTestCase  {
                 ->with($this->group_professional)
                 ->andReturn(true)
                 ->getMock();
+    }
+
+    /**
+     * @param $product
+     * @param $presenter
+     */
+    protected function assertExcerptEquals($product, $presenter)
+    {
+        $this->assertEquals(substr($product->decorateLanguage()->description, 0, 20), substr($presenter->description, 0, 20));
     }
 }
  

@@ -44,4 +44,11 @@ trait ProductStubTrait {
     {
         return $this->faker->randomNumber(2) . '.' . $this->faker->randomNumber(2);
     }
+
+    protected function getCategoryStub()
+    {
+        return [
+            "name" => $this->faker->unique()->text(10)
+        ];
+    }
 } 

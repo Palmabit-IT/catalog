@@ -104,7 +104,6 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
                         case 'code':
                             $q = $q->where($products_table . '.code', '=', $value);
                             break;
-
                         case 'name':
                             $q = $q->where($products_description_table . '.name', 'LIKE', "%{$value}%");
                             break;
@@ -131,7 +130,12 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $q = $q->select([
                                 $products_table . '.*',
                                 $category_table . '.name' => 'description',
-                                $products_description_table . '.*'
+                                $products_description_table . '.product_id',
+                                $products_description_table . '.name',
+                                $products_description_table . '.slug',
+                                $products_description_table . '.description',
+                                $products_description_table . '.long_description',
+                                $products_description_table . '.lang',
                         ]);
 
         return $q;
@@ -270,7 +274,6 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     {
         $product_data = [
                 "code"                                       => $data["code"],
-
                 "featured"                                   => (boolean)$data["featured"],
                 "public"                                     => (boolean)$data["public"],
                 "offer"                                      => (boolean)$data["offer"],
@@ -505,14 +508,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
 
     public function getProductLangsAvailable($id)
     {
-        return $this->model_description->whereProductId($id)->get([
-                                                                          "id",
-                                                                          "name",
-                                                                          "slug",
-                                                                          "lang",
-                                                                          "description",
-                                                                          "long_description"
-                                                                  ]);
+        return $this->model_description->with('product')->whereProductId($id)->get();
     }
 
     /**

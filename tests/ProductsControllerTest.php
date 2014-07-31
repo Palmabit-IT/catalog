@@ -171,37 +171,5 @@ class ProductsControllerTest extends DbTestCase
         $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $slug_lang]);
         $this->assertSessionHasErrors();
     }
-
-    /**
-     * @test
-     **/
-    public function itCanDeleteAllLanguageInProduct_GivenSlugLang()
-    {
-        $slug_lang = "sl";
-        $this->createNProductsWithSameSlugLang(5, $slug_lang);
-
-        $this->route('GET', 'products.delete.bysluglang', ["slug_lang" => $slug_lang]);
-
-        $this->assertEquals(0, Product::count());
-        $this->assertRedirectedToRoute('products.lists');
-        $this->assertSessionHas('message');
-    }
-
-    /**
-     * @test
-     **/
-    public function itCanHandleValidationErrors()
-    {
-        $slug_lang = "sl";
-        $this->createNProductsWithSameSlugLang(5, $slug_lang);
-
-        $this->route('GET', 'products.delete.bysluglang');
-
-        $this->assertEquals(5, Product::count());
-        $this->assertRedirectedToRoute('products.lists');
-        $this->assertSessionHas('errors');
-    }
-
-
 }
  

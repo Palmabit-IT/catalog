@@ -233,6 +233,7 @@ class ProductLanguageDecoratorTest extends DbTestCase
         $data = [
             "name" => $this->faker->unique()->text(20),
             "code" => $this->faker->unique()->lexify('????????'),
+            "unfillable" => $this->faker->text(10)
         ];
 
         $decorator->fill($data)->save();

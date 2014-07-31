@@ -50,11 +50,11 @@
                             {{Form::close()}}
                         </td>
                         <td>
-                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, 'slug_lang' => $product->slug_lang, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-link"></i> duplica</a>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-link"></i> duplica</a>
                         </td>
                         <td>
-                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('slug_lang'=> $product->slug_lang) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
-                            <a href="{{URL::route('products.delete.bysluglang',array('slug_lang' => $product->slug_lang) )}}" class="cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i></a>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('id'=> $product->id) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
+                            <a href="{{URL::route('products.delete',array('id' => $product->id) )}}" class="cancella" style="margin-right:10px"><i class="glyphicon glyphicon-trash"></i></a>
                         </td>
                     </tr>
                 @endforeach

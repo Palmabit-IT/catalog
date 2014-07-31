@@ -10,8 +10,17 @@ if ( ! function_exists('get_product_select_arr'))
 {
     function get_product_select_arr()
     {
-        return Product::whereLang(L::get_admin())
-                    ->lists('name', 'id');
+        $products = Product::get();
+        $arr_prods = [];
+        foreach($products as $product)
+        {
+            $arr_prods[] = [
+                "name" => $product->decorateLanguage(L::get_admin())->name,
+                "id" => $product->id
+            ];
+        }
+
+        return $arr_prods;
     }
 }
 

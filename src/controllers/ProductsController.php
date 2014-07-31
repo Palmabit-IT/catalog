@@ -81,18 +81,17 @@ class ProductsController extends Controller
             $product = $this->r->find($id);
         } catch(NotFoundException $e)
         {
-            $product = new Product();
+            $product = (new Product())->decorateLanguage(L::get_admin());
         }
         $this->presenter = new PresenterProducts($product->decorateLanguage(L::get_admin()));
 
-        return View::make('catalog::products.edit')->with(["product" => $product, "slug_lang" => $id, "presenter" => $this->presenter]);
+        return View::make('catalog::products.edit')->with(["product" => $product, "id" => $id, "presenter" => $this->presenter]);
     }
 
     public function postEdit()
     {
         $input = Input::all();
 
-        $this->f->getR()->enableGeneralFormFilter();
         try
         {
             $obj = $this->f->process($input);
@@ -102,7 +101,7 @@ class ProductsController extends Controller
             return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit")->withInput()->withErrors($errors);
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $obj->slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $obj->id])
                        ->with(array("message" => "Prodotto modificato con successo."));
     }
 
@@ -120,14 +119,13 @@ class ProductsController extends Controller
         }
 
         return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@lists")
-                       ->with(array("message" => "Prodotto <img class=\"current-lang-flag\" src=\"".Config::get('catalog::flags.flags_path').'/'.L::get_admin().".jpg\" /> eliminato con successo."));
+                       ->with(array("message" => "Prodotto eliminato con successo."));
     }
 
 
     public function postAttachCategory()
     {
         $product_id = Input::get('product_id');
-        $slug_lang = Input::get('slug_lang');
         $category_id = Input::get('category_id');
 
         try
@@ -136,22 +134,21 @@ class ProductsController extends Controller
             $this->r->associateCategory($product_id, $category_id);
         } catch(NotFoundException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                            ->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
         } catch(ValidationException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                            ->withErrors($this->v_pc->getErrors());
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                        ->with(["message_cat" => "Categoria associata con successo."]);
     }
 
     public function postDetachCategory()
     {
         $product_id = Input::get('product_id');
-        $slug_lang = Input::get('slug_lang');
         $category_id = Input::get('category_id');
 
         try
@@ -159,11 +156,11 @@ class ProductsController extends Controller
             $this->r->deassociateCategory($product_id, $category_id);
         } catch(NotFoundException $e)
         {
-            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+            return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                            ->withErrors(new MessageBag(["model" => "Prodotto non trovato."]));
         }
 
-        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["slug_lang" => $slug_lang])
+        return Redirect::action("Palmabit\\Catalog\\Controllers\\ProductsController@getEdit", ["id" => $product_id])
                        ->with(["message_cat" => "Categoria deassociata con successo."]);
     }
 
@@ -301,21 +298,5 @@ class ProductsController extends Controller
         }
         return Redirect::action('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $obj->slug_lang])
                        ->withMessage("prodotto clonato con successo.");
-    }
-
-    public function deleteBySlugLang()
-    {
-        $slug_lang = Input::get('slug_lang');
-
-        $rules = ["slug_lang" => "required"];
-        $validator = App::make('validator')->make(Input::all(), $rules);
-
-        if($validator->passes())
-        {
-            $this->r->deleteFromSlugLang($slug_lang);
-            return Redirect::route('products.lists')->withMessage('Prodotto eliminato con successo in tutte le lingue.');
-        }
-
-        return Redirect::route('products.lists')->withErrors(['cancellazione' => 'Non sono riuscito a cancellare il prodotto.']);
     }
 }

@@ -69,10 +69,6 @@ Route::group(['before' => ['logged']], function ()
             'as'   => 'products.delete',
             'uses' => 'Palmabit\Catalog\Controllers\ProductsController@delete'
     ]);
-    Route::any('/admin/products/deletebysluglang', [
-            'as'   => 'products.delete.bysluglang',
-            'uses' => 'Palmabit\Catalog\Controllers\ProductsController@deleteBySlugLang'
-    ]);
 
     //////////////// PRODUCT ACCESSORIES //////////////////
     Route::post('/admin/products/products/attach', [

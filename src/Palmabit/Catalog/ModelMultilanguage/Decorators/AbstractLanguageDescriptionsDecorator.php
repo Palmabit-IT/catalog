@@ -192,7 +192,7 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     {
         foreach($attributes as $key => $value)
         {
-            $this->setAttribute($key, $value);
+            if($this->isFillable($key)) $this->setAttribute($key, $value);
         }
 
         return $this;
@@ -220,5 +220,14 @@ abstract class AbstractLanguageDescriptionsDecorator implements DecoratorInterfa
     public function setCurrentLang($current_lang)
     {
         $this->current_lang = $current_lang;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    protected function isFillable($key)
+    {
+        return in_array($key, $this->resource->getFillable())||in_array($key, $this->resource->getDescriptionAttributes());
     }
 }

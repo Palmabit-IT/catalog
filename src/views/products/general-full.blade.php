@@ -15,16 +15,19 @@
 
     <div class="col-md-6">
         {{Form::model($product, array('url' => array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' => 'post') )}}
-<!--        {{Form::hidden("slug_lang", $slug_lang)}}-->
         {{FormField::code(["label" => "Codice*: "])}}
         <span class="text-danger">{{$errors->first('code')}}</span>
-        {{FormField::name(["id" => "slugme", "label" => "Nome* :"])}}
+        {{Form::label('name', 'Nome:*')}}
+        {{Form::text('name', $product->decorateLanguage(L::get_admin())->name, ["id" => "slugme", 'class' => 'form-control'] )}}
         <span class="text-danger">{{$errors->first('name')}}</span>
-        {{FormField::slug(["label"=>"Slug*: ", "id" => "slug"])}}
+        {{Form::label('slug', 'Slug:*')}}
+        {{Form::text('slug', $product->decorateLanguage(L::get_admin())->slug, ["class"=>"form-control", "id" => "slug"])}}
         <span class="text-danger">{{$errors->first('slug')}}</span>
-        {{FormField::description(["type" => "textarea", "label" => "Descrizione breve*: ", "rows"=>5])}}
+        {{Form::label('description', 'Descrizione breve*: ')}}
+        {{Form::textarea('description', $product->decorateLanguage(L::get_admin())->description, ["class" => "form-control", "rows"=>5])}}
         <span class="text-danger">{{$errors->first('description')}}</span>
-        {{FormField::long_description(["label" => "Descrizione lunga", "type" => "textarea"])}}
+        {{Form::label('long_description', 'Descrizione lunga*: ')}}
+        {{Form::textarea('long_description', $product->decorateLanguage(L::get_admin())->long_description, ["class" => "form-control", "rows"=>5])}}
         <span class="text-danger">{{$errors->first('long_description')}}</span>
     </div>
     <div class="col-md-6">
@@ -109,7 +112,6 @@
         @if($product->exists)
             <a href="{{URL::route('products.delete',array('id' => $product->id))}}" class="btn btn-danger cancella-prodotto" style="margin-bottom:30px">Cancella</a>
         @endif
-        {{Form::updateOldLanguageInput()}}
         {{Form::close()}}
     </div>
 </div>

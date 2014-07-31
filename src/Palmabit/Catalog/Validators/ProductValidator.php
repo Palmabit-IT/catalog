@@ -35,7 +35,7 @@ class ProductValidator  extends OverrideConnectionValidator{
 
             if(App::environment() != 'testing' && isset($input["id"]))
             {
-                static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
+//                static::$rules["slug"][] = "unique:product,slug,{$input['id']}";
             }
 
             $found = false;
