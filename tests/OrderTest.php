@@ -154,7 +154,7 @@ class OrderTest extends DbTestCase
         $order->addRow($product, $first_quantity, $mock_row);
         $second_quantity = 20;
         $mock_row->quantity = $first_quantity;
-        $mock_row->slug_lang = $product->slug_lang;
+        $mock_row->slug = $product->slug;
         $quantity = $order->clearDuplicatesAndUpdateQuantity($product, $second_quantity);
 
         $this->assertEquals(30, $quantity);

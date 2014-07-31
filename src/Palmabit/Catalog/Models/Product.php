@@ -147,15 +147,6 @@ class Product extends Model implements EditableLanguageDescriptionInterface
         return new PresenterProducts($this, $current_lang);
     }
 
-    /**
-     * @param boolean $general_form_filter_enabled
-     */
-    public function setGeneralFormFilterEnabled($general_form_filter_enabled)
-    {
-        $this->general_form_filter_enabled = $general_form_filter_enabled;
-        return $this;
-    }
-
     public function decorateLanguage($current_lang = null)
     {
         return new ProductLanguageDecorator($this, $current_lang);

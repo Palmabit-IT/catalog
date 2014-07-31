@@ -13,7 +13,7 @@ class RowOrder extends Model
 {
     protected $table = "row_order";
 
-    protected $fillable = ["order_id", "product_id", "quantity", "total_price", "slug_lang", "price_type_used", "single_price"];
+    protected $fillable = ["order_id", "product_id", "quantity", "total_price", "slug", "price_type_used", "single_price"];
 
     protected $authenticator;
 
@@ -43,7 +43,7 @@ class RowOrder extends Model
     public function setItem(Product $product, $quantity)
     {
         $this->setAttribute('product_id', $product->id);
-        $this->setAttribute('slug_lang', $product->slug_lang);
+        $this->setAttribute('slug', $product->slug);
         $this->setAttribute('quantity', $quantity);
         $this->setAttribute('total_price', $this->calculatePrice($product, $quantity));
         $this->setAttribute('single_price', $this->getSingleProductPriceToUse($product, $quantity));

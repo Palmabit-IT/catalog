@@ -1,5 +1,7 @@
 <?php  namespace Palmabit\Catalog\Tests\Traits;
 
+use Palmabit\Catalog\Tests\CatRepoStubLang;
+
 trait CategoryStubTrait
 {
     public function getModelStub()

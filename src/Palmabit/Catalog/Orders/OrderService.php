@@ -25,7 +25,7 @@ class OrderService
 
     /**
      *
-     * @var Illuminate\Support\MessageBag
+     * @var \Illuminate\Support\MessageBag
      */
     protected $errors;
 

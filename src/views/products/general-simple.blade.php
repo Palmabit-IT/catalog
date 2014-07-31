@@ -56,7 +56,7 @@
         $('#slugme').slugIt();
     });
     $(".cancella-prodotto").click(function(){
-        return confirm("Sei sicuro di volere eliminare il prodotto corrente?");
+        return confirm("Sei sicuro di volere eliminare il prodotto corrente in tutte le lingue?");
     });
 </script>
 @stop

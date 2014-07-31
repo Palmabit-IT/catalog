@@ -43,6 +43,7 @@ class PresenterAccessoriesFactoryTest extends DbTestCase {
                        "quantity_pricing_quantity" => 100
                    ];
         $data2 = $data1;
+        $data2["code"] = "code2";
         $data2["slug"] = "slug2";
         $repo_product = App::make('product_repository');
         $prod1 = $repo_product->create($data1);
@@ -54,7 +55,7 @@ class PresenterAccessoriesFactoryTest extends DbTestCase {
 
         $this->assertInstanceOf('Palmabit\Library\Presenters\PresenterCollection', $presenter);
         $this->assertEquals(1, count($presenter));
-        $this->assertEquals($prod2->slug, $presenter->first()->slug);
+        $this->assertEquals($prod2->code, $presenter->first()->code);
     }
 
 }

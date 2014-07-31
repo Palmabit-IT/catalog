@@ -3,12 +3,15 @@ use Palmabit\Catalog\Models\RowOrder;
 use Palmabit\Catalog\Models\Product;
 use Mockery as m;
 use App, Config;
+use Palmabit\Catalog\Tests\Traits\ProductStubTrait;
+
 /**
  * Test RowOrderTest
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
 class RowOrderTest extends DbTestCase {
+    use ProductStubTrait;
 
     protected $group_professional;
     protected $group_logged;
@@ -16,6 +19,7 @@ class RowOrderTest extends DbTestCase {
     protected $product;
     protected $quantity_professional;
     protected $quantity_non_professional;
+    protected $current_lang = "it";
 
     public function setUp()
     {
@@ -159,12 +163,7 @@ class RowOrderTest extends DbTestCase {
     protected function getStandardProduct($quantity_professional, $quantity_non_professional)
     {
         return new Product([
-                    "description" => "desc",
                     "code" => "code",
-                    "name" => "name",
-                    "slug" => "slug",
-                    "slug_lang" => "",
-                    "description_long" => "",
                     "featured" => 1,
                     "public" => 1,
                     "offer" => 1,

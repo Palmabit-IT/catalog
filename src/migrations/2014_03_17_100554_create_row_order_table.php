@@ -21,7 +21,7 @@ class CreateRowOrderTable extends Migration {
             $table->decimal("total_price", 19,2);
             $table->decimal('single_price', 19,2);
             $table->string('price_type_used');
-            $table->string('slug_lang')->nullable();
+            $table->string('slug')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

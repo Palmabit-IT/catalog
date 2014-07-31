@@ -79,7 +79,7 @@ class Order extends Model
 
     public function clearDuplicatesAndUpdateQuantity($product, $quantity)
     {
-        foreach ($this->row_orders as $key => $row_order) if($row_order->slug_lang == $product->slug_lang)
+        foreach ($this->row_orders as $key => $row_order) if($row_order->slug == $product->slug)
         {
             $this->row_orders->forget($key);
             $quantity+= $row_order->quantity;
