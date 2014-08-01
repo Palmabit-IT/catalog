@@ -416,7 +416,9 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $product = $this->find($product_id);
         $cloned_product = $this->duplicateProduct($product);
         $this->duplicateDescriptions($product, $cloned_product);
-
+        $this->duplicateAccessories($product, $cloned_product);
+        $this->duplicateCategories($product, $cloned_product);
+        $this->duplicateImages($product, $cloned_product);
         return $cloned_product;
     }
 
@@ -456,6 +458,50 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
             unset($description->id);
             $description->exists = false;
             $description->save();
+        }
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateCategories($product, $cloned_product)
+    {
+        // get the cats
+        $cat_ids = $product->categories()->get()->lists('id');
+        // attach all the cats
+        foreach ($cat_ids as $cat_id)
+        {
+            $this->associateCategory($cloned_product->id, $cat_id);
+        }
+    }
+
+    /**
+     * @param $product
+     * @param $cloned_product
+     */
+    protected function duplicateAccessories($product, $cloned_product)
+    {
+        // get the accessories
+        $acc_ids = $product->accessories()->get()->lists('id');
+        // attach all the accessories
+        foreach ($acc_ids as $acc_id) {
+            $this->attachProduct($cloned_product->id, $acc_id);
+        }
+    }
+
+    /**
+     * @param $product_id
+     */
+    protected function duplicateImages($product, $cloned_product)
+    {
+        $images = App::make('product_image_repository')->getByProductId($product->id);
+        // copy them
+        foreach ($images as $image) {
+            unset($image->id);
+            $image->exists     = false;
+            $image->product_id = $cloned_product->id;
+            $image->save();
         }
     }
 

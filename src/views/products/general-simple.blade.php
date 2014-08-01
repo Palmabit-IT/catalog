@@ -33,8 +33,25 @@
         <span class="text-danger">{{$errors->first('long_description')}}</span>
     </div>
     <div class="col-md-6">
+        {{FormField::video_link(["type" => "hidden", "label" => ""])}}
+        {{Form::hidden('price1', null, ['class' => 'form-control'])}}
+        {{Form::hidden('price2', null, ['class' => 'form-control'])}}
+        {{Form::hidden('price3',null, ['class' => 'form-control'])}}
+        {{Form::hidden('price4', null, ['class' => 'form-control'])}}
+        {{Form::select('quantity_pricing_enabled', ["1" => "Sì", "0" => "No"],
+        (isset($product->quantity_pricing_enabled) && $product->quantity_pricing_enabled) ?
+        $product->quantity_pricing_enabled: "0", ["class"=> "hidden"] )}}
+        {{FormField::quantity_pricing_quantity(["label" => "","class" => "hidden"])}}
+        {{FormField::quantity_pricing_quantity_non_professional(["label" => "","class" => "hidden"])}}
+        {{Form::select('with_vat', ["1" => "Sì", "0" => "No"], null, ["class"=> "hidden"] )}}
+        {{Form::select('stock', ["1" => "Sì", "0" => "No"], null, ["class"=> "hidden"] )}}
+        {{Form::select('professional', ["0" => "No", "1" => "Sì"], null, ["class"=> "hidden"] )}}
+        {{Form::select('public', ["1" => "Sì", "0" => "No"], null, ["class"=> "hidden"] )}}
+        {{Form::select('featured', ["0" => "No", "1" => "Sì"], null, ["class"=> "hidden"] )}}
+        {{Form::select('offer', ["0" => "No", "1" => "Sì"], null, ["class"=> "hidden"] )}}
         {{Form::hidden('id')}}
         {{Form::hidden('form_name','products.general')}}
+
     </div>
 </div>
 <hr>

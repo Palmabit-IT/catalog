@@ -268,17 +268,40 @@ class EloquentProductRepositoryTest extends DbTestCase
     {
         // prepare product with related classes
         $product_1 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $product_2 = $this->make('Palmabit\Catalog\Models\Product')->first();
         $description_1 = $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product_1), ["lang" => "it"]))->first();
         $description_2 = $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product_1), ["lang" => "en"]))->first();
+        $this->repository_stub->attachProduct(1,2);
+        Category::create([
+                             "name" => "cat_name",
+                         ]);
+        $this->repository_stub->associateCategory(1,1);
+
+        $mock_img_repo = new ImgRepoStub;
+        $img_data = [
+                "description" => "desc",
+                "product_id" => 1,
+                "featured" => 0,
+                "data" => 111
+        ];
+        $mock_img_repo->create($img_data);
+
+
         $this->repository_stub->duplicate($product_1->id);
 
         // product duplicated
-        $product_duplicated = $this->repository_stub->find(2);
-
+        $product_duplicated = $this->repository_stub->find(3);
         $this->assertObjectHasAllAttributes($product_duplicated->toArray(), $product_1, ["created_at","updated_at","id","type", "blocked","code"]);
+        $this->assertEquals($product_1->code."_copia", $product_duplicated->code);
+        // description
         $this->assertEquals(2, $product_duplicated->descriptions()->count(), 'The product doesnt have the right language descriptions number');
         $this->assertEquals($product_duplicated->descriptions()->first()->name, $description_1->name."_copia");
-        $this->assertEquals($product_1->code."_copia", $product_duplicated->code);
+        // accessories
+        $this->assertEquals(1, $product_duplicated->accessories()->count());
+        // images
+        $this->assertEquals(1, $product_duplicated->product_images()->count());
+        // categories
+        $this->assertEquals(1, $product_duplicated->categories()->count());
     }
 
     /**
