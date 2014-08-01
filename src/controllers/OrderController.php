@@ -39,7 +39,7 @@ class OrderController extends Controller
         }
         catch(NotFoundException $e)
         {
-            //@todo
+            //@todo handle not found
         }
 
         return View::make('catalog::orders.detail')->with(["order_presenter" => $presenter, 'order' => $order]);

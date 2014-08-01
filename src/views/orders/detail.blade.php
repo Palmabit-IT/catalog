@@ -33,7 +33,7 @@
 	    @foreach($order->row_orders()->get() as $row)
     	<tr>
     		<td>
-	        	<a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',['slug_lang' => $row->getProductPresenter()->slug_lang])}}">{{$row->getProductPresenter()->name}}</a>
+	        	<a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',['id' => $row->product_id])}}">{{$row->getProductPresenter()->name}}</a>
     		</td>
     		<td>
     			{{$row->getProductPresenter()->name}}
