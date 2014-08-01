@@ -8,16 +8,28 @@
     {{Form::hidden('lang', $lang)}}
     {{Form::hidden('form_name', 'category_description')}}
     <div class="control-group">
-    {{Form::label('slug','Url univoco')}}
-    {{Form::text('slug',$presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->slug: null,['class' => 'form-control'])}}
-    <span class="text-danger">{{$errors->first('slug')}}</span>
+    {{Form::label('description','Descrizione')}}
+    {{Form::text('description',$presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->description: null,['class' => 'form-control', 'id' => 'slugme_'.$lang])}}
+    <span class="text-danger">{{$errors->first('description')}}</span>
     </div>
     <div class="control-group">
-    {{Form::label('description','Descrizione')}}
-    {{Form::text('description',$presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->description: null,['class' => 'form-control'])}}
-    <span class="text-danger">{{$errors->first('description')}}</span>
+    {{Form::label('slug','Url univoco')}}
+    {{Form::text('slug',$presenter->getDescriptionObjectOfLang($lang) ? $presenter->getDescriptionObjectOfLang($lang)->slug: null,['class' => 'form-control','id' => 'slug_'.$lang])}}
+    <span class="text-danger">{{$errors->first('slug')}}</span>
     </div>
     {{Form::submit('Salva', array("class"=>"btn btn-large btn-warning tab-remember margin-top-10 margin-bottom-10"))}}
     {{Form::close()}}
 </div>
 @endforeach
+
+@section('footer_scripts')
+@parent
+{{HTML::script('packages/palmabit/catalog/js/slugit.js')}}
+<script>
+    @foreach(\L::get_lista() as $lang => $long_name)
+        $(function(){
+            $('#slugme_'+'{{$lang}}').slugIt({output: '#slug_'+'{{$lang}}'});
+        });
+    @endforeach
+</script>
+@stop

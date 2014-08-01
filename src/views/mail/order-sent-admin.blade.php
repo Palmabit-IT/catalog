@@ -77,7 +77,7 @@
         <ul>
             <?php $product = Product::find($order->product_id); ?>
             <li>
-                <strong>Nome: </strong>{{$product->name}}
+                <strong>Nome: </strong>{{$product->decorateLanguage(\L::get_admin())->name}}
             </li>
             <li>
                 <strong>Codice: </strong>{{$product->code}}

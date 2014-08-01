@@ -17,7 +17,7 @@
             <?php $product = Product::find($order->product_id); ?>
         <ul>
             <li>
-                <strong>{{L::t('Name')}}: </strong>{{$product->name}}
+                <strong>{{L::t('Name')}}: </strong>{{$product->decorateLanguage()->name}}
             </li>
             <li>
                 <strong>{{L::t('Code')}}: </strong>{{$product->code}}
