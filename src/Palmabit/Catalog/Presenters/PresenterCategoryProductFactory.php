@@ -30,7 +30,6 @@ class PresenterCategoryProductFactory
         {
             $categories = ($category->children) ? $category->children()
                 ->orderBy('order','DESC')
-                ->orderBy('description')
                 ->paginate($per_page) : array();
 
             return ( ! empty($categories) ) ? new PresenterPagination('Palmabit\Catalog\Presenters\PresenterCategory', $categories ) : new Collection();
