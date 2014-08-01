@@ -144,7 +144,7 @@ class ProductsControllerTest extends DbTestCase
         App::instance('product_repository', $mock_repo);
         $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@duplicate', '', ["id" => 1, "slug_lang" => "old_slug_lang"]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['id' => 1]);
         $this->assertSessionHas('message');
     }
 
@@ -158,7 +158,7 @@ class ProductsControllerTest extends DbTestCase
         $slug_lang = "sl";
         $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@duplicate', '', ["id" => 1, "slug_lang" => $slug_lang]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@lists', ['id' => 1]);
         $this->assertSessionHasErrors();
     }
 }
