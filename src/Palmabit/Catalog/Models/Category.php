@@ -5,6 +5,7 @@
  * @author jacopo beschi j.beschi@palmabit.com
  */
 use Baum\Node as Model;
+use L;
 
 class Category extends Model{
 
@@ -46,11 +47,16 @@ class Category extends Model{
 
     public function getDescriptionAttribute()
     {
-        return $this->category_description()->whereLang(\L::get())->pluck('description');
+        return $this->category_description()->whereLang(L::get())->pluck('description');
     }
 
     public function getSlugLangAttribute()
     {
-        return $this->category_description()->whereLang(\L::get())->pluck('slug');
+        return $this->category_description()->whereLang(L::get())->pluck('slug');
+    }
+
+    public function getSlugAttribute()
+    {
+        return $this->category_description()->whereLang(L::get())->pluck('slug');
     }
 }

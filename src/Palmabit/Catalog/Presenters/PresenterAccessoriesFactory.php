@@ -17,7 +17,7 @@ class PresenterAccessoriesFactory
     /**
      * @param $product_id
      * @return PresenterCollection
-     * @throws Palmabit\Library\Exceptions\NotFoundException
+     * @throws \Palmabit\Library\Exceptions\NotFoundException
      */
     public function create($product_id)
     {
