@@ -37,7 +37,6 @@ class ProductsControllerTest extends DbTestCase
     {
         $first_id = 1;
         $second_id = 2;
-        $slug_lang = "ss";
 
         $mock_repo =
                 m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->shouldReceive('attachProduct')->once()->with($first_id, $second_id)
@@ -48,10 +47,9 @@ class ProductsControllerTest extends DbTestCase
         App::instance('Palmabit\Catalog\Validators\ProductsProductsValidator', $mock_validator);
 
         $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postAttachProduct', '', ["first_product_id"  => $first_id,
-                                                                                                        "second_product_id" => $second_id,
-                                                                                                        "slug_lang"         => $slug_lang]);
+                                                                                                        "second_product_id" => $second_id]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['id' => $first_id]);
         $this->assertSessionHas(['message_accessories']);
     }
 
@@ -60,8 +58,6 @@ class ProductsControllerTest extends DbTestCase
      **/
     public function it_redirect_with_errors_if_validation_fails_on_attach_product()
     {
-        $slug_lang = "ss";
-
         $mock_validator = m::mock('Palmabit\Catalog\Validators\ProductsProductsValidator')->shouldReceive('validate')
                            ->once()
                            ->andThrow(new ValidationException)
@@ -70,9 +66,9 @@ class ProductsControllerTest extends DbTestCase
                            ->andReturn(new MessageBag(["model" => "model"]))->getMock();
         App::instance('Palmabit\Catalog\Validators\ProductsProductsValidator', $mock_validator);
 
-        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postAttachProduct', '', ["slug_lang" => $slug_lang]);
+        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postAttachProduct', '', ["first_product_id" => 1]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['id' => 1]);
 
         $this->assertSessionHasErrors(['model']);
     }
@@ -82,17 +78,15 @@ class ProductsControllerTest extends DbTestCase
      **/
     public function it_redirect_with_errors_if_doesnt_find_the_model_on_attach_products()
     {
-        $slug_lang = "ss";
-
         $mock_validator = m::mock('Palmabit\Catalog\Validators\ProductsProductsValidator')->shouldReceive('validate')
                            ->once()
                            ->andThrow(new NotFoundException())
                            ->getMock();
         App::instance('Palmabit\Catalog\Validators\ProductsProductsValidator', $mock_validator);
 
-        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postAttachProduct', '', ["slug_lang" => $slug_lang]);
+        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postAttachProduct', '', ["first_product_id" => 1]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['id' => 1]);
 
         $this->assertSessionHasErrors(['model']);
     }
@@ -104,7 +98,6 @@ class ProductsControllerTest extends DbTestCase
     {
         $first_id = 1;
         $second_id = 2;
-        $slug_lang = "ss";
 
         $mock_repo =
                 m::mock('Palmabit\Catalog\Repository\EloquentProductRepository')->shouldReceive('detachProduct')->once()->with($first_id, $second_id)
@@ -115,10 +108,9 @@ class ProductsControllerTest extends DbTestCase
         App::instance('Palmabit\Catalog\Validators\ProductsProductsValidator', $mock_validator);
 
         $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postDetachProduct', '', ["first_product_id"  => $first_id,
-                                                                                                        "second_product_id" => $second_id,
-                                                                                                        "slug_lang"         => $slug_lang]);
+                                                                                                        "second_product_id" => $second_id]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['id' => $first_id]);
         $this->assertSessionHas(['message_accessories']);
     }
 
@@ -128,17 +120,15 @@ class ProductsControllerTest extends DbTestCase
      **/
     public function it_redirect_with_errors_if_doesnt_find_the_model_on_detach_products()
     {
-        $slug_lang = "ss";
-
         $mock_validator = m::mock('Palmabit\Catalog\Validators\ProductsProductsValidator')->shouldReceive('validate')
                            ->once()
                            ->andThrow(new NotFoundException())
                            ->getMock();
         App::instance('Palmabit\Catalog\Validators\ProductsProductsValidator', $mock_validator);
 
-        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postDetachProduct', '', ["slug_lang" => $slug_lang]);
+        $this->action('POST', 'Palmabit\Catalog\Controllers\ProductsController@postDetachProduct', '', ["first_product_id" => 1]);
 
-        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['slug_lang' => $slug_lang]);
+        $this->assertRedirectedToAction('Palmabit\Catalog\Controllers\ProductsController@getEdit', ['id' => 1]);
         $this->assertSessionHasErrors(['model']);
     }
 

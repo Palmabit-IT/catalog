@@ -267,45 +267,18 @@ class EloquentProductRepositoryTest extends DbTestCase
     public function it_duplicates_products_cats_imgs_accessories_and_create_unique_slug_lang()
     {
         // prepare product with related classes
-        /*   $this->prepareFakeData(2);
-           $this->r->attachProduct(1, 2);
-           Category::create([
-                                    "name" => "name",
-                            ]);
-           $this->r->associateCategory(1, 1);
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $description_1 = $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product_1), ["lang" => "it"]))->first();
+        $description_2 = $this->make('Palmabit\Catalog\Models\ProductDescription', array_merge($this->getProductDescriptionStub($product_1), ["lang" => "en"]))->first();
+        $this->repository_stub->duplicate($product_1->id);
 
-           $mock_img_repo = new ImgRepoStub;
-           $img_data = [
-                   "description" => "desc",
-                   "product_id"  => 1,
-                   "featured"    => 0,
-                   "data"        => 111
-           ];
-           $mock_img_repo->create($img_data);
+        // product duplicated
+        $product_duplicated = $this->repository_stub->find(2);
 
-           $prod = $this->r->duplicate(1);
-
-           // product duplicated
-           $prod3 = $this->r->find(3);
-           $prod1 = $this->r->find(1);
-           // check that name contains copy
-           $expected_name = $prod1->name . "_copia";
-           $this->assertEquals($prod3->name, $expected_name);
-           // check that i return a cloned product with no slug lang
-           $this->assertEquals($prod->id, $prod->slug_lang);
-           // categories
-           $cat_original = $prod3->categories()->get()->lists('id');
-           $cat_associated = $prod3->categories()->get()->lists('id');
-           $this->assertEquals($cat_original, $cat_associated);
-           // accessories
-           $acc_original = $prod3->accessories()->get()->lists('id');
-           $acc_associated = $prod3->accessories()->get()->lists('id');
-           $this->assertEquals($acc_original, $acc_associated);
-           // images
-           $image_original = App::make('product_image_repository')->getByProductId($prod1->id);
-           $image_associated = App::make('product_image_repository')->getByProductId($prod3->id);
-           $this->assertEquals(count($image_original), count($image_associated));
-           $this->assertEquals($image_original->first()->data, $image_associated->first()->data);  */
+        $this->assertObjectHasAllAttributes($product_duplicated->toArray(), $product_1, ["created_at","updated_at","id","type", "blocked","code"]);
+        $this->assertEquals(2, $product_duplicated->descriptions()->count(), 'The product doesnt have the right language descriptions number');
+        $this->assertEquals($product_duplicated->descriptions()->first()->name, $description_1->name."_copia");
+        $this->assertEquals($product_1->code."_copia", $product_duplicated->code);
     }
 
     /**
@@ -322,7 +295,6 @@ class EloquentProductRepositoryTest extends DbTestCase
         \Config::set('catalog::admin_per_page', $results_per_page);
 
         $products = $this->repository_stub->all();
-        $this->assertEquals($products->first()->id, $product_1->id);
         $this->assertEquals(2, count($products));
     }
 

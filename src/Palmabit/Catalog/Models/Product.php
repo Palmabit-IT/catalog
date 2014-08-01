@@ -61,6 +61,7 @@ class Product extends Model implements EditableLanguageDescriptionInterface
      */
     protected static $my_attributes = [
         "id",
+        "blocked",
         "code",
         "name",
         "slug",
