@@ -38,12 +38,14 @@ class EloquentProductRepositoryTest extends DbTestCase
      */
     public function canFindProductsFromSlug()
     {
-        $product = $this->make('Palmabit\Catalog\Models\Product')->first();
-        $product_description = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product))->first();
+        $product_1 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $product_2 = $this->make('Palmabit\Catalog\Models\Product')->first();
+        $product_description_1 = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_1))->first();
+        $product_description_2 = $this->make('Palmabit\Catalog\Models\ProductDescription', $this->getProductDescriptionStub($product_2))->first();
 
-        $product_found = $this->repository_stub->findBySlug($product_description->slug);
+        $product_found = $this->repository_stub->findBySlug($product_description_2->slug);
         $this->assertTrue($product_found->exists);
-        $this->assertObjectHasAllAttributes($product->toArray(), $product_found, ['updated_at', 'created_at', 'deleted_at', 'type']);
+        $this->assertObjectHasAllAttributes($product_2->toArray(), $product_found, ['updated_at', 'created_at', 'deleted_at', 'type']);
     }
 
     /**

@@ -192,7 +192,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
 
         if($product_description->isEmpty()) throw new ModelNotFoundException;
 
-        return $product_description->first()->product->first();
+        return $product_description->first()->product()->first();
     }
 
     /**
