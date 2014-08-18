@@ -4,8 +4,10 @@
     </div>
     <div class="panel-body">
         {{Form::open(['action' => 'Palmabit\Catalog\Controllers\ProductsController@lists','method' => 'get'])}}
-        {{FormField::code(['label' => 'Codice: '])}}
-        {{FormField::name(['label' => 'Nome: '])}}
+        {{Form::label('code', 'Codice: ')}}
+        {{Form::text('code', Input::get('code'), ['class' => 'form-control'])}}
+        {{Form::label('name', 'Nome: ')}}
+        {{Form::text('name', Input::get('name'), ['class' => 'form-control'])}}
         <div class="form-group">
             {{Form::label('featured', 'In evidenza: ')}}
             {{Form::select('featured', ['' => '', 1 => 'Sì', 0 => 'No'], Input::get('featured',''), ["class" => "form-control"])}}
