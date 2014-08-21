@@ -62,7 +62,7 @@ class PresenterCategoryTest extends DbTestCase
     {
       $category = $this->make('Palmabit\Catalog\Models\Category', $this->getCategoryModelStub())->first();
       $presenter = new PresenterCategory($category);
-      $this->assertEquals("", $presenter->getLink());
+      $this->assertEquals("#", $presenter->getLink());
     }
 
     /**
