@@ -50,10 +50,10 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
             ->get();
 
         if ($featured->isEmpty())
-            return ["data" => "data:image;base64," . base64_encode(ProductImage::getImageFromUrl($this->default_img_path)), "alt" => ""];
+            return ["data" => "data:image/png;base64," . base64_encode(ProductImage::getImageFromUrl($this->default_img_path)), "alt" => ""];
         else $featured = $featured->first();
 
-        return array("data" => $featured ? "data:image;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
+        return array("data" => $featured ? "data:image/png;base64,{$featured->data}" : null, "alt" => $featured->descrizione);
     }
 
     public function images_all()
@@ -82,7 +82,7 @@ class PresenterProducts extends AbstractPresenter implements ProductCategoryPres
 
         $images->each(function ($image) use (&$all_img) {
             $all_img[] = [
-                "data" => "data:image;base64,{$image->data}",
+                "data" => "data:image/png;base64,{$image->data}",
                 "alt" => $image->description,
                 "id" => $image->id,
                 "featured" => $image->featured
