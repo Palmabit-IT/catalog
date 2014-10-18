@@ -1,48 +1,45 @@
 {
     "name": "palmabit/catalog",
     "description": "",
-    "version" : "0.1.0",
-    "license" : "proprietary",
+    "license" : "mit",
     "authors": [
-        {
-            "name": "jacopo",
-            "email": "j.beschi@palmabit.com",
-            "homepage": "http://www.jacopobeschi.com"
-        }
+      {
+        "name": "jacopo beschi",
+        "email": "j.beschi@palmabit.com",
+        "homepage": "http://www.jacopobeschi.com"
+      },
+      {
+        "name" : "francesco falanga",
+        "email" : "f.falanga@palmabit.com",
+        "homepage" : "http://www.palmabit.com"
+      },
+      {
+        "name" : "alessandro sarzina",
+        "email" : "a.sarzina@palmabit.com",
+        "homepage" : "http://www.palmabit.com"
+      }
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "4.1.*",
+        "illuminate/support": "~4",
         "baum/baum": "1.0.9",
         "way/form": "dev-master",
         "intervention/image": "1.6.*",
-        "palmabit/library" : "dev-superfx",
-        "palmabit/multilanguage" : "dev-superfx",
-        "palmabit/authentication" : "dev-superfx",
+        "palmabit/library" : "dev-1.0",
+        "palmabit/multilanguage" : "1.0.2",
+        "palmabit/authentication" : "dev-1.0",
         "jacopo/laravel-single-table-inheritance": "dev-master",
         "jacopo/bootstrap-3-table-generator": "dev-master"
     },
     "require-dev": {
         "mockery/mockery": "0.9.0",
-        "orchestra/testbench": "2.1.*",
-        "fzaninotto/faker": "1.4.*@dev"
+        "orchestra/testbench": "2.2.*",
+        "fzaninotto/faker": "1.4.*"
     },
     "repositories": [
         {
             "type": "vcs",
             "url": "git://github.com/orchestral/phpseclib.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/authenticator.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/library.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://palmabitdev:op423sfdl4@bitbucket.org/palmabit/multilanguage.git"
         }
     ],
     "autoload": {
