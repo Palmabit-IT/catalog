@@ -21,14 +21,14 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "illuminate/support": "~4",
-        "baum/baum": "1.0.9",
+        "illuminate/support": "4.2.*",
+        "baum/baum": "1.0.*",
         "way/form": "dev-master",
         "intervention/image": "1.6.*",
-        "palmabit/library" : "dev-1.0",
-        "palmabit/multilanguage" : "1.0.2",
-        "palmabit/authentication" : "dev-1.0",
-        "jacopo/laravel-single-table-inheritance": "dev-master",
+        "palmabit/library" : "1.0.*",
+        "palmabit/multilanguage" : "1.0.*",
+        "palmabit/authentication" : "1.0.*",
+        "jacopo/laravel-single-table-inheritance": "1.0.*@dev",
         "jacopo/bootstrap-3-table-generator": "dev-master"
     },
     "require-dev": {
@@ -57,5 +57,6 @@
             "src/commands"
         ]
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev",
+    "prefer-stable" : true
 }
