@@ -10,15 +10,14 @@ use Illuminate\Support\Facades\Event;
 use Palmabit\Catalog\Models\CategoryDescription;
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Models\ProductDescription;
-use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
 use Palmabit\Library\Repository\EloquentBaseRepository;
-use Palmabit\Multilanguage\Traits\LanguageHelper;
 use Palmabit\Library\Exceptions\NotFoundException;
 use L, Config, DB, Cache, App;
+use Palmabit\Multilanguage\Classes\Traits\LanguageHelperTrait;
 
-class EloquentProductRepository extends EloquentBaseRepository implements MultilinguageRepositoryInterface
+class EloquentProductRepository extends EloquentBaseRepository
 {
-    use LanguageHelper;
+    use LanguageHelperTrait;
 
     /**
      * If the repository is used in admin panel
@@ -537,6 +536,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         $data['quantity_pricing_quantity'] = (!empty($data['quantity_pricing_quantity'])) ? $data['quantity_pricing_quantity'] : 0;
         $data['quantity_pricing_quantity_non_professional'] =
                 (!empty($data['quantity_pricing_quantity_non_professional'])) ? $data['quantity_pricing_quantity_non_professional'] : 0;
+
         return $data;
     }
 
@@ -547,7 +547,7 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
     protected function removeLangData(array $data)
     {
         if(isset($data['lang'])) unset($data['lang']);
-        return $data;
+
         return $data;
     }
 
@@ -560,5 +560,10 @@ class EloquentProductRepository extends EloquentBaseRepository implements Multil
         if(isset($data["id"])) unset($data["id"]);
 
         return $data;
+    }
+
+    protected function getLang()
+    {
+      return L::get();
     }
 }

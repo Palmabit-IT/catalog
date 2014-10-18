@@ -13,15 +13,14 @@ use Palmabit\Catalog\Models\CategoryDescription;
 use Palmabit\Library\Exceptions\InvalidException;
 use Palmabit\Library\Exceptions\NotFoundException;
 use Palmabit\Library\Repository\EloquentBaseRepository;
-use Palmabit\Multilanguage\Interfaces\MultilinguageRepositoryInterface;
-use Palmabit\Multilanguage\Traits\LanguageHelper;
+use Palmabit\Multilanguage\Classes\Traits\LanguageHelperTrait;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Palmabit\Catalog\Helpers\Helper as ImageHelper;
 use DB;
 
 class EloquentCategoryRepository extends EloquentBaseRepository implements TreeInterface
 {
-    use LanguageHelper;
+    use LanguageHelperTrait;
 
     /**
      * If the repo is used as admin or not

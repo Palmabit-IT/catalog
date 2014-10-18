@@ -151,7 +151,9 @@ class OrderService
     {
         $user = App::make('authenticator')->getLoggedUser();
 
-        if (!$user) throw new LoginRequiredException;
+        if (!$user) {
+          throw new LoginRequiredException;
+        }
 
         return $user->email;
     }

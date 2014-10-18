@@ -8,7 +8,7 @@ use Palmabit\Catalog\Models\ProductImage;
 use Palmabit\Catalog\Presenters\Interfaces\ProductCategoryPresenterInterface;
 use Palmabit\Catalog\Traits\ViewHelper;
 use Palmabit\Library\Presenters\AbstractPresenter;
-use L, URLT;
+use L, URL;
 
 class PresenterCategory extends AbstractPresenter implements ProductCategoryPresenterInterface{
  use ViewHelper;
@@ -50,7 +50,7 @@ class PresenterCategory extends AbstractPresenter implements ProductCategoryPres
 
     public function getLink()
     {
-      return ($description = $this->getDescriptionObjectOfLang(L::get())) ? URLT::action('CategoryController@show', ['slug' => $description->slug] ) : '#';
+//      return ($description = $this->getDescriptionObjectOfLang(L::get())) ? URL::action('Palmabit\Catalog\Controllers\CategoryController@show', ['slug' => $description->slug] ) : '#';
     }
 
     public function getDescriptionObjectOfLang($lang)

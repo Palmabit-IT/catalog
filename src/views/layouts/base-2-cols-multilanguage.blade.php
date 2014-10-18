@@ -9,9 +9,7 @@
     @include('authentication::layouts.sidebar')
 </div>
 <div class="col-md-10">
-    {{-- select languages --}}
-    {{get_form_select_lang()}}
-    <br/>
+    @include('multilanguage::select-language')
     @yield('content')
 </div>
 @stop
