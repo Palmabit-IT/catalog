@@ -14,12 +14,9 @@
 
 		<hr>
 		{{Form::submit('Salva', array("class"=>"btn btn-large btn-primary tab-remember"))}}
-        {{Form::updateOldLanguageInput()}}
 
         {{Form::close()}}
-
 	</div>
-
     @include('catalog::category.description')
 
 </div>
