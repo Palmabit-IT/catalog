@@ -79,7 +79,7 @@
 @parent
 <script>
         $(".cancella").click(function(){
-            return confirm("Sei sicuro di volere eliminare il prodotto selezionato in tutte le lingue?");
+            return confirm("Are you sure to delete this product in all the languages?");
         });
         $("#form-select-lang").hide();
 </script>
