@@ -5,7 +5,6 @@ use Palmabit\Catalog\Tests\Traits\StubTrait;
 
 class CategoryTest extends DbTestCase  {
     use StubTrait;
-
     /**
      * @test
      **/

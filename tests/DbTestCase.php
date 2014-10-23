@@ -116,4 +116,4 @@ class DbTestCase extends TestCase
     {
         \Config::set('mail.pretend', true);
     }
-} 
+}

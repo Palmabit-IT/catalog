@@ -1,6 +1,7 @@
 <?php namespace Palmabit\Catalog;
 
 use AlignProductsLang;
+use Palmabit\Catalog\Install\Install;
 use Palmabit\Catalog\Validators\CategoryDescriptionValidator;
 use ResizeAllCatImages;
 use Illuminate\Support\ServiceProvider;
@@ -106,6 +107,12 @@ class CatalogServiceProvider extends ServiceProvider {
     });
 
     $this->commands('catalog.category.resizeimages');
+
+    $this->app['catalog.install'] = $this->app->share(function ($app) {
+      return new Install();
+    });
+
+    $this->commands('catalog.install');
   }
 
   protected function bindValidators() {
@@ -118,4 +125,6 @@ class CatalogServiceProvider extends ServiceProvider {
     $new_menu_list = array_merge(Config::get('authentication::menu.list'), Config::get('catalog::menu.list'));
     Config::set('authentication::menu.list', $new_menu_list);
   }
+
+
 }

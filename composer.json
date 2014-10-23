@@ -25,7 +25,7 @@
         "baum/baum": "1.0.*",
         "way/form": "dev-master",
         "intervention/image": "1.6.*",
-        "palmabit/library" : "1.0.*",
+        "palmabit/library" : "0.1.*",
         "palmabit/multilanguage" : "1.0.*",
         "palmabit/authentication" : "1.0.*",
         "jacopo/bootstrap-3-table-generator": "dev-master"

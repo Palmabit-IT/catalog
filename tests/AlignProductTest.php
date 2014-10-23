@@ -1,7 +1,8 @@
-<?php  namespace Palmabit\Catalog\Tests;
+<?php namespace Palmabit\Catalog\Tests;
 
 use Palmabit\Catalog\Models\Product;
 use Palmabit\Catalog\Services\AlignProducts;
+
 /**
  * Test AlignProducts
  *
@@ -64,7 +65,6 @@ class AlignProductTest extends DbTestCase {
 //        }
 //         last product only italian
 //        $this->createProduct($number_products, "it");
-
     }
 
     /**

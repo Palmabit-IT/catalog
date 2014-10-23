@@ -5,12 +5,13 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
+
+use Palmabit\Library\Models\SingleTableInheritance;
 use Palmabit\Catalog\ModelMultilanguage\Decorators\ProductLanguageDecorator;
 use Palmabit\Catalog\ModelMultilanguage\Interfaces\EditableLanguageDescriptionInterface;
 use Palmabit\Catalog\ModelMultilanguage\Traits\LanguageDescriptionsEditable;
-use Palmabit\Catalog\Presenters\PresenterProducts;
 use L;
-use Palmabit\Library\Models\SingleTableInheritance;
+use Palmabit\Catalog\Presenters\PresenterProducts;
 
 class Product extends SingleTableInheritance implements EditableLanguageDescriptionInterface
 {
