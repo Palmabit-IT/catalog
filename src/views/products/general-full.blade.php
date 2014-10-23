@@ -34,7 +34,7 @@
         {{FormField::video_link(["type" => "text", "label" => "URL video (youtube):"])}}
         <span class="text-danger">{{$errors->first('video_link')}}</span>
         <div class="form-group">
-            <label for=​"price1" class=​"control-label">​Prezzo1*:​</label>​
+            <label for=​"price1" class=​"control-label">​Prezzo1:​</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
               {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -43,7 +43,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price1')}}</span>
         <div class="form-group">
-            <label for=​"price2" class=​"control-label">​Prezzo2*:</label>​
+            <label for=​"price2" class=​"control-label">​Prezzo2:</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -52,7 +52,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price2')}}</span>
         <div class="form-group">
-            <label for=​"price3" class=​"control-label">​Prezzo3*:*</label>​
+            <label for=​"price3" class=​"control-label">​Prezzo3:</label>​
             <div class="input-group">
               <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}
@@ -61,7 +61,7 @@
         </div>
         <span class="text-danger">{{$errors->first('price3')}}</span>
         <div class="form-group">
-            <label for=​"price4" class=​"control-label">​Prezzo4*:</label>​
+            <label for=​"price4" class=​"control-label">​Prezzo4:</label>​
             <div class="input-group">
                 <span class="input-group-addon">€</span>
                 {{--  please keep in mind this null will be replaced with the populated value from the form class --}}

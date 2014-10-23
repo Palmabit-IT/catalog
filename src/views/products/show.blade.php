@@ -6,7 +6,6 @@
 
 @section('content')
 <div class="row" style="margin-bottom: 20px;">
-    <!-- <div class="col-md-12"> -->
         <div class="col-md-9">
             {{-- Lista dei prodotti --}}
             <h3>Catalogo prodotti</h3>
@@ -81,6 +80,5 @@
         $(".cancella").click(function(){
             return confirm("Are you sure to delete this product in all the languages?");
         });
-        $("#form-select-lang").hide();
 </script>
 @stop

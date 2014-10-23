@@ -11,7 +11,7 @@
         @include('authentication::layouts.sidebar')
     </div>
     <div class="col-md-10">
-    {{-- here put the admin language change select --}}
+        @include('catalog::layouts.select-language-admin')
         @yield('content')
     </div>
 </div>

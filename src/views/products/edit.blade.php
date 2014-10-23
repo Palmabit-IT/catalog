@@ -5,7 +5,6 @@
 @stop
 
 @section('content')
-
     <div class="top-product-flags pull-right">
         {{$product->presenter()->availableflags}}
     </div>

@@ -20,9 +20,9 @@ class ProductValidator  extends OverrideConnectionValidator{
         "description_long" => "max:8000",
         "lang" => "max:2",
         "video_link" => "max:255|url",
-        "price1" => "required|currency",
+        "price1" => "currency",
         "price2" => "currency",
-        "price3" => "required|currency",
+        "price3" => "currency",
         "price4" => "currency",
         'quantity_pricing_quantity' => 'integer|max:1000000',
         'quantity_pricing_quantity_non_professional' => 'integer|max:1000000'

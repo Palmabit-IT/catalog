@@ -564,6 +564,6 @@ class EloquentProductRepository extends EloquentBaseRepository
 
     protected function getLang()
     {
-      return L::get();
+      return L::get_admin();
     }
 }
