@@ -10,29 +10,30 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h3>Anagrafica prodotto</h3>
+        <h3>{{L::t('Anagrafica prodotto')}}</h3>
     </div>
 
     <div class="col-md-6">
         {{Form::model($product, array('url' =>
         array(URL::action('Palmabit\Catalog\Controllers\ProductsController@postEdit'), $product->id), 'method' =>
         'post') )}}
-        {{FormField::code(["label" => "Codice*: ", 'readonly' => 'readonly'])}}
+        {{FormField::code(["label" => L::t("Codice*: "), 'readonly' => 'readonly'])}}
         <span class="text-danger">{{$errors->first('code')}}</span>
-        {{Form::label('name', 'Nome:*')}}
+        {{Form::label('name', L::t('Nome:*'))}}
         {{Form::text('name', $product->decorateLanguage(L::get_admin())->name, ["id" => "slugme", 'class' => 'form-control'] )}}
         <span class="text-danger">{{$errors->first('name')}}</span>
-        {{Form::label('slug', 'Slug:*')}}
+        {{Form::label('slug', L::t('Slug:*'))}}
         {{Form::text('slug', $product->decorateLanguage(L::get_admin())->slug, ["class"=>"form-control", "id" => "slug"])}}
         <span class="text-danger">{{$errors->first('slug')}}</span>
-        {{Form::label('description', 'Descrizione breve*: ')}}
+        {{Form::label('description', L::t('Descrizione breve*: '))}}
         {{Form::textarea('description', $product->decorateLanguage(L::get_admin())->description, ["class" => "form-control", "rows"=>5])}}
         <span class="text-danger">{{$errors->first('description')}}</span>
-        {{Form::label('long_description', 'Descrizione lunga*: ')}}
+        {{Form::label('long_description', L::t('Descrizione lunga*: '))}}
         {{Form::textarea('long_description', $product->decorateLanguage(L::get_admin())->long_description, ["class" => "form-control", "rows"=>5])}}
         <span class="text-danger">{{$errors->first('long_description')}}</span>
     </div>
     <div class="col-md-6">
+        {{-- hidden data for non-default language form --}}
         {{FormField::video_link(["type" => "hidden", "label" => ""])}}
         {{Form::hidden('price1', null, ['class' => 'form-control'])}}
         {{Form::hidden('price2', null, ['class' => 'form-control'])}}

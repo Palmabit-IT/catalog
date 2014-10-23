@@ -1,13 +1,13 @@
 <?php
 use Palmabit\Catalog\Orders\OrderService;
 
-    /**
+/**
  * Passa le voci di menu al pannello admin categoria
  */
 View::composer('catalog::category.*', function($view){
     $view->with('sidebar_items', [
-                                "Lista categorie" => [URL::to('/admin/category/lists'),"<i class='glyphicon glyphicon-th-list'></i>"],
-                                "Aggiungi categoria" => [URL::to('/admin/category/edit'), "<i class='glyphicon glyphicon-plus'></i>"],
+                                L::t("Lista categorie") => [URL::to('/admin/category/lists'),"<i class='glyphicon glyphicon-th-list'></i>"],
+                                L::t("Aggiungi categoria") => [URL::to('/admin/category/edit'), "<i class='glyphicon glyphicon-plus'></i>"],
                            ]);
 });
 
@@ -16,9 +16,9 @@ View::composer('catalog::category.*', function($view){
  */
 View::composer(['catalog::products.*', 'catalog::orders.*'], function($view){
     $view->with('sidebar_items', [
-                                "Lista prodotti" => [URL::to('/admin/products/lists'),"<i class='glyphicon glyphicon-th-list'></i>"],
-                                "Aggiungi prodotti" => [ URL::to('/admin/products/edit'),"<i class='glyphicon glyphicon-plus'></i>"],
-                                "Lista Ordini" => [URL::to('/admin/orders/lists'),"<i class='glyphicon glyphicon-credit-card'></i>"]
+                                L::t("Lista prodotti") => [URL::to('/admin/products/lists'),"<i class='glyphicon glyphicon-th-list'></i>"],
+                                L::t("Aggiungi prodotti") => [ URL::to('/admin/products/edit'),"<i class='glyphicon glyphicon-plus'></i>"],
+                                L::t("Lista Ordini") => [URL::to('/admin/orders/lists'),"<i class='glyphicon glyphicon-credit-card'></i>"]
                            ]);
 });
 // elementi presenti nel carrello

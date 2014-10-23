@@ -1,7 +1,7 @@
 @extends('catalog::layouts.base-2-cols-multilanguage')
 
 @section('title')
-{{$app_name}} Admin area: insersci prodotto
+{{$app_name}} {{L::t('Admin area: insersci prodotto')}}
 @stop
 
 @section('content')

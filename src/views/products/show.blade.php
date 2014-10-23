@@ -1,14 +1,14 @@
 @extends('catalog::layouts.base-2-cols-multilanguage')
 
 @section('title')
-{{$app_name}} Admin area: prodotti
+{{$app_name}} {{L::t('Admin area: prodotti')}}
 @stop
 
 @section('content')
 <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-9">
             {{-- Lista dei prodotti --}}
-            <h3>Catalogo prodotti</h3>
+            <h3>{{L::t('Catalogo prodotti')}}</h3>
 
             {{-- messaggi vari --}}
             <?php $message = Session::get('message'); ?>
@@ -24,9 +24,9 @@
             {{-- Lista prodotti --}}
             <table class="table table-striped">
                 <tr>
-                    <th>Codice</th>
-                    <th>Nome</th>
-                    <th>Ordine</th>
+                    <th>{{L::t('Codice')}}</th>
+                    <th>{{L::t('Nome')}}</th>
+                    <th>{{L::t('Ordine')}}</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -49,7 +49,7 @@
                             {{Form::close()}}
                         </td>
                         <td>
-                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-link"></i> duplica</a>
+                            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@duplicate', ['id' => $product->id, '_token' => csrf_token()])}}" class=""><i class="glyphicon glyphicon-link"></i> {{L::t('duplica')}}</a>
                         </td>
                         <td>
                             <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit',array('id'=> $product->id) )}}" class=""><i class="glyphicon glyphicon-edit"></i></a>
@@ -58,11 +58,11 @@
                     </tr>
                 @endforeach
                 @else
-                <h5>Non ho trovato risultati.</h5>
+                <h5>{{L::t('Non ho trovato risultati.')}}</h5>
                 @endif
             </table>
             {{-- Aggiunta nuovo prodotto --}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary "><i class="glyphicon glyphicon-plus"></i> Aggiungi</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@getEdit')}}" class="btn btn-primary "><i class="glyphicon glyphicon-plus"></i> {{L::t('Aggiungi')}}</a>
             <div style="text-align: center">
                 {{ isset($products) ? $products->appends(Input::except(['page']) )->links() : ''}}
             </div>

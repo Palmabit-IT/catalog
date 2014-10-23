@@ -28,7 +28,6 @@
         "palmabit/library" : "1.0.*",
         "palmabit/multilanguage" : "1.0.*",
         "palmabit/authentication" : "1.0.*",
-        "jacopo/laravel-single-table-inheritance": "1.0.*@dev",
         "jacopo/bootstrap-3-table-generator": "dev-master"
     },
     "require-dev": {

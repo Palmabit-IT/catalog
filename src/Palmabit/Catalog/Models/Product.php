@@ -5,14 +5,14 @@
  *
  * @author jacopo beschi j.beschi@palmabit.com
  */
-use Jacopo\LaravelSingleTableInheritance\Models\Model;
 use Palmabit\Catalog\ModelMultilanguage\Decorators\ProductLanguageDecorator;
 use Palmabit\Catalog\ModelMultilanguage\Interfaces\EditableLanguageDescriptionInterface;
 use Palmabit\Catalog\ModelMultilanguage\Traits\LanguageDescriptionsEditable;
 use Palmabit\Catalog\Presenters\PresenterProducts;
 use L;
+use Palmabit\Library\Models\SingleTableInheritance;
 
-class Product extends Model implements EditableLanguageDescriptionInterface
+class Product extends SingleTableInheritance implements EditableLanguageDescriptionInterface
 {
     use LanguageDescriptionsEditable;
 

@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-12">
 
-    <h3>Associazione categorie</h3>
+    <h3>{{L::t('Associazione categorie')}}</h3>
 
     {{-- category messages --}}
     <?php $message = Session::get('message_cat'); ?>
@@ -15,17 +15,17 @@
         @endforeach
     @endif
     {{-- list of associated categories --}}
-    <h5>Categorie già associate</h5>
+    <h5>{{L::t('Categorie già associate')}}</h5>
     <ul class="list-group">
         @if($presenter->categories())
         @foreach($presenter->categories() as $category)
         <li class="list-group-item">
             {{$category->name}}
-            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postDetachCategory', ['_token' => csrf_token(), 'product_id' => $product->id, 'category_id' => $category->id])}}" class="pull-right tab-remember cancella"><i class="glyphicon glyphicon-trash"></i> Rimuovi</a>
+            <a href="{{URL::action('Palmabit\Catalog\Controllers\ProductsController@postDetachCategory', ['_token' => csrf_token(), 'product_id' => $product->id, 'category_id' => $category->id])}}" class="pull-right tab-remember cancella"><i class="glyphicon glyphicon-trash"></i> {{L::t('Rimuovi')}}</a>
         </li>
         @endforeach
         @else
-            <h5>Non ci sono categorie associate.</h5>
+            <h5>{{L::t('Non ci sono categorie associate.')}}</h5>
         @endif
     </ul>
 
